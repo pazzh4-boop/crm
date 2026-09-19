@@ -739,10 +739,6 @@ function Handle-Client {
                         -Action $action `
                         -Query $query
 
-                    if ($action -eq "updatePinned") {
-                        Write-Host "[Being API] Google response: $jsonText"
-                    }
-
                     $bytes = [Text.Encoding]::UTF8.GetBytes($jsonText)
 
                     Send-HttpResponse `
@@ -828,7 +824,7 @@ function Handle-Client {
 Write-Banner
 
 try {
-    $config = Get-BeingConfig
+    [void](Get-BeingConfig)
     Write-Host "[OK] Google Sheet configuration found."
     Write-Host "[OK] Apps Script URL ends in /exec."
     Write-Host ""
