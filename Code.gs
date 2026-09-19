@@ -1,10 +1,6 @@
-
-    // Every POST writes to the spreadsheet. Announcing it here keeps the
-    // onChange cache trigger from mistaking our own write for a 365 edit.
-    markBeingSelfWrite_();
 /************************************************************
  * VIP CRM / BEING GOOGLE SHEET API
- * v3.3 — exact 365 layout + day/7D/30D/12M + dated quest tracking
+ * v3.4 — exact 365 layout + day/7D/30D/12M + dated quest tracking
  *        + per-section daily turnover (Casino / Sport) for quest scoping
  *        + change-driven 365 cache reset (setupBeing365CacheTrigger)
  *
@@ -195,6 +191,7 @@ function setupBeingApi() {
     BEING_SHEET_NAME: sheet.getName(),
     BEING_API_KEY: apiKey
   });
+  resetSpreadsheetMemo_();
 
   formatSheet_(sheet);
   SpreadsheetApp.flush();
@@ -212,7 +209,7 @@ function setupBeingApi() {
   console.log('Pinned column: ' + schema.mapping.pinned);
   console.log('Follow-up column: ' + schema.mapping.followUpDate);
   console.log('Last Contact column: ' + schema.mapping.lastContact);
-  console.log('API KEY: ' + apiKey);
+  console.log('API KEY: ' + maskSecret_(apiKey));
   console.log('========================================');
 
   return {
@@ -226,7 +223,7 @@ function setupBeingApi() {
 
 
 function setupReactivationApi() {
-  const ss = SpreadsheetApp.openById(getSpreadsheetId_());
+  const ss = getSpreadsheet_();
   const sheets = getReactivationSheets_(ss);
 
   if (!sheets.length) {
@@ -277,7 +274,7 @@ function debugBeingApi() {
 
 
 function debug365Statistics_() {
-  const ss = SpreadsheetApp.openById(getSpreadsheetId_());
+  const ss = getSpreadsheet_();
   const sheet = ss.getSheets().find(item =>
     normalizeHeader_(item.getName()) === normalizeHeader_(CONFIG.STATISTICS_365_SHEET_NAME)
   );
@@ -318,13 +315,18 @@ function getBeingApiInfo() {
     apiKey: props.getProperty('BEING_API_KEY')
   };
 
-  console.log(JSON.stringify(info, null, 2));
+  // The log is kept by Apps Script; only the return value carries the key.
+  console.log(JSON.stringify(
+    Object.assign({}, info, { apiKey: maskSecret_(info.apiKey) }),
+    null,
+    2
+  ));
   return info;
 }
 
 
 function getReactivationFeed_() {
-  const ss = SpreadsheetApp.openById(getSpreadsheetId_());
+  const ss = getSpreadsheet_();
   const sheetEntries = getReactivationSheets_(ss);
 
   if (!sheetEntries.length) {
@@ -351,9 +353,14 @@ function getReactivationFeed_() {
   const historyById = {};
   const latestSnapshotById = {};
   const lastSeenEntryById = {};
+  const currentEntry = sheetEntries[sheetEntries.length - 1];
+  // The current sheet is part of the history pass, so its rows are kept
+  // rather than read a second time below.
+  let currentRows = [];
 
   sheetEntries.forEach(entry => {
     const rows = readReactivationSheetRows_(entry.sheet);
+    if (entry === currentEntry) currentRows = rows;
     const seenSheetIds = {};
 
     rows.forEach(row => {
@@ -381,7 +388,8 @@ function getReactivationFeed_() {
           sheetName: sourceEntry.name,
           text: row.previousAttemptsText
         });
-        history.reactivationNotes = history.reactivationNotes.concat(
+        Array.prototype.push.apply(
+          history.reactivationNotes,
           parseReactivationCommEntries_(
             row.previousAttemptsText,
             sourceEntry.isoDate,
@@ -406,8 +414,6 @@ function getReactivationFeed_() {
     historyById[id].reactivationNotes.sort(compareReactivationNotesNewestFirst_);
   });
 
-  const currentEntry = sheetEntries[sheetEntries.length - 1];
-  const currentRows = readReactivationSheetRows_(currentEntry.sheet);
   const seenCurrentIds = {};
   const rows = [];
 
@@ -472,7 +478,7 @@ function updateReactivation_(mutation) {
   lock.waitLock(20000);
 
   try {
-    const ss = SpreadsheetApp.openById(getSpreadsheetId_());
+    const ss = getSpreadsheet_();
     const sheets = getReactivationSheets_(ss);
 
     if (!sheets.length) {
@@ -482,7 +488,6 @@ function updateReactivation_(mutation) {
     const current = sheets[sheets.length - 1];
     const sheet = current.sheet;
     const schema = inspectReactivationSheetSchema_(sheet);
-    const columns = schema.map;
     const clientIdIndex = requireReactivationColumn_(schema, 'clientId', 'ID');
     let rowNumber = findClientRow_(sheet, clientIdIndex + 1, id);
 
@@ -560,11 +565,7 @@ function updateReactivation_(mutation) {
       );
     }
 
-    if (
-      action === 'comm:update' ||
-      action === 'notes:update' ||
-      action === 'offer:update'
-    ) {
+    if (action === 'comm:update') {
       const commIndex = requireReactivationColumn_(schema, 'comm', 'COMM');
       return writeVerifiedReactivationText_(
         sheet,
@@ -1075,6 +1076,25 @@ function build365StatisticsProfiles_(sheet, layout, timezone) {
     return read365Number_(blocks[location.block].values[rowIndex][location.offset]);
   };
 
+  // Period membership and the latest date depend on the descriptor only, so
+  // they are worked out once here instead of once per client row.
+  const descriptorPlans = layout.descriptors.map(descriptor => {
+    const dateColumns = descriptor.dateColumns;
+    const latestTimestamp = Math.max.apply(null, dateColumns.map(item => item.timestamp));
+    return {
+      field: descriptor.field,
+      dateColumns: dateColumns,
+      latestIsoDate: dateColumns.find(item => item.timestamp === latestTimestamp).isoDate,
+      isQuestDaily: QUEST_DAILY_FIELDS.indexOf(descriptor.field) >= 0,
+      periodColumns: {
+        day: dateColumns.filter(item => item.timestamp === latestTimestamp),
+        '7d': dateColumns.filter(item => item.timestamp >= latestTimestamp - 6 * 86400000),
+        '30d': dateColumns.filter(item => item.timestamp >= latestTimestamp - 29 * 86400000),
+        '12m': dateColumns.filter(item => item.timestamp >= latestTimestamp - 364 * 86400000)
+      }
+    };
+  });
+
   const profiles = {};
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
     const id = cleanString_(identityDisplay[rowIndex][0]);
@@ -1088,16 +1108,10 @@ function build365StatisticsProfiles_(sheet, layout, timezone) {
       timezone
     );
 
-    layout.descriptors.forEach(descriptor => {
+    descriptorPlans.forEach(descriptor => {
       const dateColumns = descriptor.dateColumns;
-      const latestTimestamp = Math.max.apply(null, dateColumns.map(item => item.timestamp));
-      const latestIsoDate = dateColumns.find(item => item.timestamp === latestTimestamp).isoDate;
-      const periodColumns = {
-        day: dateColumns.filter(item => item.timestamp === latestTimestamp),
-        '7d': dateColumns.filter(item => item.timestamp >= latestTimestamp - 6 * 86400000),
-        '30d': dateColumns.filter(item => item.timestamp >= latestTimestamp - 29 * 86400000),
-        '12m': dateColumns.filter(item => item.timestamp >= latestTimestamp - 364 * 86400000)
-      };
+      const latestIsoDate = descriptor.latestIsoDate;
+      const periodColumns = descriptor.periodColumns;
 
       // Current Quest needs real values for an arbitrary inclusive date range.
       // Missing metrics stay absent so unavailable data is never shown as zero.
@@ -1105,7 +1119,7 @@ function build365StatisticsProfiles_(sheet, layout, timezone) {
       // scoped to. In the supplied 365 workbook casino + sport reconciles
       // exactly with the Turnover total, so the combined section keeps using
       // 'to' as its authoritative source.
-      if (QUEST_DAILY_FIELDS.indexOf(descriptor.field) >= 0) {
+      if (descriptor.isQuestDaily) {
         dateColumns.forEach(item => {
           const dailyValue = readCell(rowIndex, item.index);
           if (dailyValue === null) return;
@@ -1261,7 +1275,7 @@ function onBeing365Change() {
  * previous trigger for this handler is removed first.
  */
 function setupBeing365CacheTrigger() {
-  const ss = SpreadsheetApp.openById(getSpreadsheetId_());
+  const ss = getSpreadsheet_();
   const replaced = removeBeing365CacheTrigger().removed;
 
   ScriptApp.newTrigger(STATISTICS_365_CACHE.TRIGGER_HANDLER)
@@ -1378,35 +1392,9 @@ function parse365MetricField_(value) {
     return product ? product.charAt(0).toLowerCase() + product.slice(1) : 'to';
   }
 
-  const aliases = [
-    ['ggrSport', ['ggr sport', 'sport ggr']],
-    ['ggrCasino', ['ggr casino', 'casino ggr']],
-    ['ggrSlots', ['ggr slots', 'slots ggr']],
-    ['ggrInstant', ['ggr instant', 'instant ggr']],
-    ['ggrLive', ['ggr live', 'live ggr', 'live casino ggr', 'ggr live casino']],
-    ['ngrSport', ['ngr sport', 'sport ngr']],
-    ['ngrCasino', ['ngr casino', 'casino ngr']],
-    ['ngrSlots', ['ngr slots', 'slots ngr']],
-    ['ngrInstant', ['ngr instant', 'instant ngr']],
-    ['ngrLive', ['ngr live', 'live ngr', 'live casino ngr', 'ngr live casino']],
-    ['sport', ['turnover sport', 'sport turnover', 'to sport', 'sport to']],
-    ['casino', ['turnover casino', 'casino turnover', 'to casino', 'casino to']],
-    ['slots', ['turnover slots', 'slots turnover', 'to slots', 'slots to']],
-    ['instant', ['turnover instant', 'instant turnover', 'to instant', 'instant to']],
-    ['live', ['turnover live', 'live turnover', 'to live', 'live to', 'live casino turnover']],
-    ['depositCount', ['deposit count', 'deposits count']],
-    ['withdrawalCount', ['withdrawal count', 'withdrawals count']],
-    ['deposits', ['deposit', 'deposits']],
-    ['withdrawals', ['withdrawal', 'withdrawals']],
-    ['bonusRate', ['br', 'bonus rate']],
-    ['bonus', ['bonus', 'bonuses']],
-    ['to', ['to', 'turnover']],
-    ['ggr', ['ggr']],
-    ['ngr', ['ngr']]
-  ];
-  for (let index = 0; index < aliases.length; index++) {
-    if (aliases[index][1].some(alias => text === normalizeHeader_(alias))) return aliases[index][0];
-  }
+  // Every other spelling is already resolved by the pattern chain above;
+  // only a bare "BR" carries neither "bonus" nor "rate".
+  if (text === 'br') return 'bonusRate';
   return '';
 }
 
@@ -1423,12 +1411,14 @@ function inspectReactivationSheetSchema_(sheet) {
   const headers = sheet.getRange(1, 1, 1, lastColumn)
     .getDisplayValues()[0]
     .map(cleanString_);
+  const normalizedHeaders = headers.map(normalizeHeader_);
   const map = {};
 
   Object.keys(CONFIG.REACTIVATION.HEADER_ALIASES).forEach(key => {
     map[key] = findHeaderIndex_(
       headers,
-      CONFIG.REACTIVATION.HEADER_ALIASES[key]
+      CONFIG.REACTIVATION.HEADER_ALIASES[key],
+      normalizedHeaders
     );
   });
 
@@ -1499,8 +1489,8 @@ function readReactivationSheetRows_(sheet) {
       clientId: clientId,
       lastActivityDate: lastActivity.date,
       daysInactive: lastActivity.days,
-      ngr: readOptionalReactivationNumber_(raw, display, columns.ngr),
-      depositAmount: readOptionalReactivationNumber_(raw, display, columns.depositAmount),
+      ngr: readOptionalSheetNumber_(raw, display, columns.ngr),
+      depositAmount: readOptionalSheetNumber_(raw, display, columns.depositAmount),
       previousAttemptsText: readDisplayCell_(display, columns.previousAttempts),
       plansText: readDisplayCell_(display, columns.plans),
       commText: readDisplayCell_(display, columns.comm),
@@ -1576,8 +1566,7 @@ function buildReactivationClient_(id, currentRow, history, beingClient, sheetEnt
     playing: cleanString_(profile.playing),
     performance: profile.performance || {},
     quest: {
-      name: questName,
-      progress: 0
+      name: questName
     },
     reactivationTotals: {
       deposits: source.depositAmount,
@@ -1596,9 +1585,7 @@ function extractActiveQuestName_(value) {
 }
 
 
-function readReactivationInactiveDays_(rawValue, displayValue, isoDate) {
-  if (isoDate) return daysSinceIsoDate_(isoDate);
-
+function readReactivationInactiveDays_(rawValue, displayValue) {
   const text = cleanString_(displayValue || rawValue);
   const match = text.match(/^-?\s*(\d{1,5})(?:\s*(?:day|days|дн(?:ей|я)?))?\s*$/i);
   if (!match) return null;
@@ -1621,7 +1608,7 @@ function readReactivationLastActivity_(rawRow, displayRow, dateIndex, daysIndex,
   const dayRawValue = hasDays && rawRow ? rawRow[daysIndex] : '';
   const dayDisplayValue = hasDays && displayRow ? displayRow[daysIndex] : '';
   let days = hasDays
-    ? readReactivationInactiveDays_(dayRawValue, dayDisplayValue, '')
+    ? readReactivationInactiveDays_(dayRawValue, dayDisplayValue)
     : null;
 
   if (days === null && date) {
@@ -1652,17 +1639,8 @@ function isoDateDaysAgo_(daysValue) {
 }
 
 
-function readOptionalReactivationNumber_(rawRow, displayRow, index) {
-  if (!Number.isInteger(index) || index < 0) return null;
-  const rawValue = rawRow ? rawRow[index] : '';
-  const displayValue = displayRow ? displayRow[index] : '';
-  if (!cleanString_(displayValue || rawValue)) return null;
-  return readReactivationNumber_(rawValue, displayValue);
-}
-
-
 function readReactivationCounter_(rawRow, displayRow, index) {
-  const value = readOptionalReactivationNumber_(rawRow, displayRow, index);
+  const value = readOptionalSheetNumber_(rawRow, displayRow, index);
   return value === null ? 0 : Math.max(0, Math.floor(value));
 }
 
@@ -1854,12 +1832,6 @@ function doGet(e) {
           clients: getClients_()
         });
 
-      case 'getClient':
-        return json_({
-          ok: true,
-          client: getClient_(params.clientId)
-        });
-
       case 'updatePinned':
         return json_(
           updatePinned_(
@@ -1921,38 +1893,6 @@ function doPost(e) {
           updateClient_(
             request.clientId,
             request.changes || {}
-          )
-        );
-
-      case 'updateNotes':
-        return json_(
-          updateClient_(
-            request.clientId,
-            { notes: request.notes }
-          )
-        );
-
-      case 'updateFollowUp':
-        return json_(
-          updateClient_(
-            request.clientId,
-            { followUpDate: request.followUpDate }
-          )
-        );
-
-      case 'updateLastContact':
-        return json_(
-          updateClient_(
-            request.clientId,
-            { lastContactDate: request.lastContactDate }
-          )
-        );
-
-      case 'updatePinned':
-        return json_(
-          updatePinned_(
-            request.clientId,
-            request.pinned
           )
         );
 
@@ -2141,26 +2081,7 @@ function getClients_() {
 
 
 /* =========================================================
-   6. READ ONE CLIENT
-   ========================================================= */
-
-function getClient_(clientId) {
-  const wantedId = cleanString_(clientId);
-
-  if (!wantedId) {
-    throw new Error('Client ID is required.');
-  }
-
-  const clients = getClients_();
-
-  return clients.find(
-    item => item.clientId === wantedId
-  ) || null;
-}
-
-
-/* =========================================================
-   7. DIRECT PIN UPDATE
+   6. DIRECT PIN UPDATE
    ========================================================= */
 
 function updatePinned_(
@@ -2375,7 +2296,7 @@ function ensurePinnedColumn_(
 
 
 /* =========================================================
-   8. VERIFIED ACTIVE QUEST UPDATE — FIXED COLUMN D
+   7. VERIFIED ACTIVE QUEST UPDATE — FIXED COLUMN D
    ========================================================= */
 
 function updateActiveQuest_(
@@ -2464,7 +2385,7 @@ function updateActiveQuest_(
 
 
 /* =========================================================
-   9. UPDATE CLIENT
+   8. UPDATE CLIENT
    ========================================================= */
 
 /* =========================================================
@@ -2575,10 +2496,15 @@ function resolveClientRow_(sheet, clientIdColumn, clientId) {
  */
 function verifyWrittenCells_(sheet, row, expected) {
   const mismatched = [];
+  if (!expected.length) return mismatched;
+
+  // One read of the row up to the last written column, instead of one read
+  // per cell while the script lock is held.
+  const width = Math.max.apply(null, expected.map(item => item.column));
+  const values = sheet.getRange(row, 1, 1, width).getDisplayValues()[0];
 
   expected.forEach(item => {
-    const cell = sheet.getRange(row, item.column);
-    const actual = cleanString_(cell.getDisplayValue());
+    const actual = cleanString_(values[item.column - 1]);
     const wanted = cleanString_(item.display);
     if (actual !== wanted) {
       mismatched.push({ column: item.column, field: item.field, actual: actual, expected: wanted });
@@ -2877,11 +2803,13 @@ function updateClient_(clientId, changes) {
       );
     }
 
-    const confirmedPinned = pinnedCell
-      ? (pinnedCell.getValue() === true ||
-         (pinnedCell.getValue() !== false &&
-          normalizeBoolean_(cleanString_(pinnedCell.getDisplayValue()))))
-      : undefined;
+    let confirmedPinned;
+    if (pinnedCell) {
+      const rawPinned = pinnedCell.getValue();
+      confirmedPinned = rawPinned === true ||
+        (rawPinned !== false &&
+          normalizeBoolean_(cleanString_(pinnedCell.getDisplayValue())));
+    }
 
     return {
       ok: true,
@@ -2900,7 +2828,7 @@ function updateClient_(clientId, changes) {
 
 
 /* =========================================================
-   8. FIND CLIENT ROW
+   9. FIND CLIENT ROW
    ========================================================= */
 
 function findClientRow_(
@@ -2938,7 +2866,7 @@ function findClientRow_(
 
 
 /* =========================================================
-   9. WRITE HELPERS
+   10. WRITE HELPERS
    ========================================================= */
 
 function writeText_(
@@ -3165,60 +3093,71 @@ function ensureHeaders_(sheet) {
 
 
 /* =========================================================
-   11. HEADER MAP
+   12. HEADER MAP
    ========================================================= */
 
 function buildHeaderMap_(
   headers,
   dataRows
 ) {
+  const normalizedHeaders =
+    headers.map(normalizeHeader_);
+
   const map = {
     clientId: findHeaderIndex_(
       headers,
-      CONFIG.HEADER_ALIASES.clientId
+      CONFIG.HEADER_ALIASES.clientId,
+      normalizedHeaders
     ),
 
     clientName: findHeaderIndex_(
       headers,
-      CONFIG.HEADER_ALIASES.clientName
+      CONFIG.HEADER_ALIASES.clientName,
+      normalizedHeaders
     ),
 
     notes: findHeaderIndex_(
       headers,
-      CONFIG.HEADER_ALIASES.notes
+      CONFIG.HEADER_ALIASES.notes,
+      normalizedHeaders
     ),
 
-    activeQuest: getActiveQuestColumnIndex_(headers),
+    activeQuest: getActiveQuestColumnIndex_(headers, normalizedHeaders),
 
     bonusLog: findHeaderIndex_(
       headers,
-      CONFIG.HEADER_ALIASES.bonusLog
+      CONFIG.HEADER_ALIASES.bonusLog,
+      normalizedHeaders
     ),
 
     pinned: findHeaderIndex_(
       headers,
-      CONFIG.HEADER_ALIASES.pinned
+      CONFIG.HEADER_ALIASES.pinned,
+      normalizedHeaders
     ),
 
     followUpDate:
       findBestPopulatedHeaderIndex_(
         headers,
         CONFIG.HEADER_ALIASES.followUpDate,
-        dataRows
+        dataRows,
+        normalizedHeaders
       ),
 
     lastContact:
       findBestPopulatedHeaderIndex_(
         headers,
         CONFIG.HEADER_ALIASES.lastContact,
-        dataRows
+        dataRows,
+        normalizedHeaders
       )
   };
 
   Object.keys(CONFIG.OPTIONAL_REACTIVATION_ALIASES).forEach(key => {
     map[key] = findHeaderIndex_(
       headers,
-      CONFIG.OPTIONAL_REACTIVATION_ALIASES[key]
+      CONFIG.OPTIONAL_REACTIVATION_ALIASES[key],
+      normalizedHeaders
     );
   });
 
@@ -3226,7 +3165,7 @@ function buildHeaderMap_(
 }
 
 
-function getActiveQuestColumnIndex_(headers) {
+function getActiveQuestColumnIndex_(headers, normalizedHeaders) {
   const fixedIndex = CONFIG.ACTIVE_QUEST_COLUMN - 1;
   const fixedHeader = Array.isArray(headers)
     ? headers[fixedIndex]
@@ -3242,17 +3181,23 @@ function getActiveQuestColumnIndex_(headers) {
 
   return findHeaderIndex_(
     headers,
-    CONFIG.HEADER_ALIASES.activeQuest
+    CONFIG.HEADER_ALIASES.activeQuest,
+    normalizedHeaders
   );
 }
 
 
 function findHeaderIndex_(
   headers,
-  aliases
+  aliases,
+  normalizedHeaders
 ) {
-  const normalizedHeaders =
-    headers.map(normalizeHeader_);
+  // Callers that resolve many aliases against one header row pass the
+  // normalised row in, so it is computed once rather than per alias key.
+  if (!normalizedHeaders) {
+    normalizedHeaders =
+      headers.map(normalizeHeader_);
+  }
 
   for (
     let i = 0;
@@ -3290,10 +3235,13 @@ function findHeaderIndex_(
 function findBestPopulatedHeaderIndex_(
   headers,
   aliases,
-  dataRows
+  dataRows,
+  normalizedHeaders
 ) {
-  const normalizedHeaders =
-    headers.map(normalizeHeader_);
+  if (!normalizedHeaders) {
+    normalizedHeaders =
+      headers.map(normalizeHeader_);
+  }
 
   const candidates = [];
 
@@ -3361,7 +3309,7 @@ function requireColumn_(
 
 
 /* =========================================================
-   12. READ HELPERS
+   13. READ HELPERS
    ========================================================= */
 
 function readDisplayCell_(
@@ -3450,7 +3398,7 @@ function readDateCell_(
 
 
 /* =========================================================
-   13. SHEET FORMAT
+   14. SHEET FORMAT
    ========================================================= */
 
 function formatSheet_(sheet) {
@@ -3517,7 +3465,7 @@ function formatSheet_(sheet) {
 
 
 /* =========================================================
-   14. SCHEMA DEBUG
+   15. SCHEMA DEBUG
    ========================================================= */
 
 function inspectSchema_(sheet) {
@@ -3592,15 +3540,21 @@ function inspectSchema_(sheet) {
 
 
 function getSafeTimezone_() {
+  if (!memoizedTimezone_) {
+    memoizedTimezone_ = resolveSafeTimezone_();
+  }
+  return memoizedTimezone_;
+}
+
+
+function resolveSafeTimezone_() {
   /*
    * Spreadsheet timezone should normally be a string,
    * but date loading must never fail if Google returns
    * an unexpected value/settings state.
    */
   try {
-    const ss = SpreadsheetApp.openById(
-      getSpreadsheetId_()
-    );
+    const ss = getSpreadsheet_();
 
     const spreadsheetTimezone =
       cleanString_(
@@ -3644,10 +3598,53 @@ function getSafeTimezone_() {
 
 
 /* =========================================================
-   15. GET SHEET
+   16. GET SHEET
    ========================================================= */
 
+/*
+  One execution opens the workbook once. Spreadsheet and Sheet are live
+  handles, so a value read through them after flush() is current; the
+  timezone and the ID are plain strings. Like every global they last for one
+  execution only.
+*/
+let memoizedSpreadsheetId_ = '';
+let memoizedSpreadsheet_ = null;
+let memoizedSpreadsheetOpenedId_ = '';
+let memoizedBeingSheet_ = null;
+let memoizedTimezone_ = '';
+
+
+function resetSpreadsheetMemo_() {
+  memoizedSpreadsheetId_ = '';
+  memoizedSpreadsheet_ = null;
+  memoizedSpreadsheetOpenedId_ = '';
+  memoizedBeingSheet_ = null;
+  memoizedTimezone_ = '';
+}
+
+
+function openSpreadsheet_(spreadsheetId) {
+  if (memoizedSpreadsheet_ && memoizedSpreadsheetOpenedId_ === spreadsheetId) {
+    return memoizedSpreadsheet_;
+  }
+
+  const ss = SpreadsheetApp.openById(spreadsheetId);
+  memoizedSpreadsheet_ = ss;
+  memoizedSpreadsheetOpenedId_ = spreadsheetId;
+  return ss;
+}
+
+
+function getSpreadsheet_() {
+  return openSpreadsheet_(getSpreadsheetId_());
+}
+
+
 function getBeingSheet_() {
+  if (memoizedBeingSheet_) {
+    return memoizedBeingSheet_;
+  }
+
   const props =
     PropertiesService
       .getScriptProperties();
@@ -3668,10 +3665,7 @@ function getBeingSheet_() {
     );
   }
 
-  const ss =
-    SpreadsheetApp.openById(
-      spreadsheetId
-    );
+  const ss = openSpreadsheet_(spreadsheetId);
 
   const sheet =
     ss.getSheetByName(
@@ -3689,11 +3683,16 @@ function getBeingSheet_() {
     );
   }
 
+  memoizedBeingSheet_ = sheet;
   return sheet;
 }
 
 
 function getSpreadsheetId_() {
+  if (memoizedSpreadsheetId_) {
+    return memoizedSpreadsheetId_;
+  }
+
   const id =
     PropertiesService
       .getScriptProperties()
@@ -3707,12 +3706,13 @@ function getSpreadsheetId_() {
     );
   }
 
+  memoizedSpreadsheetId_ = id;
   return id;
 }
 
 
 /* =========================================================
-   16. API AUTHORIZATION
+   17. API AUTHORIZATION
    ========================================================= */
 
 function authorize_(
@@ -3744,7 +3744,7 @@ function authorize_(
 
 
 /* =========================================================
-   17. PARSE POST
+   18. PARSE POST
    ========================================================= */
 
 function parsePostRequest_(e) {
@@ -3775,7 +3775,7 @@ function parsePostRequest_(e) {
 
 
 /* =========================================================
-   18. DATE NORMALIZATION
+   19. DATE NORMALIZATION
    API output is ALWAYS YYYY-MM-DD.
    ========================================================= */
 
@@ -3986,7 +3986,7 @@ function buildIsoDate_(
 
 
 /* =========================================================
-   19. HELPERS
+   20. HELPERS
    ========================================================= */
 
 function cleanString_(
@@ -4003,6 +4003,16 @@ function cleanString_(
 }
 
 
+/**
+ * First four characters of a secret, for logs that outlive the run.
+ */
+function maskSecret_(value) {
+  const text = cleanString_(value);
+  if (!text) return '';
+  return text.slice(0, 4) + '…';
+}
+
+
 function normalizeHeader_(
   value
 ) {
@@ -4015,7 +4025,7 @@ function normalizeHeader_(
 
 
 /* =========================================================
-   20. JSON
+   21. JSON
    ========================================================= */
 
 function json_(data) {
