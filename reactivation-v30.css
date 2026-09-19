@@ -1,0 +1,5468 @@
+/* VIP CRM v1.5.4.38 — compact period statistics + stable operational geometry. */
+
+@media (min-width: 821px) {
+  .reactivation-card-overlay {
+    box-sizing: border-box !important;
+  }
+
+  .reactivation-card-dual-shell {
+    box-sizing: border-box !important;
+    max-width: 1480px !important;
+  }
+}
+
+/* v1.5.4.38 — approved compact statistics card and stable operational grid. */
+.reactivation-statistics-block {
+  padding: var(--sp-6) var(--sp-8) var(--sp-7) !important;
+  border: 1px solid var(--line-soft) !important;
+  border-radius: var(--r-s) !important;
+  background: var(--panel-2) !important;
+}
+
+.reactivation-statistics-head {
+  min-height: 24px !important;
+  margin: 0 0 var(--sp-5) !important;
+  align-items: center !important;
+}
+
+.reactivation-period-toggle {
+  display: inline-grid;
+  grid-template-columns: repeat(2, auto);
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-s);
+  background: var(--panel-2);
+}
+
+.reactivation-period-toggle button {
+  min-width: 58px;
+  height: 22px;
+  padding: 0 var(--sp-8);
+  border: 0;
+  border-radius: var(--r-s);
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--s-7);
+  font-weight: 750;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color var(--ui-speed) var(--ui-curve), color var(--ui-speed) var(--ui-curve);
+}
+
+.reactivation-period-toggle button:hover { color: var(--ink); }
+.reactivation-period-toggle button.is-active {
+  background: var(--ink);
+  color: var(--panel-2);
+}
+
+.reactivation-statistics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(330px, .88fr);
+  gap: var(--sp-6);
+}
+
+.reactivation-statistics-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--field-line);
+  border-radius: var(--r-s);
+  background: var(--panel-2);
+}
+
+.reactivation-statistics-panel__head {
+  min-height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-8);
+  padding: 0 var(--sp-7);
+  border-bottom: 1px solid var(--panel-3);
+}
+
+.reactivation-statistics-panel__head strong {
+  color: var(--ink);
+  font-size: var(--s-8);
+  font-weight: 750;
+  letter-spacing: var(--ls-caps-tight);
+  text-transform: uppercase;
+}
+
+.reactivation-statistics-panel__head span {
+  color: var(--ink-3);
+  font-size: var(--s-7);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.reactivation-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.reactivation-activity-grid > div {
+  min-width: 0;
+  padding: var(--sp-4) var(--sp-7);
+  border-right: 1px solid var(--panel-2);
+}
+
+.reactivation-activity-grid > div:last-child { border-right: 0; }
+.reactivation-activity-grid span,
+.reactivation-casino-product > span {
+  overflow: hidden;
+  color: var(--ink-3);
+  font-size: var(--s-7);
+  font-weight: 700;
+  letter-spacing: var(--ls-caps-tight);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.reactivation-activity-grid strong {
+  min-width: 0;
+  margin-top: var(--sp-4);
+  overflow: hidden;
+  color: var(--ink);
+  font-size: var(--s-10);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reactivation-casino-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.reactivation-casino-product {
+  min-width: 0;
+  min-height: 42px;
+  padding: var(--sp-4) var(--sp-7);
+  border-right: 1px solid var(--panel-2);
+}
+
+.reactivation-casino-product:last-child { border-right: 0; }
+.reactivation-casino-product dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-5);
+  margin: var(--sp-4) 0 0;
+}
+.reactivation-casino-product dl div { min-width: 0; }
+.reactivation-casino-product dt {
+  color: var(--ink-3);
+  font-size: var(--s-7);
+  font-weight: 700;
+}
+.reactivation-casino-product dd {
+  margin: var(--sp-1) 0 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: var(--s-9);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .reactivation-statistics-grid { grid-template-columns: 1fr; }
+  .reactivation-activity-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .reactivation-activity-grid > div:nth-child(3) { border-right: 0; }
+  .reactivation-activity-grid > div:nth-child(-n + 3) { border-bottom: 1px solid var(--panel-2); }
+}
+
+@media (max-width: 620px) {
+  .reactivation-statistics-head { align-items: flex-start !important; }
+  .reactivation-statistics-grid { grid-template-columns: 1fr; }
+  .reactivation-activity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .reactivation-activity-grid > div { border-bottom: 1px solid var(--panel-2); }
+  .reactivation-activity-grid > div:nth-child(2n) { border-right: 0; }
+  .reactivation-activity-grid > div:nth-last-child(-n + 2) { border-bottom: 0; }
+}
+
+/* Reactivation table geometry is owned here; data loading cannot resize it. */
+
+.app.app--reactivation-portal .reactivation-table__header,
+.app.app--reactivation-portal .reactivation-row {
+  box-sizing: border-box !important;
+}
+
+.reactivation-card-main-panel,
+.reactivation-work-panel {
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
+.reactivation-contact-undo--type[hidden],
+.reactivation-contact-undo-action[hidden] {
+  display: none !important;
+}
+
+.reactivation-work-panel-body {
+  min-height: 0 !important;
+  padding: var(--sp-8) !important;
+  overflow: hidden !important;
+}
+
+.reactivation-work-section {
+  min-width: 0;
+  padding: var(--sp-7) !important;
+}
+
+.reactivation-work-section__head {
+  min-height: 20px !important;
+  margin-bottom: var(--sp-5);
+}
+.reactivation-offer-editor {
+  grid-template-columns: minmax(0, 1fr) 92px;
+  grid-template-rows: 22px minmax(0, 1fr);
+  gap: var(--sp-5);
+  overflow: hidden;
+}
+.reactivation-offer-editor .reactivation-work-section__head {
+  margin: 0 !important;
+}
+
+.reactivation-offer-fields {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: var(--sp-5) !important;
+}
+
+.reactivation-offer-quest-field {
+  grid-column: auto !important;
+}
+
+.reactivation-offer-fields input,
+.reactivation-offer-fields select {
+  height: 31px !important;
+  padding: 0 var(--sp-6) !important;
+}
+
+.reactivation-offer-current {
+  grid-column: 1 / -1;
+}
+
+.reactivation-comm-section {
+  display: grid !important;
+  overflow: hidden !important;
+}
+
+.reactivation-comm-list {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+@media (max-width: 1450px) and (min-width: 821px) {
+  .reactivation-card-dual-shell {
+    grid-template-columns: minmax(0, 1fr) 390px !important;
+  }
+
+  .reactivation-card-strip {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 821px) {
+  .reactivation-card-dual-shell {
+    grid-template-columns: minmax(0, 1fr) 360px !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .reactivation-card-dual-shell {
+    grid-template-columns: 1fr !important;
+    overflow-y: auto !important;
+  }
+
+  .reactivation-card-main-panel,
+  .reactivation-work-panel {
+    max-height: none !important;
+  }
+}
+
+/* v1.5.4.36 — Being-aligned content geometry and artifact cleanup. */
+
+.app.app--reactivation-portal .reactivation-row {
+  padding-top: var(--sp-6) !important;
+  padding-bottom: var(--sp-6) !important;
+}
+
+.app.app--reactivation-portal .reactivation-row > * {
+  align-self: center !important;
+}
+
+.reactivation-card-id-row {
+  max-width: 100% !important;
+}
+
+.reactivation-card-id-row > span:first-child {
+  flex: 0 1 auto !important;
+}
+
+.reactivation-stage-badge {
+  max-width: 180px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.reactivation-card-scroll {
+  scrollbar-gutter: stable !important;
+}
+
+.reactivation-card-strip article,
+.reactivation-12m-play-grid article{
+  overflow: hidden !important;
+}
+
+.reactivation-card-strip span,
+.reactivation-card-strip strong,
+.reactivation-12m-play-grid span,
+.reactivation-12m-play-grid strong{
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.reactivation-notes-panel-header h3,
+.reactivation-notes-panel-header span {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.reactivation-work-panel-body {
+  background: var(--panel-2) !important;
+}
+
+.reactivation-work-section {
+  border-color: var(--line-soft) !important;
+  background: var(--panel-2) !important;
+}
+
+.reactivation-comm-composer > *,
+.reactivation-offer-fields > * {
+  min-width: 0 !important;
+}
+
+.reactivation-comm-list,
+.reactivation-note-history-list {
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 1181px) {
+
+  .reactivation-card-strip {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .reactivation-card-strip article {
+    min-height: 46px !important;
+    padding: var(--sp-6) var(--sp-9) !important;
+  }
+}
+
+/* v1.5.4.38 final priority: fixed fill geometry after asynchronous data load. */
+
+@media (max-height: 760px) and (min-width: 821px) {
+  .reactivation-card-header,
+  .reactivation-notes-panel-header {
+    min-height: 68px !important;
+    height: 68px !important;
+  }
+
+  .reactivation-card-strip {
+    padding-top: var(--sp-5) !important;
+    padding-bottom: var(--sp-5) !important;
+  }
+}
+
+/* v1.5.4.35 — deterministic full-screen control-center geometry. */
+.app.app--reactivation-portal .reactivation-panel {
+  box-sizing: border-box !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  gap: var(--sp-7) !important;
+  padding: var(--sp-8) var(--sp-10) !important;
+  background: var(--ground) !important;
+}
+
+.app.app--reactivation-portal .reactivation-header {
+  min-height: 54px !important;
+  height: 54px !important;
+}
+
+.app.app--reactivation-portal .reactivation-title {
+  font-size: clamp(27px, 1.8vw, 35px) !important;
+  line-height: .96 !important;
+}
+
+.app.app--reactivation-portal .reactivation-summary {
+  margin: 0 !important;
+  gap: var(--sp-7) !important;
+}
+
+.app.app--reactivation-portal .reactivation-summary-group {
+  padding: var(--sp-5) !important;
+}
+
+.app.app--reactivation-portal .reactivation-summary-group__label {
+  height: 14px !important;
+  padding: 0 var(--sp-3) var(--sp-4) !important;
+}
+
+.app.app--reactivation-portal .reactivation-metric {
+  min-height: 52px !important;
+  padding: var(--sp-6) var(--sp-8) var(--sp-5) !important;
+}
+
+.app.app--reactivation-portal .reactivation-metric strong {
+  margin-top: var(--sp-4) !important;
+  font-size: var(--t-7)!important;
+}
+
+.app.app--reactivation-portal .reactivation-metric small {
+  margin-top: var(--sp-3) !important;
+}
+
+.app.app--reactivation-portal .reactivation-list-section {
+  min-height: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  grid-template-rows: 34px minmax(0, 1fr);
+}
+
+.app.app--reactivation-portal .reactivation-list-heading {
+  min-height: 0 !important;
+  height: 34px !important;
+  margin: 0 !important;
+}
+
+.app.app--reactivation-portal .reactivation-table-shell {
+  height: 100% !important;
+}
+
+.reactivation-card-name-link {
+  width: auto !important;
+  max-width: min(100%, 680px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: color var(--ui-speed) var(--ui-curve), transform var(--ui-speed) var(--ui-curve) !important;
+}
+
+.reactivation-card-name-link:not(:disabled):hover {
+  color: var(--ink-2) !important;
+  transform: translateX(3px) !important;
+}
+
+.reactivation-card-name-link:focus-visible {
+  outline: 1px solid var(--ink-2) !important;
+  outline-offset: 4px !important;
+}
+
+.reactivation-card-name-link:disabled {
+  cursor: default !important;
+}
+
+.being-card-return-reactivation {
+  min-width: 112px !important;
+  height: 38px !important;
+  padding: 0 var(--sp-11) !important;
+  border: 1px solid var(--ink-3) !important;
+  border-radius: var(--r-s) !important;
+  background: var(--panel-2) !important;
+  color: var(--ink) !important;
+  font-size: var(--s-9)!important;
+  font-weight: 750 !important;
+  letter-spacing: .035em !important;
+  cursor: pointer !important;
+  transition: border-color var(--ui-speed) var(--ui-curve), color var(--ui-speed) var(--ui-curve), background var(--ui-speed) var(--ui-curve) !important;
+}
+
+.being-card-return-reactivation:hover {
+  border-color: var(--ink-2) !important;
+  background: var(--panel-3) !important;
+  color: var(--accent) !important;
+}
+
+.being-card-return-reactivation[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .app.app--reactivation-portal .reactivation-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .app.app--reactivation-portal .reactivation-panel {
+    height: auto !important;
+    min-height: 100dvh !important;
+    grid-template-rows: auto auto auto !important;
+  }
+
+  .app.app--reactivation-portal .reactivation-table-shell {
+    min-height: 420px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .reactivation-offer-editor {
+    grid-template-columns: minmax(0, 1fr) 78px;
+  }
+
+  .reactivation-offer-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* v1.5.4.31 — compact Action Plan tool rail. */
+.reactivation-work-panel-body {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 38px !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  align-items: stretch;
+  gap: var(--sp-7) !important;
+}
+
+.reactivation-work-toolrail {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-6);
+  min-width: 0;
+}
+
+.reactivation-work-toolrail button {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-s);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color var(--ui-speed) var(--ui-curve), border-color var(--ui-speed) var(--ui-curve), color var(--ui-speed) var(--ui-curve), transform var(--ui-speed) var(--ui-curve);
+}
+
+.reactivation-work-toolrail button:hover,
+.reactivation-work-toolrail button:focus-visible {
+  border-color: var(--ink-2);
+  color: var(--accent);
+  outline: none;
+}
+
+.reactivation-work-toolrail button:active {
+  transform: scale(.94);
+}
+
+.reactivation-work-toolrail button.is-active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--panel-2);
+}
+
+.reactivation-work-toolrail svg {
+  width: 17px;
+  height: 17px;
+}
+
+.reactivation-work-drawer {
+  grid-column: 1;
+  grid-row: 1;
+  min-height: 0 !important;
+  max-height: 122px;
+  animation: reactivation-tool-open var(--ui-speed) var(--ui-curve) both;
+}
+
+.reactivation-work-drawer[hidden] {
+  display: none !important;
+}
+
+@keyframes reactivation-tool-open {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reactivation-work-status {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0);
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.reactivation-work-section__head > strong {
+  color: var(--ink);
+  font-size: var(--s-10);
+  letter-spacing: .02em;
+}
+.reactivation-offer-editor > button {
+  width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  align-self: end;
+  display: grid;
+  place-items: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: var(--s-18);
+  line-height: 1;
+}
+
+.reactivation-offer-editor {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 36px !important;
+  grid-template-rows: 20px minmax(0, 1fr) !important;
+  gap: var(--sp-5) var(--sp-6) !important;
+}
+
+.reactivation-offer-editor .reactivation-work-section__head {
+  grid-column: 1 / -1;
+}
+
+.reactivation-offer-fields {
+  grid-column: 1;
+}
+
+.reactivation-offer-editor > button {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.reactivation-offer-current {
+  display: none !important;
+}
+
+.reactivation-comm-section {
+  grid-column: 1;
+  grid-row: 2;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 820px) {
+
+  .reactivation-work-toolrail {
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: row;
+  }
+
+  .reactivation-work-drawer {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .reactivation-comm-section {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 460px) {
+
+  .reactivation-offer-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* v1.5.4.32 — restored operational statistics table. */
+
+.app.app--reactivation-portal .reactivation-table__header,
+.app.app--reactivation-portal .reactivation-row {
+  grid-template-columns:
+    minmax(150px, 1.3fr)
+    74px
+    88px
+    60px
+    85px
+    80px
+    80px
+    52px
+    repeat(5, 68px)
+    94px
+    minmax(112px, .9fr) !important;
+}
+
+.app.app--reactivation-portal .reactivation-last-activity,
+.app.app--reactivation-portal .reactivation-playing,
+.app.app--reactivation-portal .reactivation-money,
+.app.app--reactivation-portal .reactivation-rate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app.app--reactivation-portal .reactivation-last-contact[data-contact-type="archive"]::before {
+  background: var(--ink-3);
+}
+
+/* v1.5.4.33 — unified dual-card geometry and spacing rhythm. */
+@media (min-width: 821px) {
+  .reactivation-card-overlay {
+    padding: var(--sp-12) !important;
+  }
+
+  .reactivation-card-dual-shell {
+    min-height: 0 !important;
+    max-height: calc(100dvh - 24px) !important;
+    gap: var(--sp-8) !important;
+  }
+
+  .reactivation-card-main-panel,
+  .reactivation-work-panel {
+    min-height: 0 !important;
+  }
+
+  .reactivation-card-header,
+  .reactivation-notes-panel-header {
+    box-sizing: border-box !important;
+  }
+
+  .reactivation-card-scroll {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    padding: 0 var(--sp-9) var(--sp-9) !important;
+    overflow-y: auto !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .reactivation-card-strip {
+    gap: var(--sp-5) !important;
+    padding: var(--sp-7) 0 !important;
+  }
+
+  .reactivation-card-strip article {
+    box-sizing: border-box !important;
+    min-height: 48px !important;
+    padding: var(--sp-6) var(--sp-8) !important;
+  }
+
+  .reactivation-smart-core {
+    gap: var(--sp-5) !important;
+  }
+
+  .reactivation-12m-play-block {
+    padding: var(--sp-6) var(--sp-8) !important;
+  }
+
+  .reactivation-12m-play-grid article {
+    min-height: 28px !important;
+  }
+
+  .reactivation-decision-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr) !important;
+    gap: var(--sp-5) !important;
+  }
+
+  .reactivation-decision-grid .reactivation-card-block {
+    min-height: 58px !important;
+  }
+
+  .reactivation-current-quest-open {
+    min-height: 56px !important;
+  }
+
+  .reactivation-smart-core .reactivation-contact-block {
+    min-height: 38px !important;
+    grid-template-columns: 66px minmax(0, 1fr) !important;
+  }
+
+  .reactivation-contact-grid {
+    grid-template-columns: 112px 92px 88px 88px 62px minmax(0, 1fr) !important;
+  }
+
+  .reactivation-history-actions {
+    min-height: 29px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+
+  .reactivation-work-panel-body {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    gap: var(--sp-8) !important;
+    padding: var(--sp-9) !important;
+    overflow: hidden !important;
+  }
+
+  .reactivation-work-toolrail {
+    gap: var(--sp-7) !important;
+  }
+
+  .reactivation-work-toolrail button {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: var(--r-s) !important;
+  }
+
+  .reactivation-work-drawer {
+    max-height: 126px !important;
+  }
+
+  .reactivation-comm-section {
+    min-height: 0 !important;
+  }
+
+  .reactivation-comm-composer {
+    grid-template-columns: 98px minmax(0, 1fr) 34px !important;
+    min-width: 0 !important;
+  }
+
+  .reactivation-comm-empty {
+    min-height: 72px !important;
+    height: 100% !important;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1180px) {
+
+  .reactivation-card-strip {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .reactivation-contact-grid {
+    grid-template-columns: 96px 78px 78px 78px 56px minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .reactivation-card-overlay {
+    padding: var(--sp-6) !important;
+  }
+
+  .reactivation-card-dual-shell {
+    width: calc(100vw - 12px) !important;
+    height: calc(100dvh - 12px) !important;
+    max-height: calc(100dvh - 12px) !important;
+    gap: var(--sp-7) !important;
+  }
+
+  .reactivation-card-main-panel,
+  .reactivation-work-panel {
+    height: auto !important;
+  }
+
+  .reactivation-card-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .reactivation-work-panel {
+    min-height: 430px !important;
+    max-height: none !important;
+  }
+}
+
+/* v1.5.4.35 final priority — one large panel at a time. */
+.reactivation-card-name {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  font-size: clamp(22px, 1.85vw, 28px) !important;
+  /* Room for the glyph box: at line-height 1 the name lost its descenders.
+     The UI face needs about 1.2 before the box contains the whole glyph. */
+  line-height: 1.22 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.reactivation-card-id-row {
+  min-width: 0 !important;
+  margin-top: var(--sp-4) !important;
+  gap: var(--sp-7) !important;
+  flex-wrap: nowrap;
+  white-space: nowrap !important;
+}
+.reactivation-card-id-row > span:first-child {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.reactivation-stage-badge {
+  flex: 0 0 auto !important;
+  padding: var(--sp-2) var(--sp-6) !important;
+  line-height: 1.2 !important;
+}
+.reactivation-note-history-list {
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: var(--sp-6) !important;
+  padding-right: var(--sp-3) !important;
+  overflow-y: auto;
+  scrollbar-gutter: stable !important;
+}
+.reactivation-work-panel-body > [data-reactivation-work-panel][hidden] {
+  display: none !important;
+}
+
+@media (min-width: 821px) {
+  /* Both headers keep one height so the two panels line up; 78px cut the
+     bottom 5px off the card header's name block. */
+  .reactivation-card-header,
+  .reactivation-notes-panel-header {
+    min-height: 88px !important;
+    height: 88px !important;
+    padding: var(--sp-9) var(--sp-14) !important;
+  }
+  .reactivation-work-panel-body {
+    grid-template-columns: minmax(0, 1fr) 40px !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+  .reactivation-work-toolrail {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+  .reactivation-work-panel-body > [data-reactivation-work-panel] {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+  }
+  .reactivation-comm-section {
+    grid-template-rows: 22px 42px minmax(0, 1fr) !important;
+  }
+  .reactivation-offer-editor {
+    align-content: start !important;
+    grid-template-columns: minmax(0, 1fr) 38px !important;
+    grid-template-rows: 24px auto !important;
+    padding: var(--sp-10) !important;
+  }
+  .reactivation-offer-fields {
+    gap: var(--sp-8) !important;
+  }
+  .reactivation-offer-fields input,
+  .reactivation-offer-fields select { height: 36px !important; }
+  .reactivation-offer-editor > button {
+    width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    margin: 0 !important;
+  }
+  .reactivation-note-history-section {
+    display: grid !important;
+    grid-template-rows: 30px minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+  .reactivation-note-history-section[hidden] { display: none !important; }
+}
+
+@media (max-width: 820px) {
+  .reactivation-card-header,
+  .reactivation-notes-panel-header {
+    min-height: 76px !important;
+    height: 76px !important;
+  }
+  .reactivation-work-panel-body {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 40px minmax(340px, 1fr) !important;
+  }
+  .reactivation-work-toolrail {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+  .reactivation-work-panel-body > [data-reactivation-work-panel] {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    min-height: 340px !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}
+
+/* Final v1.5.4.36 priority: no viewport-stretched rows or floating card geometry. */
+
+.app.app--reactivation-portal .reactivation-row {
+  box-sizing: border-box !important;
+}
+
+.reactivation-card-header,
+.reactivation-notes-panel-header {
+  overflow: hidden !important;
+}
+
+.reactivation-card-header > div,
+.reactivation-notes-panel-header > div {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding-right: 48px !important;
+}
+
+.reactivation-stage-badge,
+.reactivation-notes-panel-header h3,
+.reactivation-notes-panel-header span {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+@media (min-width: 821px) {
+  .reactivation-offer-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .reactivation-offer-quest-field {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (min-width: 1181px) {
+  .reactivation-card-dual-shell {
+    width: min(1460px, calc(100vw - 24px)) !important;
+    height: min(720px, calc(100dvh - 24px)) !important;
+    grid-template-columns: minmax(0, 1fr) minmax(390px, 420px) !important;
+    align-items: start !important;
+  }
+
+  .reactivation-card-main-panel {
+    height: auto !important;
+    max-height: 100% !important;
+  }
+
+  .reactivation-work-panel {
+    height: 100% !important;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1180px) {
+  .reactivation-card-dual-shell {
+    width: calc(100vw - 20px) !important;
+    height: calc(100dvh - 20px) !important;
+    grid-template-columns: minmax(0, 1fr) 350px !important;
+    align-items: start !important;
+  }
+
+  .reactivation-card-main-panel {
+    height: auto !important;
+    max-height: 100% !important;
+  }
+
+  .reactivation-work-panel {
+    height: 100% !important;
+  }
+}
+
+/* v1.5.4.44 EOF priority — content-sized columns; spare width only at the end. */
+.app.app--reactivation-portal .reactivation-table-shell { min-height: 0 !important; overflow: auto !important; scrollbar-gutter: stable both-edges; }
+/* The columns were sized for the old type. A quarter more text needs a
+   quarter more room, and the shell above already scrolls. */
+.app.app--reactivation-portal .reactivation-table { width: max(100%, 1880px) !important; min-width: 1880px !important; min-height: 0 !important; }
+.app.app--reactivation-portal .reactivation-table__header,
+.app.app--reactivation-portal .reactivation-row {
+  /* Every money column is a quarter wider than it was, because the figures
+     in them are. Sport and Casino carry the same numbers as the 12M columns
+     and get the same width; Slots, Live and Instant are the narrow ones. */
+  grid-template-columns:
+    250px
+    104px
+    112px
+    84px
+    repeat(3, 116px)
+    100px
+    repeat(2, 116px)
+    repeat(3, 76px)
+    128px
+    190px
+    minmax(0, 1fr) !important;
+  column-gap: 0 !important;
+  padding-inline: var(--sp-8) !important;
+}
+.app.app--reactivation-portal .reactivation-table__header { height: 38px !important; min-height: 38px !important; max-height: 38px !important; }
+.app.app--reactivation-portal .reactivation-table__body { min-height: 0 !important; align-content: start !important; }
+.app.app--reactivation-portal .reactivation-row { height: 52px !important; min-height: 52px !important; max-height: 52px !important; padding-block: var(--sp-6) !important; }
+.app.app--reactivation-portal .reactivation-table__header > *,
+.app.app--reactivation-portal .reactivation-row > * { min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; font-variant-numeric: tabular-nums; }
+.app.app--reactivation-portal .reactivation-table__header > :first-child,
+.app.app--reactivation-portal .reactivation-client-cell {
+  position: sticky !important;
+  left: 0;
+  /* The sticky Client column has to paint an opaque background of its own,
+     or the scrolling figures would show through it. A fixed var(--panel-2) over rows
+     that alternate var(--panel-2) and var(--panel-2) drew a band of a third shade down the
+     names. Inheriting takes whatever colour the row actually has. */
+  background-color: inherit !important;
+}
+.app.app--reactivation-portal .reactivation-table__header > :first-child { z-index: 24 !important; }
+.app.app--reactivation-portal .reactivation-client-cell { z-index: 4 !important; }
+@media (min-width: 821px) {
+  .reactivation-card-dual-shell { width: min(1500px, calc(100vw - 16px)) !important; height: min(760px, calc(100dvh - 16px)) !important; grid-template-columns: minmax(0, 1fr) 420px !important; align-items: stretch !important; }
+  .reactivation-card-main-panel,
+  .reactivation-work-panel { height: 100% !important; max-height: 100% !important; }
+  .reactivation-card-strip { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+}
+
+/* =========================================================
+   v1.5.4.53 — STAGE RAMP · COLUMN BREATHING · CARD FILL
+========================================================= */
+
+/*
+  The stages are a funnel, so they read as one: green while the client is still
+  warm, then yellow, then orange, and red once they are properly gone. The four
+  accents drive both the summary chips at the top of the page and the pills in
+  the table, so the two can never disagree.
+
+  Unassigned keeps a neutral grey: it is the bucket for "no days recorded" and
+  renders as a dash, so it states nothing and should colour nothing.
+*/
+.app.app--reactivation-portal {
+  --reactivation-active: var(--s1);
+  --reactivation-catch-up: var(--s3);
+  --reactivation-call-twice: var(--s3);
+  --reactivation-pre-sleep: var(--s4);
+  --reactivation-sleeping: var(--s5);
+}
+
+.reactivation-stage--active { --stage-tone: var(--s1); }
+.reactivation-stage--catch_up { --stage-tone: var(--s2); }
+.reactivation-stage--call_twice { --stage-tone: var(--s3); }
+.reactivation-stage--pre_sleep { --stage-tone: var(--s4); }
+.reactivation-stage--sleeping { --stage-tone: var(--s5); }
+.reactivation-stage--unassigned { --stage-tone: var(--ink-3); }
+
+.reactivation-stage span {
+  border-color: color-mix(in srgb, var(--stage-tone, var(--ink-3)) 44%, transparent) !important;
+  background: color-mix(in srgb, var(--stage-tone, var(--ink-3)) 13%, transparent) !important;
+  color: color-mix(in srgb, var(--stage-tone, var(--ink-3)) 74%, var(--accent)) !important;
+}
+
+.reactivation-stage span::before {
+  background: var(--stage-tone, var(--ink-3)) !important;
+}
+
+/* The card header carries the same signal as the row it was opened from. */
+.reactivation-stage-badge[data-stage="active"] { --stage-tone: var(--s1); }
+.reactivation-stage-badge[data-stage="catch_up"] { --stage-tone: var(--s2); }
+.reactivation-stage-badge[data-stage="call_twice"] { --stage-tone: var(--s3); }
+.reactivation-stage-badge[data-stage="pre_sleep"] { --stage-tone: var(--s4); }
+.reactivation-stage-badge[data-stage="sleeping"] { --stage-tone: var(--s5); }
+.reactivation-stage-badge[data-stage="unassigned"] { --stage-tone: var(--ink-3); }
+
+.reactivation-stage-badge[data-stage] {
+  border-color: color-mix(in srgb, var(--stage-tone) 44%, transparent) !important;
+  background: color-mix(in srgb, var(--stage-tone) 13%, transparent) !important;
+  color: color-mix(in srgb, var(--stage-tone) 74%, var(--accent)) !important;
+}
+
+/*
+  Contact sits immediately after Instant with no column gap, so its two buttons
+  were pressed against the last figure. The column has 37px of unused width, so
+  the separation comes out of that rather than out of the table's total.
+*/
+.app.app--reactivation-portal .reactivation-table__header > :nth-child(14),
+.app.app--reactivation-portal .reactivation-row > :nth-child(14) {
+  padding-left: var(--sp-15) !important;
+}
+
+/*
+  The left half of the client card laid its blocks out at their natural height
+  and left whatever was over — about 200px on a 900px window — as dead space at
+  the bottom. The column now fills the panel: the ten-tile strip keeps its own
+  size, and the three substantial blocks share the surplus in proportion to the
+  room each actually needs. The two small rows at the end stay as they are,
+  because stretching a single line of buttons only makes it look lost.
+*/
+.reactivation-card-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  min-height: 0;
+}
+
+.reactivation-card-scroll > .reactivation-card-strip {
+  flex: 0 0 auto;
+}
+
+.reactivation-smart-core {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.reactivation-smart-core > .reactivation-12m-play-block {
+  flex: 1 1 0;
+  min-height: 66px;
+}
+
+.reactivation-smart-core > .reactivation-statistics-block {
+  flex: 2.1 1 0;
+  min-height: 120px;
+}
+
+.reactivation-smart-core > .reactivation-decision-grid {
+  flex: 1.7 1 0;
+  min-height: 88px;
+}
+
+.reactivation-smart-core > .reactivation-contact-block,
+.reactivation-smart-core > .reactivation-history-actions {
+  flex: 0 0 auto;
+}
+
+/*
+  A block that grows has to pass the growth on, or the extra height turns into
+  padding under its own contents.
+*/
+.reactivation-12m-play-block,
+.reactivation-statistics-block,
+.reactivation-decision-grid > .reactivation-card-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.reactivation-12m-play-block > .reactivation-card-block__head,
+.reactivation-statistics-block > .reactivation-card-block__head,
+.reactivation-decision-grid > .reactivation-card-block > .reactivation-card-block__head {
+  flex: 0 0 auto;
+}
+
+.reactivation-12m-play-grid,
+.reactivation-statistics-grid,
+.reactivation-decision-grid > .reactivation-card-block > .reactivation-offer-content,
+.reactivation-decision-grid > .reactivation-card-block > .reactivation-current-quest-open {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Rows inside those grids share the block's height instead of a fixed one. */
+.reactivation-12m-play-grid,
+.reactivation-activity-grid,
+.reactivation-casino-grid {
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch !important;
+}
+
+.reactivation-statistics-grid {
+  grid-template-rows: minmax(0, 1fr) !important;
+  align-items: stretch !important;
+}
+
+.reactivation-decision-grid {
+  grid-template-rows: minmax(0, 1fr) !important;
+  align-items: stretch !important;
+}
+
+.reactivation-statistics-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  min-height: 0;
+}
+
+.reactivation-statistics-panel > .reactivation-statistics-panel__head {
+  flex: 0 0 auto;
+}
+
+.reactivation-statistics-panel > .reactivation-activity-grid,
+.reactivation-statistics-panel > .reactivation-casino-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The Pre-Sleep chip joins the ramp on the summary row. */
+.app.app--reactivation-portal .reactivation-metric--filter[data-reactivation-stage-filter="pre_sleep"] {
+  --stage-accent: var(--reactivation-pre-sleep);
+}
+
+/*
+  Stretching the blocks was only half the job: their tiles kept their content
+  pinned to the top, so the height they gained turned into dead air underneath.
+  Being's cards read well because nothing there floats in its box, and this
+  gets to the same place from the other side — the boxes fill the panel, and
+  the content is centred in whatever height each box ended up with.
+*/
+.reactivation-card-strip article,
+.reactivation-12m-play-grid article,
+.reactivation-casino-product {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sp-5);
+  min-height: 0;
+}
+
+.reactivation-casino-product > dl {
+  margin: 0;
+}
+
+.reactivation-current-quest-open {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+/*
+  The offer container is pinned to display:block elsewhere, so the filling is
+  done by the card inside it: it takes the block's height and centres its own
+  two lines, which lines it up with Current Quest beside it.
+*/
+.reactivation-offer-block > .reactivation-offer-content > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* The activity tiles already centred; keeping them explicit stops the rule
+   above from being the only thing holding the row together. */
+.reactivation-activity-grid > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sp-5);
+  min-height: 0;
+}
+
+/*
+  The stage row carries six chips now that Pre-Sleep exists, and the grid was
+  fixed at five, so the last one dropped to a second line. Only the group that
+  actually holds the stage filters is retracked; the other summary groups keep
+  their own counts.
+*/
+.reactivation-summary-group__grid:has([data-reactivation-stage-filter]) {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.reactivation-card-strip article span,
+.reactivation-12m-play-grid article span {
+  font-size: var(--s-10)!important;
+  letter-spacing: .05em !important;
+}
+
+.reactivation-card-strip article strong {
+  font-size: 17px !important;
+}
+
+.reactivation-12m-play-grid article strong {
+  font-size: var(--s-14)!important;
+}
+
+.reactivation-card-block__head h3,
+.reactivation-statistics-panel__head strong {
+  font-size: var(--s-12)!important;
+}
+
+.reactivation-card-block__head span,
+.reactivation-statistics-panel__head span {
+  font-size: var(--s-10)!important;
+}
+
+.reactivation-activity-grid > div span,
+.reactivation-casino-product > span {
+  font-size: var(--s-10)!important;
+  letter-spacing: .05em !important;
+}
+
+.reactivation-activity-grid > div strong {
+  /* 15px clipped the six-column row by a couple of pixels; 14 is the largest
+     that still fits a figure like EUR 28,287.77 in its cell. */
+  font-size: var(--s-14)!important;
+}
+
+.reactivation-casino-product dt {
+  font-size: var(--s-9)!important;
+}
+
+.reactivation-casino-product dd {
+  font-size: var(--s-14)!important;
+}
+
+.reactivation-offer-name {
+  font-size: 15px !important;
+}
+
+.reactivation-offer-rule {
+  font-size: var(--s-11)!important;
+  line-height: 1.45 !important;
+}
+
+.reactivation-current-quest-open strong {
+  font-size: 15px !important;
+}
+
+.reactivation-current-quest-open span,
+.reactivation-current-quest-open small {
+  font-size: var(--s-10)!important;
+}
+
+/* =========================================================
+   v1.5.4.58 — STATISTICS PANELS
+========================================================= */
+
+/* Seven metrics now: Last Activity, TO, GGR, NGR, BR, Sport GGR, Casino GGR. */
+.reactivation-activity-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+}
+
+/*
+  Casino Breakdown carries turnover only, so its cells are the same label and
+  value as everywhere else instead of a GGR/NGR pair that sheet 365 cannot
+  fill.
+*/
+.reactivation-casino-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.reactivation-casino-product > strong {
+  font-size: var(--s-14)!important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  line-height: 1.1 !important;
+}
+
+/*
+  Casino Breakdown dropped from six figures to three, so it hands the width
+  over to Activity, which gained a seventh. Without this the metric values
+  were wider than the cells holding them.
+*/
+.reactivation-statistics-grid {
+  grid-template-columns: minmax(0, 2.15fr) minmax(0, 1fr) !important;
+}
+
+.reactivation-activity-grid > div strong {
+  /* Sized so a seven-figure turnover still fits its cell. */
+  font-size: var(--s-12)!important;
+  letter-spacing: -.01em !important;
+}
+
+.reactivation-activity-grid > div {
+  padding-left: var(--sp-7) !important;
+  padding-right: var(--sp-7) !important;
+}
+
+.reactivation-activity-grid > div span,
+.reactivation-casino-product > span {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/*
+  The tool rail is its own column, so nothing from the notes column may bleed
+  under it. Both sides are clipped to their track and the rail keeps a hair of
+  clearance from the panel edge.
+*/
+.reactivation-work-panel-body > * {
+  min-width: 0;
+}
+
+.reactivation-work-toolrail {
+  margin-left: var(--sp-2);
+}
+
+/* =========================================================
+   v1.5.4.70 — DEPOSITS / WITHDRAWALS / NET LOSS
+========================================================= */
+
+/*
+  Deposit and Withdrawal amounts have no product split in sheet 365, so their
+  rows in the performance table carry a dash under every section column. The
+  dash is quieter than a real figure so the eye skips it.
+*/
+.profile-performance-void {
+  color: var(--ink-3);
+}
+
+/* The Deposits and Withdrawals tiles now lead with the amount and keep the
+   operation count on the unit line. */
+.yesterday-metric__unit span {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ten cells over six columns leaves a short second row; the divider between
+   the two rows keeps them from reading as one run-on strip. */
+.reactivation-activity-grid > div:nth-child(n + 7) {
+  border-top: 1px solid var(--panel-2);
+}
+
+/* =========================================================
+   v1.5.4.73 — LAST CONTACT BAR
+========================================================= */
+
+/*
+  One line carries the whole contact history of a client: when the last one
+  happened, how many mails, how many calls, and the total. The counters used
+  to sit on the action buttons and the total in a separate chip, which said
+  the same thing in three places and never said when.
+*/
+.cbar {
+  --cbar-bg: var(--panel-3);
+  --cbar-fg: var(--ink);
+  --cbar-strong: var(--accent);
+  --cbar-muted: var(--ink-3);
+  --cbar-name: var(--ink-2);
+  --cbar-hover: var(--panel-2);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-14);
+  height: 28px;
+  padding: 0 var(--sp-10);
+  background: var(--cbar-bg);
+  border-radius: var(--r-s);
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.cbar__name {
+  font-size: var(--s-10);
+  font-weight: 700;
+  letter-spacing: var(--ls-caps-wide);
+  text-transform: uppercase;
+  color: var(--cbar-name);
+}
+
+.cbar__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-5);
+  margin: -2px -4px;
+  padding: var(--sp-2) var(--sp-4);
+  border: 0;
+  border-radius: var(--r-s);
+  background: none;
+  color: var(--cbar-fg);
+  font-family: inherit;
+  font-size: var(--s-11);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.cbar__item:hover { background: var(--cbar-hover); }
+.cbar__item:focus-visible { outline: 1px solid var(--accent); outline-offset: 1px; }
+
+.cbar__item svg {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  stroke: var(--cbar-muted);
+}
+
+.cbar__item b {
+  color: var(--cbar-strong);
+  font-weight: 600;
+}
+
+/* The bar reports, it does not act: the Email and Call buttons below it are
+   what logs a contact. */
+.cbar__item--static { cursor: default; }
+.cbar__item--static:hover { background: none; }
+
+.cbar__sum {
+  color: var(--cbar-muted);
+  font-size: var(--s-11);
+}
+
+.cbar__dot {
+  width: 3px;
+  height: 3px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--panel-3);
+}
+
+/* The contact block is a grid, so the bar is a grid item: without an explicit
+   start it is stretched across the whole column. */
+.reactivation-contact-block .cbar {
+  justify-self: start;
+  align-self: flex-start;
+  margin: 0 0 var(--sp-8);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* =========================================================
+   v1.5.4.76 — GREY DARK
+
+   Second pass on the pilot. Three notes drove it: the graphite still read
+   blue, the surfaces sat too dark, and every plate carried a gradient, an
+   inset highlight and a shadow at once. So: one neutral grey scale with no
+   hue in it, a step lighter throughout, and a single flat fill with one soft
+   hairline per plate. Nothing stacks any more.
+
+   Scale: ground #1A1A1C, panel #202023, plate #26262A, raised #2C2C31,
+   lifted #343439. Hairlines are white at 7-14%.
+
+   Light theme is untouched; every rule here is scoped to dark.
+========================================================= */
+
+/* ---- Generated: every dark ground onto the grey scale, every bright
+        hairline down to one soft edge ---- */
+
+[data-theme="dark"] .main-menu__button:hover {
+  border-color: var(--ink-3);
+}
+
+[data-theme="dark"] .update-button {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .update-button:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .yesterday-page,
+[data-theme="dark"] .dashboard-page,
+[data-theme="dark"] .clients-page,
+[data-theme="dark"] .being-page {
+  background: var(--panel-3);
+}
+
+[data-theme="dark"] .yesterday-panel {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .yesterday-metric {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .player-table__header {
+  border: 1px solid var(--line-soft);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .player-table-sort.is-active[data-direction="desc"]::after {
+  border-top: 4px solid var(--ink-3);
+}
+
+[data-theme="dark"] .player-table-sort.is-active[data-direction="asc"]::after {
+  border-bottom: 4px solid var(--ink-3);
+}
+
+[data-theme="dark"] .player-table__row {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .player-table__row:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .dashboard-panel {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .dashboard-metric {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .dashboard-top-card {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .dashboard-top-card__title {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .dashboard-top-table__head {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .dashboard-top-table__row {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .version-notification {
+  border: 1px solid var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .clients-panel {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .clients-search {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .clients-search:focus {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .client-card {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .client-profile-back {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .client-profile-back:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .profile-card {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .profile-period-tab {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .profile-period-tab.is-active {
+  border-color: var(--ink-3);
+}
+
+[data-theme="dark"] .profile-performance-row {
+  border-top: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .where-plays-item {
+  border-right: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .profile-info-row {
+  border-top: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .client-profile-back {
+  border-color: var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .profile-card {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .profile-card:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .client-profile-view {
+  border: 1px solid var(--line);
+  background: linear-gradient( 115deg, var(--panel), var(--panel) ), var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--page-open .main-menu-return {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .app.app--page-open .main-menu-return:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .profile-quest-card:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .client-quest-view {
+  border: 1px solid var(--line);
+  background: linear-gradient( 115deg, var(--panel), var(--panel) ), var(--panel-3);
+}
+
+[data-theme="dark"] .client-quest-back {
+  border: 1px solid var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .client-quest-back:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-detail-card {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-live-progress {
+  border-top: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .quest-detail-date {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-edit-input,
+[data-theme="dark"] .quest-edit-textarea {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-edit-input:focus,
+[data-theme="dark"] .quest-edit-textarea:focus {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-save-button {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .quest-save-button:hover {
+  border-color: var(--ink-3);
+}
+
+[data-theme="dark"] .quest-edit-button {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-edit-button:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-edit-button.is-editing {
+  border-color: var(--ink-3);
+}
+
+[data-theme="dark"] .client-quest-view.is-editing .quest-edit-input,
+[data-theme="dark"] .client-quest-view.is-editing .quest-edit-textarea {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .quest-save-button--header {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .client-quest-view.is-editing .quest-save-button--header:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-mechanic-select {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-mechanic-select option {
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .client-quest-view.is-editing .quest-mechanic-select {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .quest-mechanic-select:focus {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .profile-bonuses-card:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .bonus-history-modal {
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(115deg, var(--panel), var(--panel)), var(--panel-3);
+}
+
+[data-theme="dark"] .bonus-history-header {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .bonus-history-close {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .bonus-history-close:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .bonus-history-summary__item {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .bonus-history-table__head {
+  border-top: 1px solid var(--panel-3);
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .bonus-history-row {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .client-quick-nav {
+  border: 1px solid var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .client-quick-nav__actions button {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .client-quick-nav__actions button:not(:disabled):hover {
+  border-color: var(--line-soft);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-history-action {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-history-action:not(:disabled):hover {
+  border-color: var(--line-soft);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-history-modal {
+  border: 1px solid var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-history-header {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-history-header button {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .client-quest-reactivation-back {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .client-card {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .client-card:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .client-card:focus-visible {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .client-quest-view.is-editing .quest-name-input {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .client-quest-view.is-editing .quest-name-input:focus {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-name-sync-button {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-name-sync-button:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .quest-complete-button {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .quest-complete-button:not(:disabled):hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-history-open {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .quest-history-open:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-confirm-modal {
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(115deg,var(--panel),var(--panel)),var(--panel-3);
+}
+
+[data-theme="dark"] .quest-confirm-continue,
+[data-theme="dark"] .quest-confirm-no {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .quest-confirm-continue:hover,
+[data-theme="dark"] .quest-confirm-no:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .quest-history-modal {
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(115deg,var(--panel),var(--panel)),var(--panel-3);
+}
+
+[data-theme="dark"] .quest-history-header {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .quest-history-close {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-history-table-head {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .quest-history-row {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] #profileQuestOpen.is-no-active-quest {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-page {
+  background: var(--panel-3);
+}
+
+[data-theme="dark"] .being-panel {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .being-table__header {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .being-row {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-row:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-pin {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-pin:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-note {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-note:focus {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-card-modal {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .being-card-header {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .being-card-pin,
+[data-theme="dark"] .being-card-close {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-card-pin:hover,
+[data-theme="dark"] .being-card-close:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-comm-composer {
+  border: 1px solid var(--field-line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-comm-composer input,
+[data-theme="dark"] .reactivation-comm-composer textarea {
+  background: var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-comm-item {
+  border: 1px solid var(--field-line);
+  background: var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-comm-item > button {
+  border-left: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-comm-item > button:hover {
+  background: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-comm-empty {
+  border: 1px dashed var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-contact-undo--type {
+  border-color: var(--line-soft) !important;
+}
+
+[data-theme="dark"] .reactivation-card-strip article {
+  border-color: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-contact-undo-action {
+  border: 1px solid var(--field-line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-contact-undo-action:hover {
+  border-color: var(--line-soft);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-work-panel {
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-work-panel .reactivation-notes-panel-header {
+  border-bottom-color: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-work-section {
+  border: 1px solid var(--field-line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-offer-fields input:focus,
+[data-theme="dark"] .reactivation-offer-fields select:focus {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-offer-editor > button {
+  border: 1px solid var(--field-line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-offer-editor > button:hover {
+  border-color: var(--line-soft);
+  background: var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-offer-fields input,
+[data-theme="dark"] .reactivation-offer-fields select {
+  border: 1px solid var(--field-line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .being-card-date-input {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-card-date-input:focus {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-card-today {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-card-today:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-card-quest {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-card-notes textarea {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-card-notes textarea:focus {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .being-card-footer {
+  border-top: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .being-card-quest:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .app-loader {
+  background: radial-gradient(circle at 50% 48%, var(--panel-2), transparent 34%), var(--panel-3);
+}
+
+[data-theme="dark"] .app-loader__spinner span {
+  border: 1px solid var(--field-line);
+  border-top-color: var(--ink-3);
+}
+
+[data-theme="dark"] .app-loader__spinner span + span {
+  border-top-color: var(--line-soft);
+}
+
+[data-theme="dark"] .app-loader__continue {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .app-loader__continue:hover {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .app-loader__retry,
+[data-theme="dark"] .app-loader__continue {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .app-loader__retry {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .reactivation-page {
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-panel {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .reactivation-metric {
+  border: 1px solid var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-table__header {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-stage span {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-stage--active span {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-stage--sleeping span {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-contact-button,
+[data-theme="dark"] .reactivation-contact-undo {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-contact-button:hover,
+[data-theme="dark"] .reactivation-contact-undo:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-card-modal {
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] .reactivation-card-header {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-stage-badge {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-card-close {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-card-strip article,
+[data-theme="dark"] .reactivation-card-block {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-offer-content > div {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-contact-grid input {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-contact-main-button {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-log-head {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-log-row {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-log-undo {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-log-empty {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-portal-back {
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel)), var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-portal-back:hover {
+  border-color: var(--line);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel)), var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-sort-button i::before {
+  border-bottom: 3px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-sort-button i::after {
+  border-top: 3px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-sort-button.is-active[data-direction="asc"] i::before {
+  border-bottom-color: var(--ink-3);
+}
+
+[data-theme="dark"] .reactivation-sort-button.is-active[data-direction="desc"] i::after {
+  border-top-color: var(--ink-3);
+}
+
+[data-theme="dark"] .reactivation-contact-button strong {
+  border: 1px solid var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-12m-play-grid article {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-contact-main-button strong {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-panel {
+  background: radial-gradient(circle at 82% -12%, var(--panel-2), transparent 30%), linear-gradient(125deg, var(--panel), transparent 36%), var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-search {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-search:focus-within {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .reactivation-count {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-summary-group {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-summary-group--queue {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-metric {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-metric--filter.is-active {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .reactivation-metric--filter:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-clear-filters {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-clear-filters:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-table-shell {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-table__header {
+  border-bottom: 1px solid var(--panel-3);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-table__header > :first-child {
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-row {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-row:hover {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-client-cell {
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-row:hover .reactivation-client-cell {
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .being-card-notes {
+  border: 1px solid var(--field-line);
+  background: linear-gradient(180deg, var(--panel-3), var(--panel-3));
+}
+
+[data-theme="dark"] .being-note-list__empty {
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-table-shell {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-summary-group--queue {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-metric {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-visible-count {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-clear-filters {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-table-shell {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-sort-button i::before {
+  border-bottom-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-sort-button i::after {
+  border-top-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-row {
+  border-bottom-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-row::before {
+  background: var(--ink-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-row:hover {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-stage span {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-stage span::before {
+  background: var(--ink-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-button,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-undo {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-button strong {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-undo:disabled {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-last-contact::before {
+  background: var(--ink-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-last-contact[data-contact-type="none"]::before {
+  background: var(--line);
+}
+
+[data-theme="dark"] .main-menu-exit {
+  border: 1px solid var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .main-menu-exit kbd {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .main-menu-exit:hover {
+  border-color: var(--line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-panel {
+  border-color: var(--line-soft);
+  background: linear-gradient(135deg, var(--panel-3), var(--panel-3) 58%, var(--panel-3));
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-search,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-count,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-summary-group,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-summary-group--queue,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-metric,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-table-shell {
+  border-color: var(--panel-3);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-search:focus-within {
+  border-color: var(--line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-metric--filter.is-active {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-metric--filter:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-table__header {
+  border-bottom-color: var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-sort-button.is-active[data-direction="asc"] i::before {
+  border-bottom-color: var(--ink-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-sort-button.is-active[data-direction="desc"] i::after {
+  border-top-color: var(--ink-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-row,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-row:nth-child(even) {
+  border-bottom-color: var(--panel-3);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-row:nth-child(even) {
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-row:hover {
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-stage span,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-stage--active span,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-stage--catch_up span,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-stage--call_twice span,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-stage--sleeping span {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-button,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-undo,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-clear-filters {
+  border-color: var(--panel-3);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-button:hover,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-contact-undo:not(:disabled):hover,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-clear-filters:hover {
+  border-color: var(--line-soft);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-portal-back {
+  border-color: var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-portal-back:hover {
+  border-color: var(--line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-card-modal {
+  border-color: var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-card-strip article,
+[data-theme="dark"] .reactivation-card-block {
+  border-color: var(--panel-3);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-contact-main-button {
+  border-color: var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .client-quest-being-back {
+  border-color: var(--line-soft);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .client-quest-being-back:hover,
+[data-theme="dark"] .client-quest-reactivation-back:hover {
+  border-color: var(--line-soft);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .being-search {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .being-search.is-open {
+  border-color: var(--line-soft);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .being-search:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-note-preview {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-membership-badge {
+  border: 1px solid var(--field-line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-add-button,
+[data-theme="dark"] .being-card-reactivation {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .being-card-reactivation.is-active,
+[data-theme="dark"] .being-card-reactivation:disabled {
+  border-color: var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-add-button:hover,
+[data-theme="dark"] .being-card-reactivation:not(:disabled):hover {
+  border-color: var(--line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .being-card-modal {
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .being-card-notes__head strong {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-note-date,
+[data-theme="dark"] .being-card-notes .being-note-text,
+[data-theme="dark"] .being-note-save,
+[data-theme="dark"] .being-note-cancel {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .being-note-date:focus,
+[data-theme="dark"] .being-card-notes .being-note-text:focus,
+[data-theme="dark"] .being-note-save:focus-visible,
+[data-theme="dark"] .being-note-cancel:focus-visible {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .being-note-item {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .being-note-item__delete {
+  border-left: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .being-note-list__empty {
+  border: 1px dashed var(--panel-3);
+}
+
+[data-theme="dark"] .being-note-save:hover,
+[data-theme="dark"] .being-note-cancel:hover,
+[data-theme="dark"] .being-note-item:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-note-composer {
+  background: var(--panel-2) !important;
+}
+
+[data-theme="dark"] .being-note-date,
+[data-theme="dark"] .being-card-notes .being-note-text {
+  background: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .being-note-cancel {
+  background: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .being-note-item {
+  background: var(--line-soft) !important;
+}
+
+[data-theme="dark"] .being-note-item.is-undated {
+  background: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-card-modal {
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-card-strip {
+  border-top: 1px solid var(--panel-3);
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-card-strip article {
+  border-right: 1px solid var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-smart-core {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-smart-core .reactivation-card-block {
+  border-bottom: 1px solid var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-12m-play-grid {
+  border-top: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-12m-play-grid article {
+  border-right: 1px solid var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-decision-grid {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-decision-grid .reactivation-card-block:first-child {
+  border-right: 1px solid var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-contact-grid {
+  border-top: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-contact-grid > * {
+  border-right: 1px solid var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-card-notes {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-decision-grid .reactivation-card-block:first-child {
+  border-bottom: 1px solid var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-card-main-panel,
+[data-theme="dark"] .reactivation-card-notes {
+  border: 1px solid var(--field-line) !important;
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-card-header {
+  border-bottom-color: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-card-strip article {
+  border: 1px solid var(--field-line) !important;
+  background: var(--panel-2) !important;
+}
+
+[data-theme="dark"] .reactivation-12m-play-block {
+  border: 1px solid var(--field-line) !important;
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-12m-play-grid {
+  border-top-color: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .reactivation-decision-grid .reactivation-card-block {
+  border: 1px solid var(--field-line) !important;
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-smart-core .reactivation-contact-block {
+  border: 1px solid var(--field-line) !important;
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-contact-block > .reactivation-card-block__head {
+  border-right: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-notes-panel-header {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-notes-panel-header > strong {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .reactivation-contact-block > .reactivation-card-block__head {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .quest-nolimit-toggle {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .quest-nolimit-toggle:hover:not(:disabled) {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .being-quest-filter {
+  border: 1px solid var(--field-line);
+}
+
+[data-theme="dark"] .being-quest-filter:hover {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-card-back-being {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-card-back-being:hover {
+  border-color: var(--line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-statistics-block {
+  border: 1px solid var(--field-line) !important;
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-period-toggle {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-statistics-panel {
+  border: 1px solid var(--field-line);
+  background: rgba(0, 0, 0, .24);
+}
+
+[data-theme="dark"] .reactivation-statistics-panel__head {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-activity-grid > div {
+  border-right: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-casino-product {
+  border-right: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-activity-grid > div:nth-child(-n + 3) {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-activity-grid > div {
+  border-bottom: 1px solid var(--panel-3);
+}
+
+[data-theme="dark"] .reactivation-work-panel-body {
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .reactivation-work-section {
+  border-color: var(--panel-3) !important;
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-panel {
+  background: var(--panel-3) !important;
+}
+
+[data-theme="dark"] .being-card-return-reactivation {
+  border: 1px solid var(--field-line) !important;
+  background: rgba(0, 0, 0, .24) !important;
+}
+
+[data-theme="dark"] .being-card-return-reactivation:hover {
+  border-color: var(--line) !important;
+  background: var(--panel-2) !important;
+}
+
+[data-theme="dark"] .reactivation-work-toolrail button {
+  border: 1px solid var(--field-line);
+  background: var(--panel-2);
+}
+
+[data-theme="dark"] .reactivation-work-toolrail button:hover,
+[data-theme="dark"] .reactivation-work-toolrail button:focus-visible {
+  border-color: var(--line-soft);
+}
+
+[data-theme="dark"] .reactivation-work-toolrail button.is-active {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-last-contact[data-contact-type="archive"]::before {
+  background: var(--ink-3);
+}
+
+[data-theme="dark"] .reactivation-stage span {
+  background: color-mix(in srgb, var(--stage-tone, var(--ink-3)) 13%, transparent) !important;
+}
+
+[data-theme="dark"] .reactivation-stage span::before {
+  background: var(--stage-tone, var(--ink-3)) !important;
+}
+
+[data-theme="dark"] .reactivation-activity-grid > div:nth-child(n + 7) {
+  border-top: 1px solid var(--panel-3);
+}
+
+/* ---- Flat by hand: the surfaces the sweep cannot judge ---- */
+
+[data-theme="dark"] {
+  --bg: var(--panel-3);
+  --bg-primary: var(--panel-3);
+  --bg-secondary: var(--panel-3);
+  --surface-primary: var(--line);
+  --surface-secondary: var(--line);
+  --surface-elevated: var(--line);
+
+  --border-primary: var(--line-soft);
+  --border-soft: var(--panel-3);
+
+  --accent-primary: var(--ink);
+  --accent-hover: var(--accent);
+  --accent-soft: var(--panel-3);
+
+  --button-primary-bg: var(--line);
+  --button-secondary-bg: var(--panel-3);
+
+  --table-header-bg: var(--line);
+  --row-hover-bg: var(--line);
+
+  --shadow-soft: 0 2px 8px rgba(0,0,0,0.4);
+  --scrollbar-thumb: var(--line);
+}
+
+/* One flat ground. The radial wash was the first of the three layers. */
+[data-theme="dark"] .app {
+  background: var(--panel-3) !important;
+}
+
+/*
+  Main menu buttons. Off the monumental treatment: a plate one step above the
+  ground, one soft hairline, a 10px corner, and type that no longer shouts.
+  No gradient, no inset light, no shadow.
+*/
+[data-theme="dark"] .main-menu__button {
+  min-height: clamp(58px, 3.7vw, 70px);
+  border: 1px solid var(--field-line) !important;
+  border-radius: var(--r-m) !important;
+  background: var(--line) !important;
+  color: var(--ink) !important;
+  font-size: clamp(19px, 1.35vw, 26px);
+  font-weight: 600;
+  letter-spacing: .02em;
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .main-menu__button:hover {
+    border-color: var(--line-soft) !important;
+    background: var(--line) !important;
+    transform: none;
+  }
+}
+
+[data-theme="dark"] .main-menu__button.is-active {
+  border-color: var(--line) !important;
+  background: var(--line) !important;
+  color: var(--accent) !important;
+  box-shadow: none !important;
+}
+[data-theme="dark"] .update-button {
+  border-color: var(--line-soft) !important;
+  border-radius: var(--r-s) !important;
+  background: var(--panel-2) !important;
+  color: var(--ink) !important;
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .update-button:hover {
+    border-color: var(--line-soft) !important;
+    background: var(--line) !important;
+  }
+}
+
+/* Sticky table headers keep one step of separation from the ground. */
+[data-theme="dark"] .being-table__header,
+[data-theme="dark"] .reactivation-table__header,
+[data-theme="dark"] .player-table__header,
+[data-theme="dark"] .profile-performance-header{
+  background: var(--panel-2) !important;
+}
+
+[data-theme="dark"] .cbar {
+  --cbar-bg: var(--line);
+  --cbar-fg: var(--ink);
+  --cbar-strong: var(--ink);
+  --cbar-muted: var(--ink-3);
+  --cbar-name: var(--ink-3);
+  --cbar-hover: var(--line);
+}
+
+[data-theme="dark"] .cbar__dot { background: var(--line); }
+
+/* Plate corners,
+same in both themes: big plates round,
+dense rows do not. */
+.yesterday-panel,
+.dashboard-panel,
+.clients-panel,
+.being-panel,
+.reactivation-panel,
+.being-card-modal,
+.reactivation-card-modal,
+.quest-history-modal,
+.bonus-history-modal,
+.quest-confirm-modal,
+.client-card,
+.profile-card,
+.yesterday-metric,
+.dashboard-metric,
+.reactivation-card-block{
+  border-radius: var(--r-m);
+}
+
+/* ---- Flat surfaces: panel, plate, field ----
+   Three values do all the work. A panel is the ground plus one step, a plate
+   is the panel plus one, and a field is a plate. Nothing carries a gradient
+   any more, so nothing has to be read through two layers. */
+
+[data-theme="dark"] .yesterday-panel,
+[data-theme="dark"] .dashboard-panel,
+[data-theme="dark"] .clients-panel,
+[data-theme="dark"] .being-panel,
+[data-theme="dark"] .reactivation-panel {
+  background: var(--panel-2) !important;
+}
+
+[data-theme="dark"] .client-card,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .dashboard-top-card,
+[data-theme="dark"] .being-note-item {
+  background: var(--panel-2) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="dark"] .being-row:hover,
+  [data-theme="dark"] .reactivation-row:hover,
+  [data-theme="dark"] .player-table__row:hover,
+  [data-theme="dark"] .client-card:hover {
+    background: var(--line) !important;
+    border-color: var(--line-soft) !important;
+  }
+}
+
+/* A field that matches the ground is not a field. */
+[data-theme="dark"] .app input,
+[data-theme="dark"] .app textarea,
+[data-theme="dark"] .app select,
+[data-theme="dark"] .being-search,
+[data-theme="dark"] .clients-search-wrapper,
+[data-theme="dark"] .reactivation-search {
+  border-color: var(--panel-3) !important;
+  border-radius: var(--r-s) !important;
+  background: var(--panel-2) !important;
+  color: var(--ink) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .app input:focus,
+[data-theme="dark"] .app textarea:focus,
+[data-theme="dark"] .app select:focus {
+  border-color: var(--line) !important;
+  background: var(--panel-3) !important;
+}
+
+/* The pinned row keeps its amber, the only colour left on the list. */
+[data-theme="dark"] .being-row.is-pinned {
+  background: var(--panel-3) !important;
+}
+
+/* A modal floats above the scrim,
+so it takes the panel value,
+not the
+   ground value it was landing on. */
+[data-theme="dark"] .being-card-modal,
+[data-theme="dark"] .reactivation-card-modal,
+[data-theme="dark"] .quest-history-modal,
+[data-theme="dark"] .bonus-history-modal,
+[data-theme="dark"] .quest-confirm-modal,
+[data-theme="dark"] .reactivation-history-modal,
+[data-theme="dark"] .reactivation-work-panel,
+[data-theme="dark"] .reactivation-card-main-panel{
+  border-color: var(--line-soft) !important;
+  background: var(--panel-2) !important;
+}
+
+/*
+  The Contact block is a two-column strip: a narrow label on the left, the
+  controls on the right. Adding the Last-contact bar as a third child pushed
+  the controls out of that column and left the bar sitting across the label,
+  so all three now say where they go.
+*/
+.reactivation-contact-block > .reactivation-card-block__head {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.reactivation-contact-block > .cbar {
+  grid-column: 2;
+  grid-row: 1;
+  margin: var(--sp-6) 0 var(--sp-2) var(--sp-8);
+}
+
+.reactivation-contact-block > .reactivation-contact-grid {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Single-column widths stack the three in source order instead. */
+@media (max-width: 820px) {
+  .reactivation-contact-block > .reactivation-card-block__head,
+  .reactivation-contact-block > .cbar,
+  .reactivation-contact-block > .reactivation-contact-grid {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* =========================================================
+   v1.5.4.78 — COMPACT DENSITY
+
+   One pass over the whole app: less bulk, lighter plates, more of the ground
+   showing through. Nothing here changes what is on screen, only how much
+   room it takes and how loudly it is drawn.
+
+   Sizes drop by roughly a fifth, display type by about a third, and the list
+   rows stop being filled plates - a hairline is enough to separate a row
+   from its neighbour.
+
+   To go back to the previous density, delete this block.
+========================================================= */
+
+/* ---- Page headings: a title, not a banner ---- */
+.yesterday-title,
+.dashboard-title,
+.clients-title,
+.being-title,
+.reactivation-title {
+  font-size: clamp(20px, 1.55vw, 30px) !important;
+  font-weight: 700 !important;
+  letter-spacing: -.015em;
+}
+
+.yesterday-header,
+.dashboard-header,
+.clients-header,
+.being-header,
+.reactivation-header {
+  margin-bottom: var(--sp-8);
+}
+
+/* ---- Panels and plates ---- */
+.yesterday-panel,
+.dashboard-panel,
+.clients-panel,
+.being-panel,
+.reactivation-panel {
+  padding: var(--sp-12) !important;
+}
+
+.yesterday-metric,
+.dashboard-metric {
+  min-height: clamp(58px, 3.7vw, 72px) !important;
+  padding: var(--sp-7) var(--sp-6) !important;
+}
+
+/*
+  The KPI value is the reason either screen exists, and it was set at 16px
+  against a 22px page title and an 8.5px label: the heading outranked the
+  number it introduces. On --t-8 the value reads first and the label sits
+  under it at a 2.4:1 ratio, which is the same relationship the reactivation
+  strip already uses.
+*/
+.yesterday-metric__value,
+.dashboard-metric__value {
+  font-size: var(--t-8) !important;
+}
+
+.client-card {
+  padding: var(--sp-8) var(--sp-11) !important;
+}
+
+.profile-card {
+  padding: var(--sp-10) var(--sp-12) !important;
+}
+
+/* ---- Lists: hairline separation instead of a filled plate ---- */
+.being-row {
+  min-height: 46px !important;
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-5) var(--sp-10) !important;
+}
+
+.being-table__header {
+  min-height: 28px !important;
+}
+
+.reactivation-row {
+  min-height: 42px !important;
+  padding: 0 var(--sp-11) !important;
+}
+
+.reactivation-table__header {
+  min-height: 32px !important;
+}
+
+/*
+  Hover is the only fill a row changes: the resting tile comes from the Rows
+  rule further down, and the rule that used to strip the fill here is gone
+  with the list-of-lines it belonged to.
+*/
+@media (hover: hover) and (pointer: fine) {
+  .being-row:hover,
+  .reactivation-row:hover,
+  .player-table__row:hover {
+    background: var(--hover) !important;
+  }
+}
+
+/* ---- Cards and modals ---- */
+.being-card-modal,
+.reactivation-card-modal {
+  max-height: min(660px, calc(100dvh - 24px));
+}
+
+.reactivation-card-block {
+  padding: var(--sp-9) var(--sp-11) !important;
+}
+
+.reactivation-card-strip article {
+  padding: var(--sp-7) var(--sp-9) !important;
+}
+
+/* ---- Compact: the pieces that actually set row height ----
+   min-height on the row does nothing while a child is taller than it, so the
+   cut has to happen where the height comes from: the stacked client cell,
+   the badge under it and the sort buttons in the header. */
+
+.being-client .reactivation-membership-badge {
+  margin-top: var(--sp-2) !important;
+  padding: var(--sp-1) var(--sp-4) !important;
+  font-size: var(--s-7)!important;
+  line-height: 1.3 !important;
+}
+
+.being-note-preview {
+  min-height: 26px !important;
+  padding: var(--sp-4) var(--sp-7) !important;
+}
+
+.reactivation-client-cell {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+.reactivation-client-id { margin-top: var(--sp-2) !important; }
+
+.reactivation-sort-button {
+  min-height: 26px !important;
+  height: 26px !important;
+}
+
+.reactivation-contact-actions {
+  min-height: 0 !important;
+}
+
+.reactivation-contact-button {
+  min-height: 24px !important;
+  height: 24px !important;
+}
+
+.reactivation-last-contact { min-height: 0 !important; }
+
+/* ---- Compact: the two heights that are set outright ---- */
+
+/* The reactivation row carries a fixed height through a variable, so the
+   variable is the only thing that can shorten it. */
+.reactivation-table,
+.reactivation-table__body,
+.reactivation-row {
+  --reactivation-row-height: 44px;
+}
+
+/* The client cell stacked name / id / badge on three lines. The id and the
+   badge belong together on one. */
+.being-client { display: block !important; }
+
+.being-client__id {
+  display: inline !important;
+  margin-top: 0 !important;
+}
+
+.being-client .reactivation-membership-badge {
+  display: inline-block !important;
+  margin: 0 0 0 var(--sp-6) !important;
+  vertical-align: 1px;
+}
+
+/* The header stretched its plain label cells to the tallest one. */
+.reactivation-table__header {
+  height: 32px !important;
+  align-items: center !important;
+}
+
+.reactivation-table__header > * {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/*
+  A saved quest is a record, not a form. Outside edit mode the fields drop
+  their boxes and read as text; the boxes come back the moment the pencil is
+  pressed, which is also the only time they mean anything.
+*/
+.client-quest-view:not(.is-editing) .quest-edit-input,
+.client-quest-view:not(.is-editing) .quest-edit-textarea,
+.client-quest-view:not(.is-editing) .quest-name-input,
+.client-quest-view:not(.is-editing) .quest-mechanic-select,
+.client-quest-view:not(.is-editing) .quest-goal-input {
+  border-color: transparent !important;
+  background: transparent !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-shadow: none !important;
+}
+
+.client-quest-view:not(.is-editing) .quest-mechanic-select{
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.client-quest-view.is-editing .quest-edit-input,
+.client-quest-view.is-editing .quest-edit-textarea,
+.client-quest-view.is-editing .quest-name-input,
+.client-quest-view.is-editing .quest-goal-input {
+  border-color: var(--line-soft) !important;
+  background: var(--line) !important;
+}
+
+/* =========================================================
+   v1.5.4.83 — THE CORNER DOCK
+
+   The CRM opens as one small window in the top-left corner holding a single
+   button. Pressing it grows the compact menu underneath, whose border stops
+   exactly where the buttons stop. Choosing a screen closes the menu and the
+   screen takes the whole viewport; Home gives the viewport back and the
+   corner window is all that is left.
+
+   Nothing here opens on hover: the pointer crossing the corner used to open
+   the menu on its own, which is why it kept landing on top of whatever was
+   being read.
+========================================================= */
+
+.menu-dock {
+  position: fixed;
+  /*
+    One place, in both states. The corner window used to put the dock
+    somewhere else on screen than a full screen did, so the button jumped
+    between two positions every time the navigation was used. Off the very
+    corner, and the same off-the-corner in both.
+  */
+  left: 20px;
+  top: 24px;
+  /*
+    Above the card overlays, and outside #app in the markup. Back used to sit
+    inside the app shell, which the cards mark inert while they are open: the
+    press reached nothing, which is exactly the "back does nothing" case. It
+    is now the one control that stays live over every screen and every card.
+  */
+  z-index: 5000;
+  display: block;
+  width: max-content;
+}
+
+/* ---- The window: a hairline around the buttons and nothing else ---- */
+.menu-dock__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-m);
+  background: var(--panel-3);
+}
+
+.menu-dock__back,
+.menu-dock__toggle,
+.main-menu__home,
+.main-menu .main-menu__button,
+.main-menu .main-menu-exit,
+.main-menu .update-button,
+.main-menu .theme-toggle {
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  min-height: 30px;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  gap: 0;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-s);
+  background: var(--line);
+  color: var(--ink);
+  font-size: 0;
+  cursor: pointer;
+  transition: border-color var(--ui-speed) var(--ui-curve),
+              background var(--ui-speed) var(--ui-curve),
+              color var(--ui-speed) var(--ui-curve);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-dock__back:hover,
+  .menu-dock__toggle:hover,
+  .main-menu__home:hover,
+  .main-menu .main-menu__button:hover,
+  .main-menu .main-menu-exit:hover,
+  .main-menu .update-button:hover,
+  .main-menu .theme-toggle:hover {
+    border-color: var(--line);
+    background: var(--line);
+    color: var(--accent);
+  }
+}
+
+.menu-dock__arrow {
+  font-size: var(--s-14);
+  line-height: 1;
+}
+
+.menu-dock__mark {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+}
+
+.menu-dock__mark svg { width: 100%; height: 100%; }
+
+/* The toggle reads as pressed while the menu it opened is open. */
+.menu-dock[data-open="true"] .menu-dock__toggle {
+  border-color: var(--ink-3);
+  background: var(--line);
+  color: var(--accent);
+}
+
+/* Back exists only where there is something behind. On the main menu the
+   window is one button, which is the whole point of it. */
+.menu-dock__back { display: none; }
+
+:root[data-shell="page"] .menu-dock__back,
+:root[data-shell="portal"] .menu-dock__back { display: grid; }
+
+/*
+  QUICK COLLAPSE
+
+  Home closes the screen; this only puts the window away and brings it back
+  with the screen exactly as it was. It is a hinge, not a destination, so it
+  is the smallest control in the bar - a half-width tab rather than another
+  button competing with Back and the menu.
+*/
+.menu-dock__collapse {
+  display: none;
+  width: 16px;
+  min-width: 16px;
+  height: 30px;
+  min-height: 30px;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-s);
+  background: var(--panel-3);
+  color: var(--ink);
+  font-size: 0;
+  cursor: pointer;
+  transition: border-color var(--ui-speed) var(--ui-curve),
+              background var(--ui-speed) var(--ui-curve),
+              color var(--ui-speed) var(--ui-curve);
+}
+
+:root[data-shell="page"] .menu-dock__collapse,
+:root[data-shell="portal"] .menu-dock__collapse { display: grid; }
+
+.menu-dock__chevron {
+  display: grid;
+  place-items: center;
+  width: 13px;
+  height: 13px;
+  transition: transform var(--ui-speed) var(--ui-curve);
+}
+
+.menu-dock__chevron svg { width: 100%; height: 100%; }
+
+/* Pointing down puts the window away, pointing up brings it back. */
+.menu-dock[data-collapsed="true"] .menu-dock__chevron {
+  transform: rotate(180deg);
+}
+
+.menu-dock[data-collapsed="true"] .menu-dock__collapse {
+  border-color: var(--ink-3);
+  background: var(--line-soft);
+  color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-dock__collapse:hover {
+    border-color: var(--line);
+    background: var(--line-soft);
+    color: var(--accent);
+  }
+}
+
+/*
+  Collapsing fades the screen before the window shrinks. Without it the
+  window closes over a painted layout and every row is dragged into the
+  corner with it.
+*/
+:root[data-collapsed="true"] .page.is-active,
+:root[data-collapsed="true"] .being-card-overlay,
+:root[data-collapsed="true"] .reactivation-card-overlay,
+:root[data-collapsed="true"] .quest-confirm-overlay,
+:root[data-collapsed="true"] .quest-history-overlay,
+:root[data-collapsed="true"] .bonus-history-overlay,
+:root[data-collapsed="true"] .client-quick-nav {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- The compact menu ---- */
+.main-menu {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: var(--sp-5);
+  /* 30px button + 4px padding + 1px hairline on each side. Fixed, not
+     max-content: a long value in the version line used to stretch it. */
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-m);
+  background: var(--panel-3);
+  box-shadow: 0 16px 34px -20px rgba(0, 0, 0, 0.85);
+  transform: translateY(-6px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform var(--ui-speed) var(--ui-curve),
+              opacity var(--ui-speed) var(--ui-curve),
+              visibility var(--ui-speed) var(--ui-curve);
+}
+
+.menu-dock[data-open="true"] .main-menu {
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Icons carry the meaning; the words stay for screen readers and tooltips. */
+.main-menu__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.main-menu__icon {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.main-menu__icon svg { width: 100%; height: 100%; }
+
+.main-menu__glyph {
+  font-size: var(--s-12);
+  font-weight: 750;
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+
+.main-menu .update-button__icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.main-menu .update-button__text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.main-menu .theme-toggle__icon {
+  width: 15px;
+  height: 15px;
+}
+
+.main-menu__rule {
+  height: 1px;
+  margin: var(--sp-1) var(--sp-3);
+  background: var(--panel-3);
+}
+
+.main-menu .main-menu__button.is-active {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--ground);
+  box-shadow: var(--glow);
+}
+
+/* The version lines are the only text in the column, set to the width the
+   buttons already claim so the border still stops where they stop. */
+.main-menu .system-meta {
+  margin-top: var(--sp-2);
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden;
+  background: none !important;
+  box-shadow: none !important;
+  text-align: center;
+  opacity: .55;
+}
+
+.main-menu .system-meta strong {
+  display: block;
+  color: var(--ink);
+  font-size: var(--s-7);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+/* The bridge is not connected and the figures are invented: the version goes
+   amber and the tooltip says so. */
+.main-menu .system-meta.is-placeholder {
+  opacity: 1;
+}
+
+.main-menu .system-meta.is-placeholder strong {
+  color: var(--s3);
+}
+
+/* ---- The screens leave the corner the dock sits in free ---- */
+.yesterday-header,
+.dashboard-header,
+.clients-header,
+.being-header,
+.reactivation-header {
+  /* Back, the menu and the collapse tab, plus the corner they sit in. */
+  padding-left: 108px;
+}
+
+/*
+  The screen grows out of the corner the dock occupies and folds back into it,
+  on transform and opacity only so the work stays on the compositor.
+*/
+.page {
+  transform-origin: 26px 26px;
+  transform: scale(0.985) !important;
+  transition: opacity var(--ui-speed) var(--ui-curve),
+              transform var(--ui-speed) var(--ui-curve),
+              visibility var(--ui-speed) var(--ui-curve) !important;
+}
+
+.page.is-active {
+  transform: none !important;
+}
+
+/* ---- One Back, and only one ----
+   Each screen still owns its own return control and its own origin logic;
+   the arrow in the dock walks them. They are simply not drawn. */
+.client-profile-back,
+.client-quest-back,
+.client-quest-being-back,
+.client-quest-reactivation-back,
+.being-card-return-reactivation,
+.reactivation-card-back-being,
+.app .reactivation-portal-back {
+  display: none !important;
+}
+
+/* =========================================================
+   v1.5.4.83 — THE WARNING GROWS OUT OF THE BUTTON
+
+   Save and exit used to answer with a window that arrived from the top edge
+   of the screen,
+unrelated to what had been pressed. It now opens at the
+   button's own corner and scales up to full size{
+  display: block !important;
+  place-items: initial;
+  padding: 0 !important;
+  background: rgba(0, 0, 0, .34) !important;
+}
+
+/* =========================================================
+   v1.5.4.83 — MOTION, THE CHEAP WAY
+
+   The progress bars are the one place a slower sweep says something: it
+   shows the bar filling rather than snapping.
+========================================================= */
+.being-progress__fill,
+.profile-quest-progress__fill,
+.quest-detail-progress__fill,
+.reactivation-quest-fill,
+.progress-fill,
+.being-card-quest-progress__fill {
+  transition-duration: 420ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --ui-speed: 1ms; }
+
+  .being-progress__fill,
+  .profile-quest-progress__fill,
+  .reactivation-quest-fill,
+  .being-card-quest-progress__fill {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* =========================================================
+   OVERLAPPING PANES
+
+   Only three things sit over a screen: the dock, its menu, and the cards.
+   They are the one place a surface needs to be told apart from the ground,
+   and one step of lightness plus a radius is enough to do it.
+========================================================= */
+
+:root {
+  /*
+    What the panes that overlap the screen are made of. Two steps, no blur:
+    over a black ground a frosted pane has nothing to frost.
+  */
+  --overlay-fill: var(--panel-3);
+  --overlay-fill-soft: var(--panel-2);
+  --scrim: rgba(0, 0, 0, .72);
+  /* The divider between rows is quieter than the one around a pane. */
+  --hairline-soft: var(--panel-3);
+}
+
+.menu-dock__back,
+.menu-dock__toggle,
+.main-menu__home,
+.main-menu .main-menu__button,
+.main-menu .main-menu-exit,
+.main-menu .update-button,
+.main-menu .theme-toggle {
+  background: rgba(255, 255, 255, .07) !important;
+  border-color: var(--line) !important;
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-dock__back:hover,
+  .menu-dock__toggle:hover,
+  .main-menu__home:hover,
+  .main-menu .main-menu__button:hover,
+  .main-menu .main-menu-exit:hover,
+  .main-menu .update-button:hover,
+  .main-menu .theme-toggle:hover {
+    background: var(--panel-3) !important;
+    box-shadow: var(--glow-soft) !important;
+  }
+}
+
+.menu-dock[data-open="true"] .menu-dock__toggle {
+  background: var(--panel-3) !important;
+  box-shadow: var(--glow-soft) !important;
+}
+
+/* ---- Cards: frosted,
+so the list underneath is present but quiet ---- */
+.being-card-modal,
+.reactivation-card-modal,
+.quest-history-modal,
+.bonus-history-modal,
+.quest-confirm-modal,
+.reactivation-history-modal,
+.client-quick-nav,
+[data-theme="dark"] .being-card-modal,
+[data-theme="dark"] .reactivation-card-modal,
+[data-theme="dark"] .quest-history-modal,
+[data-theme="dark"] .bonus-history-modal,
+[data-theme="dark"] .quest-confirm-modal {
+  background: var(--overlay-fill) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, .7) !important;
+}
+
+/* The panels inside a card are part of the same surface, not further
+   sheets stacked on it. */
+.reactivation-card-main-panel,
+.reactivation-card-notes,
+.reactivation-work-panel,
+.reactivation-card-strip article,
+.reactivation-card-block,
+.reactivation-work-section,
+.being-note-composer,
+.being-card-notes {
+  background: var(--panel-2) !important;
+  border-color: var(--line) !important;
+  box-shadow: none !important;
+}
+
+/* ---- Scrims tint, they do not blur: the card above does the frosting ---- */
+.being-card-overlay,
+.reactivation-card-overlay,
+.quest-confirm-overlay,
+.quest-history-overlay,
+.bonus-history-overlay,
+.reactivation-history-overlay,
+[data-theme="dark"] .being-card-overlay,
+[data-theme="dark"] .reactivation-card-overlay,
+[data-theme="dark"] .quest-confirm-overlay,
+[data-theme="dark"] .quest-history-overlay {
+  background: var(--scrim) !important;
+}
+
+/* ---- Screens: one surface with lines on it ---- */
+.yesterday-panel,
+.dashboard-panel,
+.clients-panel,
+.being-panel,
+.reactivation-panel,
+[data-theme="dark"] .yesterday-panel,
+[data-theme="dark"] .dashboard-panel,
+[data-theme="dark"] .clients-panel,
+[data-theme="dark"] .being-panel,
+
+/*
+  The inset highlights were the other half of the paper look: a one-pixel
+  light edge along the top of a plate is exactly how a raised sheet is drawn.
+  Nothing here is raised any more.
+*/
+.client-card,
+.being-row,
+.reactivation-row,
+.app.app--reactivation-portal .reactivation-search,
+.app.app--reactivation-portal .reactivation-count,
+.app.app--reactivation-portal .reactivation-summary-group,
+.app.app--reactivation-portal .reactivation-summary-group--queue,
+.app.app--reactivation-portal .reactivation-metric,
+.app.app--reactivation-portal .reactivation-table-shell,
+.app.app--reactivation-portal .reactivation-panel,
+.player-table__header {
+  box-shadow: none !important;
+}
+
+.client-card:hover,
+.being-row:hover,
+.reactivation-row:hover,
+.app.app--reactivation-portal .reactivation-row:hover {
+  box-shadow: none !important;
+}
+
+/* The pinned marker is information, not decoration, so it stays. */
+
+/* The frozen first column still needs to say it is frozen; a hairline says
+   it without the drop shadow that made it look like a separate sheet. */
+.reactivation-table__header > :first-child,
+.reactivation-client-cell,
+.app.app--reactivation-portal .reactivation-table__header > :first-child,
+.app.app--reactivation-portal .reactivation-client-cell {
+  box-shadow: 1px 0 0 var(--line) !important;
+}
+
+/* =========================================================
+   v1.5.4.87 — NO SHEETS
+
+   The last pass made the sheets transparent. They were still sheets: a panel
+   with a fill, a border and a corner radius, holding tiles with a fill, a
+   border and a corner radius, holding a table shell with a fill and a border,
+   holding a header with a fill and a border. Four boxes deep on every screen,
+   which is the notepad look no matter how faint each box is.
+
+   So the boxes go. There is one surface - the window - and everything on it
+   is separated by a hairline or by nothing at all. Fills are kept for two
+   jobs only: saying what the pointer is on, and saying what is selected.
+   Blur and a fill still belong to the dock, its menu and the cards, because
+   those genuinely sit over something else.
+========================================================= */
+
+/* ---- The screen is not a card on the window ---- */
+.yesterday-panel,
+.dashboard-panel,
+.clients-panel,
+.being-panel,
+.reactivation-panel,
+[data-theme="dark"] .yesterday-panel,
+[data-theme="dark"] .dashboard-panel,
+[data-theme="dark"] .clients-panel,
+[data-theme="dark"] .being-panel,
+[data-theme="dark"] .reactivation-panel {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/*
+  ---- Surfaces ----
+  A surface belongs to a group, not to every figure inside it. One panel
+  holds a row of readings; the readings themselves are told apart by space
+  and by type, which is what keeps a screen from reading as a wall of
+  bricks. The step from the ground is wide enough to see without a border.
+*/
+.reactivation-summary-group,
+.yesterday-summary,
+.dashboard-summary,
+.reactivation-card-main-panel,
+.reactivation-work-panel,
+.client-card,
+.dashboard-top-card,
+.profile-card,
+.quest-detail-card,
+.reactivation-card-notes,
+.being-card-notes,
+.being-note-composer,
+.player-table-wrapper,
+.being-table-shell,
+.reactivation-table-shell {
+  border: 0 !important;
+  border-radius: var(--r-m) !important;
+  background: var(--panel-2) !important;
+  box-shadow: none !important;
+}
+
+/*
+  Everything that sits inside one of those is not a box of its own. It keeps
+  its padding so the grid still breathes, and gives up its fill, its border
+  and its corner.
+*/
+.reactivation-metric,
+.yesterday-metric,
+.dashboard-metric,
+.reactivation-card-strip article,
+.reactivation-card-block,
+.reactivation-work-section,
+.reactivation-12m-play-block,
+.being-note-preview {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/*
+  ---- Lists ----
+  A list inside a panel adds nothing around itself: the panel is already the
+  surface, and a second box inside it is the brick wall again. The three
+  table shells are the panel in their own screens, so they are in the
+  surface group above and not here.
+*/
+.being-note-list,
+.reactivation-comm-list,
+.reactivation-note-history-list,
+.bonus-history-list {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/*
+  ---- Rows ----
+  A list of clients is a list of clients, not one slab scored with lines.
+  Each row is its own small surface one step above the panel it sits on,
+  with a gap instead of a rule between them, so the eye groups by shape
+  rather than by counting stripes.
+*/
+.reactivation-row,
+.being-row,
+.player-table__row {
+  border: 0 !important;
+  border-radius: var(--r-s) !important;
+  background: var(--panel-3) !important;
+  margin-bottom: var(--sp-3) !important;
+}
+
+.reactivation-row:last-child,
+.being-row:last-child,
+.player-table__row:last-child {
+  margin-bottom: 0 !important;
+}
+
+/*
+  A column header sticks to the top of its list, so it cannot be
+  transparent: rows scrolling up would read straight through it. It carries
+  the panel colour and sits above them, and the rows disappear under it.
+*/
+.player-table__header,
+.being-table__header,
+.reactivation-table__header,
+.profile-performance-header {
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  background: var(--panel-2) !important;
+  box-shadow: none !important;
+}
+
+/*
+  Notes and log entries stay as lines in a list: they are prose of varying
+  length, and a tile around each one would fight the text. The client rows
+  are tiles instead - see Rows above.
+*/
+.being-note-item,
+.reactivation-comm-item {
+  border: 0 !important;
+  border-bottom: 1px solid var(--hairline-soft) !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/*
+  A fill is left with one job: saying where the pointer is, and what is
+  selected. Nothing else on a screen is filled.
+*/
+@media (hover: hover) and (pointer: fine) {
+  .player-table__row:hover,
+  .being-row:hover,
+  .reactivation-row:hover,
+  .client-card:hover,
+}
+
+.being-row.is-pinned {
+  background: color-mix(in srgb, var(--s3) 7%, transparent) !important;
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--s3) 78%, transparent) !important;
+}
+
+/* The frozen first column of the Reactivation table is still frozen; the line
+   that says so is the same hairline as every other divider. */
+.reactivation-client-cell,
+.reactivation-table__header > :first-child,
+.app.app--reactivation-portal .reactivation-client-cell,
+.app.app--reactivation-portal .reactivation-table__header > :first-child {
+  background: none !important;
+  box-shadow: 1px 0 0 var(--line) !important;
+}
+
+.reactivation-row:hover .reactivation-client-cell,
+.app.app--reactivation-portal .reactivation-row:hover .reactivation-client-cell {
+  background: none !important;
+}
+
+/* ---- Fields: a line to write on, not a slab ---- */
+.app input,
+.app textarea,
+.app select,
+.clients-search-wrapper,
+.clients-search,
+.being-search,
+.reactivation-search,
+.reactivation-offer-fields input,
+.reactivation-offer-fields select,
+.reactivation-comm-composer input,
+.reactivation-comm-composer textarea,
+.being-note-date,
+.being-card-notes .being-note-text,
+[data-theme="dark"] .app input,
+[data-theme="dark"] .app textarea,
+[data-theme="dark"] .app select {
+  border-color: var(--line) !important;
+  background: var(--panel-2) !important;
+  box-shadow: none !important;
+}
+
+.app input:focus,
+.app textarea:focus,
+.app select:focus,
+.being-search.is-open,
+
+/* ---- Small controls keep their outline; none of them keep a slab ---- */
+.being-pin,
+.being-quest-filter,
+.reactivation-contact-button,
+.reactivation-contact-undo,
+.reactivation-clear-filters,
+.reactivation-metric--filter,
+.quest-history-open,
+.reactivation-membership-badge,
+.reactivation-add-button,
+.being-card-reactivation,
+.reactivation-work-toolrail button,
+.reactivation-offer-editor > button,
+.client-quick-nav__actions button {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .being-pin:hover,
+  .being-quest-filter:hover,
+  .reactivation-contact-button:hover,
+  .reactivation-contact-undo:not(:disabled):hover,
+  .reactivation-clear-filters:hover,
+  .quest-history-open:hover,
+  .reactivation-add-button:hover,
+  .being-card-reactivation:not(:disabled):hover,
+  .reactivation-work-toolrail button:hover,
+  .reactivation-offer-editor > button:hover,
+  .client-quick-nav__actions button:not(:disabled):hover {
+    background: var(--panel-3) !important;
+  }
+}
+
+/* Selected is the one thing that carries light. */
+.being-quest-filter[aria-pressed="true"],
+.reactivation-metric--filter.is-active,
+.reactivation-metric.is-active {
+  background: var(--panel-3) !important;
+  box-shadow: var(--glow) !important;
+}
+
+/* =========================================================
+   v1.5.4.87 — INSIDE A CARD, THE SAME RULE
+
+   A card is one surface. The sections in it were surfaces of their own -
+   fill, border, radius - which put the notepad back inside the thing that had
+   just been cleared of it. They are laid out by their headings and by the
+   space between them now.
+
+   Written against both themes explicitly: the fills these replace are set
+   under [data-theme=...], which outranks a plain class selector.
+========================================================= */
+
+.being-card-modal section,
+.being-card-modal article,
+.reactivation-card-modal section,
+.reactivation-card-modal article,
+.being-card-quest,
+.being-note-composer,
+.being-note-list__empty,
+.reactivation-statistics-panel,
+.reactivation-notes-panel-body,
+.reactivation-comm-composer,
+.reactivation-comm-empty,
+.reactivation-card-block,
+.reactivation-card-main-panel,
+.reactivation-card-notes,
+.reactivation-work-section,
+.reactivation-work-panel,
+.reactivation-12m-play-block,
+.cbar,
+.quest-detail-card,
+.profile-performance-panel,
+:root[data-theme="dark"] .being-card-modal section,
+:root[data-theme="dark"] .being-card-modal article,
+:root[data-theme="dark"] .reactivation-card-modal section,
+:root[data-theme="dark"] .reactivation-card-modal article,
+:root[data-theme="dark"] .being-card-quest,
+:root[data-theme="dark"] .being-note-composer,
+:root[data-theme="dark"] .being-note-list__empty,
+:root[data-theme="dark"] .reactivation-statistics-panel,
+:root[data-theme="dark"] .reactivation-notes-panel-body,
+:root[data-theme="dark"] .reactivation-comm-composer,
+:root[data-theme="dark"] .reactivation-comm-empty,
+:root[data-theme="dark"] .reactivation-card-block,
+:root[data-theme="dark"] .reactivation-card-main-panel,
+:root[data-theme="dark"] .reactivation-card-notes,
+:root[data-theme="dark"] .reactivation-work-section,
+:root[data-theme="dark"] .reactivation-work-panel,
+:root[data-theme="dark"] .reactivation-12m-play-block,
+:root[data-theme="dark"] .cbar,
+:root[data-theme="dark"] .quest-detail-card,
+:root[data-theme="dark"] .profile-performance-panel {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* Neighbouring sections are told apart by a line, not by two boxes. */
+.reactivation-card-modal section + section,
+.reactivation-card-modal article + article,
+.being-card-modal section + section {
+  border-top: 1px solid var(--hairline-soft) !important;
+}
+
+/* A field is still a field: it says where the typing goes. */
+.being-note-date,
+.being-card-notes .being-note-text,
+.being-card-date-input,
+.reactivation-comm-composer input,
+.reactivation-comm-composer textarea,
+.reactivation-offer-fields input,
+.reactivation-offer-fields select,
+:root[data-theme="dark"] .being-note-date,
+:root[data-theme="dark"] .being-card-notes .being-note-text,
+:root[data-theme="dark"] .being-card-date-input,
+:root[data-theme="dark"] .reactivation-comm-composer input,
+:root[data-theme="dark"] .reactivation-comm-composer textarea,
+:root[data-theme="dark"] .reactivation-offer-fields input,
+:root[data-theme="dark"] .reactivation-offer-fields select {
+  border: 1px solid var(--line) !important;
+  background: rgba(255, 255, 255, .04) !important;
+  box-shadow: none !important;
+}
+
+/* A control is still a control: it says it can be pressed. */
+.being-card-today,
+.being-card-pin,
+.being-card-close,
+.being-card-reactivation,
+.reactivation-card-close,
+.reactivation-period-toggle,
+.reactivation-history-action,
+.reactivation-notes-toggle,
+.quest-history-open,
+:root[data-theme="dark"] .being-card-today,
+:root[data-theme="dark"] .being-card-pin,
+:root[data-theme="dark"] .being-card-close,
+:root[data-theme="dark"] .being-card-reactivation,
+:root[data-theme="dark"] .reactivation-card-close,
+:root[data-theme="dark"] .reactivation-period-toggle,
+:root[data-theme="dark"] .reactivation-history-action,
+:root[data-theme="dark"] .reactivation-notes-toggle,
+:root[data-theme="dark"] .quest-history-open {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .being-card-today:hover,.being-card-pin:hover,.being-card-close:hover,.being-card-reactivation:hover,.reactivation-card-close:hover,.reactivation-period-toggle:hover,.reactivation-history-action:hover,.reactivation-notes-toggle:hover,.quest-history-open:hover {
+    background: var(--panel-3) !important;
+  }
+}
+
+/*
+  The two grids that were still drawing a box around every cell. A grid is
+  told apart by the lines between its cells, so the outer box goes and the
+  inner dividers stay - which is what the rest of the app now does.
+*/
+.reactivation-activity-grid,
+:root[data-theme="dark"] .reactivation-activity-grid {
+  border: 0 !important;
+  background: none !important;
+}
+
+/* The grid keeps its own gap; the divider sits in it, and the cell keeps all
+   the width it had - adding padding here truncated "Withdrawals". */
+.reactivation-activity-grid > *,
+:root[data-theme="dark"] .reactivation-activity-grid > * {
+  border: 0 !important;
+  border-left: 1px solid var(--hairline-soft) !important;
+  border-radius: 0 !important;
+  background: none !important;
+}
+
+/* Nothing to the left of the first cell in a row to divide it from. */
+.reactivation-activity-grid > :first-child {
+  border-left: 0 !important;
+}
+
+.reactivation-offer-content > div,
+:root[data-theme="dark"] .reactivation-offer-content > div {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* =========================================================
+   ONE GROUND, AND NOTHING ON TOP OF IT
+
+   One ground for the whole window, and it is the thing you see. Everything
+   above it is transparent: no screen fill, no page fill, no block fill. What
+   is left of a control is its outline, and what is left of a list is its
+   dividing lines.
+========================================================= */
+
+/*
+  The ground is one flat black. The brushed-metal sweep that used to live
+  here - four close greys on a diagonal, plus a corner sheen - is gone with
+  the rest of the old surface language: layers now separate by a step of
+  lightness and a radius, not by a gradient behind them.
+*/
+html,
+body {
+  background-color: var(--ground);
+  background-image: none;
+}
+
+/* ---- Everything above the ground lets it through ---- */
+.app,
+.page,
+.page-container,
+.yesterday-page,
+.dashboard-page,
+.clients-page,
+.being-page,
+.reactivation-panel,
+.clients-view-stack,
+.clients-directory,
+.client-profile-view,
+.client-quest-view,
+[data-theme="dark"] .app,
+[data-theme="dark"] .yesterday-page,
+[data-theme="dark"] .dashboard-page,
+[data-theme="dark"] .clients-page,
+[data-theme="dark"] .being-page,
+[data-theme="dark"] .app.app--reactivation-portal .reactivation-panel {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+/* ---- Controls: an outline, not a slab ---- */
+.app input,
+.app textarea,
+.app select,
+.clients-search,
+.clients-search-wrapper,
+.being-search,
+.reactivation-search,
+.being-note-date,
+.being-card-notes .being-note-text,
+.being-card-date-input,
+.reactivation-comm-composer,
+.reactivation-comm-composer input,
+.reactivation-comm-composer textarea,
+.reactivation-offer-fields input,
+.reactivation-offer-fields select,
+.being-pin,
+.being-card-pin,
+.being-card-close,
+.being-card-today,
+.being-card-reactivation,
+.being-quest-filter,
+.reactivation-card-close,
+.reactivation-contact-button,
+.reactivation-contact-undo,
+.reactivation-clear-filters,
+.reactivation-period-toggle,
+.reactivation-history-action,
+.reactivation-notes-toggle,
+.reactivation-work-toolrail button,
+.reactivation-offer-editor > button,
+.quest-history-open,
+.client-quick-nav__actions button,
+:root[data-theme="dark"] .app input,
+:root[data-theme="dark"] .app textarea,
+:root[data-theme="dark"] .app select,
+:root[data-theme="dark"] .being-note-date,
+:root[data-theme="dark"] .being-card-notes .being-note-text {
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Focus says where the typing goes with the outline, not with a fill. */
+.app input:focus,
+.app textarea:focus,
+.app select:focus,
+.being-search.is-open,
+.reactivation-search:focus-within {
+  background: none !important;
+  background-color: transparent !important;
+  border-color: var(--focus-line) !important;
+  box-shadow: none !important;
+}
+
+:root { --focus-line: var(--ink-3); }
+
+/* ---- The pointer and the selection are the only fills on a screen ---- */
+@media (hover: hover) and (pointer: fine) {
+  .player-table__row:hover,
+  .being-row:hover,
+  .reactivation-row:hover,
+  .client-card:hover,
+  .app.app--reactivation-portal .reactivation-row:hover {
+    background: var(--panel-2) !important;
+  }
+
+  .being-pin:hover,
+  .being-quest-filter:hover,
+  .being-card-pin:hover,
+  .being-card-close:hover,
+  .being-card-today:hover,
+  .reactivation-card-close:hover,
+  .reactivation-contact-button:hover,
+  .reactivation-contact-undo:not(:disabled):hover,
+  .reactivation-clear-filters:hover,
+  .reactivation-period-toggle:hover,
+  .reactivation-history-action:hover,
+  .reactivation-work-toolrail button:hover,
+  .reactivation-offer-editor > button:hover,
+  .quest-history-open:hover {
+    background: var(--panel-3) !important;
+  }
+}
+
+/*
+  The loader is the first thing on screen and the last thing to leave; it
+  stands on the same ground as everything after it.
+*/
+.app-loader,
+[data-theme="dark"] .app-loader {
+  background-color: var(--ground) !important;
+  background-image: none !important;
+}
+
+/*
+  These four still painted an opaque white over the ground,
+  from rules written with the theme attribute - which outranks a plain class.
+*/
+:root[data-theme="dark"] .clients-directory,
+:root[data-theme="dark"] .client-profile-view,
+:root[data-theme="dark"] .client-quest-view,
+:root[data-theme="dark"] .profile-card,
+:root[data-theme="dark"] .clients-view-stack {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Headers inside a card are part of the card, not a strip laid on it. */
+.reactivation-card-header,
+.reactivation-notes-panel-header,
+.reactivation-casino-product,
+.being-card-header,
+:root[data-theme="dark"] .reactivation-card-header,
+:root[data-theme="dark"] .reactivation-notes-panel-header,
+:root[data-theme="dark"] .reactivation-casino-product,
+:root[data-theme="dark"] .being-card-header {
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* =========================================================
+   v1.5.4.89 — BUTTONS, NOT A PANEL BEHIND THEM
+
+   The dock was a pane with buttons inside it. The pane is gone: what is in
+   the corner is the buttons themselves, each its own small surface, so
+   the ground carries straight through the gaps between them.
+========================================================= */
+
+.menu-dock__bar,
+.main-menu,
+[data-theme="dark"] .menu-dock__bar,
+[data-theme="dark"] .main-menu {
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/*
+  Each button carries the fill and the blur the pane used to - and carries
+  more of both than the pane did, because a button standing on its own over a
+  list has nothing else to separate it from what is underneath.
+*/
+:root {
+  --dock-button-fill: var(--panel-2);
+  --dock-button-line: var(--line);
+}
+
+.menu-dock__back,
+.menu-dock__toggle,
+.menu-dock__collapse,
+.main-menu__home,
+.main-menu .main-menu__button,
+.main-menu .main-menu-exit,
+.main-menu .update-button,
+.main-menu .theme-toggle {
+  background: var(--dock-button-fill) !important;
+  border-color: var(--dock-button-line) !important;
+}
+
+/* The bar and the column keep their own spacing without a box around it. */
+
+.main-menu {
+  gap: var(--sp-4) !important;
+  margin-top: var(--sp-4) !important;
+}
+
+/* The separator was a line inside a pane; with no pane it is just a gap. */
+.main-menu__rule {
+  background: none !important;
+  height: 4px !important;
+  margin: 0 !important;
+}
+
+.main-menu .system-meta {
+  margin-top: var(--sp-3) !important;
+}
+
+/* ---- The nested Clients views draw their own headings ---- */
+.client-profile-header,
+.client-quest-header {
+  padding-left: 108px;
+}
+
+/* =========================================================
+   v1.5.4.90 — OUTLINES BACK, EVERYTHING TIGHTER
+
+   Clearing the boxes went one step too far: a field with no outline does not
+   look like somewhere you can type. Every input gets its outline back - a
+   saved quest included, where the fields had been made invisible on purpose
+   and turned out to be unreadable as a form.
+
+   Nothing gets its fill back. An outline says "type here"; a fill says "this
+   is a separate sheet", and that is the part that stays gone.
+
+   The second half of this is size. The card and the quest were laid out when
+   panels had padding of their own to justify; without the panels the same
+   spacing just reads as slack.
+========================================================= */
+
+:root {
+  /*
+    A divider and a control edge are not the same job. --line separates
+    things that are already apart; a button or a field sitting on a panel
+    has only its edge to say where it begins, so it gets a stronger one.
+  */
+  --field-line: color-mix(in srgb, var(--ink-3) 52%, transparent);
+  --field-line-strong: var(--ink-3);
+}
+
+/* ---- Every field is outlined, in every state ---- */
+.app input,
+.app textarea,
+.app select,
+.clients-search,
+.being-search,
+.reactivation-search,
+.being-note-date,
+.being-card-notes .being-note-text,
+.being-card-date-input,
+.reactivation-comm-composer input,
+.reactivation-comm-composer textarea,
+.reactivation-offer-fields input,
+.reactivation-offer-fields select,
+.quest-name-input,
+.quest-edit-input,
+.quest-edit-textarea,
+.quest-goal-input,
+.quest-mechanic-select,
+.client-quest-view:not(.is-editing) .quest-edit-input,
+.client-quest-view:not(.is-editing) .quest-edit-textarea,
+.client-quest-view:not(.is-editing) .quest-name-input,
+.client-quest-view:not(.is-editing) .quest-mechanic-select,
+.client-quest-view:not(.is-editing) .quest-goal-input,
+:root[data-theme="dark"] .client-quest-view:not(.is-editing) .quest-edit-input,
+:root[data-theme="dark"] .client-quest-view:not(.is-editing) .quest-edit-textarea {
+  border: 1px solid var(--field-line) !important;
+  border-radius: var(--r-s) !important;
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/*
+  A field that already sits in a wrapper does not draw a second outline
+  inside the first. The wrapper is the field: it carries the border, the
+  radius and the icon, and the input is only the text in it.
+*/
+.reactivation-search input,
+.being-search input,
+.clients-search-wrapper input,
+.reactivation-comm-composer input,
+.reactivation-comm-composer textarea {
+  border: 0 !important;
+}
+
+/*
+  Inside the quest card a field is a line to write on. Seven boxed inputs
+  stacked in one column - name, mechanic, section, currency, goal, dates -
+  read as scaffolding rather than as a form, so they keep only the rule
+  under them and take their corners off.
+*/
+.client-quest-view input,
+.client-quest-view select,
+.client-quest-view textarea,
+.quest-detail-card input,
+.quest-detail-card select,
+.quest-detail-card textarea {
+  border: 0 !important;
+  border-bottom: 1px solid var(--field-line) !important;
+  border-radius: 0 !important;
+}
+
+.client-quest-view input:focus,
+.client-quest-view select:focus,
+.client-quest-view textarea:focus,
+.quest-detail-card input:focus,
+.quest-detail-card select:focus,
+.quest-detail-card textarea:focus {
+  border-bottom-color: var(--field-line-strong) !important;
+}
+
+/* The saved quest had its padding removed with its outline; it needs it back
+   or the text sits on the line. */
+.client-quest-view:not(.is-editing) .quest-edit-input,
+.client-quest-view:not(.is-editing) .quest-edit-textarea,
+.client-quest-view:not(.is-editing) .quest-name-input,
+.client-quest-view:not(.is-editing) .quest-goal-input {
+  padding-left: var(--sp-9) !important;
+  padding-right: var(--sp-9) !important;
+}
+
+.app input:focus,
+.app textarea:focus,
+.app select:focus,
+.quest-edit-input:focus,
+.quest-edit-textarea:focus,
+.quest-name-input:focus,
+.quest-goal-input:focus,
+.being-search.is-open,
+.reactivation-search:focus-within {
+  border-color: var(--field-line-strong) !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* ---- The quest block is outlined, and it is not a billboard ---- */
+/*
+  Written through .being-card-modal on purpose: the rule that cleared every
+  section inside a card matches this as `... .being-card-modal section`, and a
+  plain class alone loses to it. Without the extra class the border falls back
+  to its initial value, which is no border at all - the block looked padded
+  but unoutlined.
+*/
+.being-card-modal .being-card-quest,
+.profile-quest-card,
+.quest-live-panel,
+:root[data-theme="dark"] .being-card-modal .being-card-quest {
+  padding: var(--sp-7) var(--sp-10) !important;
+  border: 1px solid var(--field-line) !important;
+  border-radius: var(--r-s) !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.being-card-quest {
+  gap: var(--sp-14) !important;
+  min-height: 0 !important;
+}
+
+/* ---- Last contact and follow-up were taking a third of the card ---- */
+.being-card-date-input {
+  height: 28px !important;
+  min-height: 28px !important;
+  padding: 0 var(--sp-9) !important;
+  font-size: var(--s-10)!important;
+}
+
+.being-card-today {
+  width: 28px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+}
+
+.being-card-body {
+  gap: var(--sp-9) !important;
+  padding: var(--sp-10) var(--sp-12) !important;
+}
+
+.being-card-header {
+  padding: var(--sp-10) var(--sp-12) var(--sp-8) !important;
+  gap: var(--sp-12) !important;
+}
+
+.being-card-footer {
+  padding: var(--sp-8) var(--sp-12) !important;
+}
+
+.being-card-notes {
+  padding: 0 !important;
+  gap: var(--sp-6) !important;
+}
+
+.being-note-composer {
+  padding: 0 !important;
+  gap: var(--sp-5) !important;
+}
+
+.being-note-date {
+  height: 28px !important;
+  min-height: 28px !important;
+  width: 104px !important;
+  padding: 0 var(--sp-8) !important;
+  border-radius: var(--r-s) !important;
+  font-size: var(--s-10)!important;
+}
+
+.being-card-notes .being-note-text {
+  height: 28px !important;
+  min-height: 28px !important;
+  padding: 0 var(--sp-10) !important;
+  border-radius: var(--r-s) !important;
+  font-size: var(--s-10)!important;
+}
+
+.being-note-save {
+  width: 28px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+}
+
+/* ---- Notes read as comments, not as chat bubbles ----
+   They were pill-shaped blocks aligned to one side, which is a messaging
+   app, not a log. A note is a date and a line of text on one row, with the
+   rows separated the way every other list here is. */
+.being-note-list,
+.reactivation-comm-list,
+.reactivation-note-history-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+.being-note-item,
+.being-note-item.is-undated,
+:root[data-theme="dark"] .being-note-item {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  align-self: stretch !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 18px !important;
+  align-items: start !important;
+  gap: var(--sp-6) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--hairline-soft) !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.being-note-item:last-child {
+  border-bottom: 0 !important;
+}
+
+.being-note-item__edit,
+.being-note-item.is-undated .being-note-item__edit {
+  display: grid !important;
+  grid-template-columns: 62px minmax(0, 1fr) !important;
+  align-items: baseline !important;
+  gap: var(--sp-8) !important;
+  padding: var(--sp-6) 0 !important;
+  border: 0 !important;
+  background: none !important;
+  text-align: left !important;
+}
+
+/* The date leads the line, the way a comment is stamped. */
+.being-note-item__edit span {
+  order: 0;
+  font-size: var(--s-8)!important;
+  letter-spacing: .02em !important;
+  white-space: nowrap !important;
+}
+
+.being-note-item__edit strong {
+  order: 1;
+  font-size: var(--s-10)!important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  text-align: left !important;
+}
+
+/* A note with no date still starts where the dated ones do. */
+.being-note-item.is-undated .being-note-item__edit {
+  grid-template-columns: 62px minmax(0, 1fr) !important;
+}
+
+.being-note-item.is-undated .being-note-item__edit::before {
+  content: "";
+}
+
+.being-note-item__delete {
+  align-self: start !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  font-size: var(--s-12)!important;
+  line-height: 24px !important;
+  opacity: .45;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .being-note-item:hover .being-note-item__delete { opacity: 1; }
+  .being-note-item:hover { border-color: var(--field-line) !important; }
+}
+
+.being-note-list__empty {
+  padding: var(--sp-12) 0 !important;
+  border: 0 !important;
+  background: none !important;
+  font-size: var(--s-10)!important;
+  text-align: center !important;
+}
+
+/* ---- The quest fields, tighter ---- */
+.quest-name-input {
+  height: 32px !important;
+  min-height: 32px !important;
+  font-size: var(--s-16)!important;
+}
+
+.quest-edit-input,
+.quest-goal-input,
+.quest-mechanic-select {
+  height: 28px !important;
+  min-height: 28px !important;
+  padding: 0 var(--sp-9) !important;
+  font-size: var(--s-11)!important;
+}
+
+.quest-edit-textarea {
+  min-height: 56px !important;
+  padding: var(--sp-6) var(--sp-9) !important;
+  font-size: var(--s-11)!important;
+}
+
+.quest-detail-card,
+.quest-detail-columns > .quest-detail-card {
+  padding: 0 !important;
+  gap: var(--sp-6) !important;
+}
+
+.quest-detail-columns {
+  gap: var(--sp-12) !important;
+}
+
+/* The note list was sized for seven rows of the old bubble; a comment row is
+   half that height, so the empty space under two notes was most of the card. */
+.being-card-modal .being-note-list {
+  min-height: 0 !important;
+  max-height: 168px !important;
+  overflow-y: auto !important;
+}
+
+.being-card-modal .being-card-notes {
+  min-height: 0 !important;
+}
+
+.being-card-modal .being-card-body {
+  min-height: 0 !important;
+}
+
+/* =========================================================
+   v1.5.4.91 — THE WINDOW IS THE SIZE OF WHAT IS IN IT
+
+   On a tall screen a two-row list was sitting in a 1400px window with 1100px
+   of nothing under it, and the quest form used half the width. Two causes:
+   controls pinned to the bottom of a full-height container, which makes the
+   content as tall as the window by definition, and a window that always took
+   the whole work area whatever it was holding.
+
+   Both are fixed here. The pinned controls go back into the flow, the views
+   stop claiming the full height, and the window measures what is actually
+   drawn and shrinks to it.
+========================================================= */
+
+/* ---- Nothing is pinned to the bottom of a full-height box ---- */
+.quest-history-open {
+  position: static !important;
+  align-self: flex-start !important;
+  margin-top: var(--sp-10) !important;
+  height: 30px !important;
+  min-width: 92px !important;
+  font-size: var(--s-9)!important;
+}
+
+/* ---- The stacked Clients views are as tall as their content ---- */
+.clients-directory,
+.client-profile-view,
+.client-quest-view {
+  bottom: auto !important;
+  height: auto !important;
+  max-height: 100% !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ---- The quest form lines up on one grid ----
+   Tracking goal and reward were the two fields that started somewhere else,
+   which is what made the form look scattered. */
+.quest-goal-input,
+.quest-detail-card .quest-edit-input {
+  width: 100% !important;
+  max-width: 260px !important;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.quest-goal-row,
+.quest-mechanic-row {
+  align-items: end !important;
+}
+
+/* ---- Portrait: the three closing columns stack ---- */
+@media (max-aspect-ratio: 1/1), (max-width: 900px) {
+  .quest-detail-columns {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: var(--sp-10) !important;
+  }
+
+  .yesterday-summary,
+  .dashboard-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* A divider to the left only makes sense while there is something to the
+     left; stacked, the rows divide top to bottom instead. */
+  .yesterday-summary > .yesterday-metric + .yesterday-metric,
+  .dashboard-summary > .dashboard-metric + .dashboard-metric {
+    border-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .yesterday-summary > .yesterday-metric:nth-child(2n),
+  .dashboard-summary > .dashboard-metric:nth-child(2n) {
+    border-left: 1px solid var(--line) !important;
+    padding-left: var(--sp-12) !important;
+  }
+}
+
+/*
+  Tracking goal was the one field that started somewhere else: its label took
+  a 1fr column and pushed the input to the right edge, so the form had a
+  field hanging off on its own. Label above, field where every other field
+  starts.
+*/
+.quest-goal-field {
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: var(--sp-4) !important;
+}
+
+.quest-goal-field .quest-goal-input {
+  width: 100% !important;
+  max-width: 260px !important;
+  text-align: left !important;
+}
+
+/* =========================================================
+   v1.5.4.93 — GEOMETRY
+
+   A textarea does not centre its text the way an input does: it starts at the
+   top of the box whatever the box is. Used as a single-line field it has to
+   be told, or the text sits high and reads as if it is falling out.
+
+   The dock stacks: the menu opens from under Back rather than beside it, and
+   everything in it is a tenth larger.
+========================================================= */
+
+/* ---- Single-line textareas centre their line ---- */
+.being-card-notes .being-note-text,
+.reactivation-comm-composer textarea,
+:root[data-theme="dark"] .being-card-notes .being-note-text {
+  /* box 28 - 2 of border = 26 of room for one 26px line */
+  line-height: 26px !important;
+  padding-top: 0;
+  padding-bottom: 0;
+  resize: none;
+}
+
+/* Its neighbours are the same height, so they sit on the same line. */
+.being-note-date,
+.being-note-save {
+  align-self: center !important;
+}
+
+/* ---- The dock stacks: menu under Back ---- */
+.menu-dock__bar {
+  display: grid !important;
+  grid-template-columns: auto auto !important;
+  justify-content: start !important;
+  align-items: start !important;
+  gap: var(--sp-4) !important;
+}
+
+.menu-dock__back     { grid-column: 1; grid-row: 1; }
+.menu-dock__collapse { grid-column: 2; grid-row: 1; }
+.menu-dock__toggle   { grid-column: 1; grid-row: 2; }
+
+/* On the main menu there is no Back and nothing to collapse, so the one
+   button there is the first thing, not the second. */
+:root[data-shell="home"] .menu-dock__toggle { grid-row: 1; }
+
+/* With nothing in the second column the bar was still reserving its gap. */
+
+/* ---- A tenth larger, and the collapse tab wide enough to hit ---- */
+.menu-dock__back,
+.menu-dock__toggle,
+.main-menu__home,
+.main-menu .main-menu__button,
+.main-menu .main-menu-exit,
+.main-menu .update-button,
+.main-menu .theme-toggle {
+  width: 33px !important;
+  min-width: 33px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  /* Rounded, not circular: a later rule stretches these past their 33px
+     box, and 50% on a non-square button draws an ellipse. */
+  border-radius: var(--r-s) !important;
+}
+
+.menu-dock__collapse {
+  width: 22px !important;
+  min-width: 22px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  border-radius: var(--r-s) !important;
+}
+
+.main-menu {
+  width: 33px !important;
+}
+
+.main-menu__icon,
+.menu-dock__mark {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+.menu-dock__chevron {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.menu-dock__arrow { font-size: 15px !important; }
+
+.main-menu__glyph { font-size: var(--s-13)!important; }
+
+.main-menu .update-button__icon { font-size: var(--s-16)!important; }
+
+.main-menu .theme-toggle__icon {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+.main-menu .system-meta strong { font-size: var(--s-7)!important; }
+
+/* ---- The screens clear the taller cluster ---- */
+.yesterday-header,
+.dashboard-header,
+.clients-header,
+.being-header,
+.reactivation-header,
+.client-profile-header,
+.client-quest-header {
+  padding-left: 88px;
+}
+
+.app.app--reactivation-portal .reactivation-header {
+  padding-left: 88px !important;
+}
+
+/*
+  Whole pixels down the vertical rhythm. The page padding was clamp(12px, 1vw,
+  20px), which is 19.2px on a 1920 display: every row below it then starts on
+  a fraction, and a hairline on a fraction is drawn as two grey half-pixels
+  instead of one line. Fixed values, and row heights that do not depend on
+  what happens to be inside them.
+*/
+.yesterday-page,
+.dashboard-page,
+.clients-page,
+.being-page {
+  padding: var(--sp-16) !important;
+}
+
+.being-row,
+.app .being-row {
+  min-height: 48px !important;
+}
+
+.being-table__header,
+.reactivation-table__header {
+  min-height: 28px !important;
+  height: 28px !important;
+}
+
+/* The Yesterday header carries sort controls and needs 32; pinning it to 28
+   clipped them. */
+.player-table__header {
+  min-height: 32px !important;
+  height: auto !important;
+}
+
+.reactivation-row,
+.app.app--reactivation-portal .reactivation-row {
+  min-height: 44px !important;
+}
+
+.player-table__row {
+  min-height: 32px !important;
+}
+
+/* The heading was 40.95px tall because its title is sized in vw; everything
+   below it inherited that fraction. A whole minimum ends it. */
+/*
+  The dock is fixed in the top-left corner of every screen, so every screen
+  has to leave that corner alone. One clearance for all five, measured from
+  the dock's own box (20px in, about 150 wide) plus a gap - Reactivation was
+  missing from the list that handles this and the back button sat on top of
+  its panel.
+*/
+:root {
+  --dock-clearance: 192px;
+}
+
+.yesterday-header,
+.dashboard-header,
+.clients-header,
+.being-header,
+.reactivation-header {
+  min-height: 44px !important;
+  align-items: center !important;
+  padding-left: var(--dock-clearance) !important;
+}
+
+/* The Reactivation summary came out 77.5px tall, which put the list and every
+   row in it on a half pixel - a hairline on a half pixel is drawn as two grey
+   halves rather than one line. */
+.app.app--reactivation-portal .reactivation-summary,
+.reactivation-summary {
+  min-height: 78px !important;
+}
+
+.app.app--reactivation-portal .reactivation-metric,
+.reactivation-metric {
+  min-height: 62px !important;
+}
+
+/* Whole-pixel centring inside a row: the pin was landing on a half pixel
+   because the row centred it against an odd amount of padding. */
+.being-row,
+.app .being-row {
+  align-items: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.being-pin {
+  align-self: center !important;
+}
+
+/* =========================================================
+   v1.5.4.98 — THE ENGRAVED PLATE
+
+   Chrome will not draw a window narrower than 178px, and 16 of those go to
+   the frame the bridge clips. That leaves 162 of page for a dock that is 53
+   wide, and the 109 left over read as a window that failed to shrink.
+
+   They are given something to be instead: a brushed plate with the name
+   engraved down it, so the corner reads as one small object rather than a
+   button with a gap beside it. Only in the corner - on a screen the page
+   fills the window and there is nothing left over.
+========================================================= */
+
+.dock-plate {
+  position: fixed;
+  inset: 0;
+  z-index: 4900;
+  display: none;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: var(--sp-10) var(--sp-8);
+  overflow: hidden;
+  pointer-events: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  /*
+    No texture. The cross-hatch read as a stain rather than as a surface at this
+    size - a panel this small has too little room for a pattern to be a
+    surface, so it just looks dirty. One quiet fill and one hairline.
+  */
+  background-image: none;
+  background-color: var(--panel-2);
+}
+
+:root[data-shell="home"] .dock-plate,
+:root[data-collapsed="true"] .dock-plate {
+  display: flex;
+}
+
+/* =========================================================
+   v1.5.4.98 — THE CORNER PANEL USES ITS WIDTH
+
+   Chrome will not draw a window under 178px, 16 of which are the frame the
+   bridge clips, so the corner always has 162px of page whatever the dock
+   wants. Rather than leave 109 of them empty beside a 33px button, the dock
+   takes the width: the button spans the panel, and the menu keeps exactly
+   the same width when it comes down, so nothing changes shape sideways.
+
+   Only in the corner. On a screen the window is the display and a
+   full-width bar would be a banner across the top.
+========================================================= */
+
+/*
+  A fixed 150 = the 162px of page Chrome's 178px minimum leaves, less a 6px
+  margin either side. The margin is only there so the button's rounded
+  corners are not cut by the edge of the window; everything past that was
+  dark ground doing nothing.
+
+  Fixed rather than stretched to the window edge on purpose: the window is
+  sized from the dock, so a dock that fills the window keeps the window as
+  wide as it already was. The first attempt at that produced a 1860px bar.
+*/
+:root[data-shell="home"] .menu-dock,
+:root[data-collapsed="true"] .menu-dock {
+  left: 6px;
+  top: 6px;
+  width: 150px;
+}
+
+:root[data-shell="home"] .menu-dock__bar,
+:root[data-collapsed="true"] .menu-dock__bar {
+  width: 100%;
+}
+
+:root[data-shell="home"] .menu-dock__toggle,
+:root[data-collapsed="true"] .menu-dock__toggle {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Back and the collapse tab keep their own size; the menu button takes the
+   rest of the row, so the row is full width in either state. */
+:root[data-collapsed="true"] .menu-dock__bar {
+  grid-template-columns: 33px 1fr !important;
+  justify-content: stretch !important;
+}
+
+:root[data-collapsed="true"] .menu-dock__collapse {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+:root[data-shell="home"] .menu-dock__bar {
+  grid-template-columns: 1fr !important;
+}
+
+:root[data-collapsed="true"] .menu-dock__toggle {
+  grid-column: 1 / -1;
+}
+
+/* The menu is the same width as the bar above it - that is the point. */
+:root[data-shell="home"] .main-menu,
+:root[data-collapsed="true"] .main-menu {
+  width: 100% !important;
+}
+
+:root[data-shell="home"] .main-menu__home,
+:root[data-shell="home"] .main-menu .main-menu__button,
+:root[data-shell="home"] .main-menu .main-menu-exit,
+:root[data-shell="home"] .main-menu .update-button,
+:root[data-shell="home"] .main-menu .theme-toggle,
+:root[data-collapsed="true"] .main-menu__home,
+:root[data-collapsed="true"] .main-menu .main-menu__button,
+:root[data-collapsed="true"] .main-menu .main-menu-exit,
+:root[data-collapsed="true"] .main-menu .update-button,
+:root[data-collapsed="true"] .main-menu .theme-toggle {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+:root[data-shell="home"] .main-menu .system-meta,
+:root[data-collapsed="true"] .main-menu .system-meta {
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* =========================================================
+   v1.5.5.1 — NOTHING RE-FLOWS IN VIEW
+
+   The noise while the window collapses is a real re-flow: a full screen laid
+   out again at 162px crushes the tables and the headings into a column for a
+   few frames. It cannot be styled away, so it is not looked at - the screen
+   is faded out before the window changes and brought back once the new size
+   has settled.
+
+   Out quickly, back at the normal pace: a short fade reads as the screen
+   stepping aside, a slower return reads as it arriving.
+========================================================= */
+
+:root[data-reshaping] .app,
+:root[data-reshaping] .being-card-overlay,
+:root[data-reshaping] .reactivation-card-overlay,
+:root[data-reshaping] .quest-confirm-overlay,
+:root[data-reshaping] .quest-history-overlay,
+:root[data-reshaping] .bonus-history-overlay,
+:root[data-reshaping] .client-quick-nav,
+:root[data-reshaping] .version-notification {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms var(--ui-curve);
+}
+
+.app {
+  transition: opacity var(--ui-speed) var(--ui-curve);
+}
+
+/*
+  The dock is the one thing that stays, so its own change of shape - a 59px
+  bar on a screen becoming a 150px bar in the corner - is the only movement
+  on screen while everything else is out. It is worth animating rather than
+  snapping.
+*/
+.menu-dock,
+.menu-dock__bar,
+.menu-dock__back,
+.menu-dock__toggle,
+.menu-dock__collapse,
+.main-menu__home,
+.main-menu .main-menu__button,
+.main-menu .main-menu-exit,
+.main-menu .update-button,
+.main-menu .theme-toggle {
+  transition:
+    width var(--ui-speed) var(--ui-curve),
+    height var(--ui-speed) var(--ui-curve),
+    border-radius var(--ui-speed) var(--ui-curve),
+    border-color var(--ui-speed) var(--ui-curve),
+    background var(--ui-speed) var(--ui-curve),
+    color var(--ui-speed) var(--ui-curve),
+    transform var(--ui-speed) var(--ui-curve),
+    opacity var(--ui-speed) var(--ui-curve);
+}
+
+/*
+  The menu column: the same movement forwards and back, so opening and
+  closing are one gesture reversed rather than two different ones. Width is
+  animated with it, because the column is 59 wide on a screen and 150 in the
+  corner and the change should read as the same panel resizing.
+*/
+.main-menu {
+  transition:
+    opacity var(--ui-speed) var(--ui-curve),
+    transform var(--ui-speed) var(--ui-curve),
+    visibility var(--ui-speed) var(--ui-curve),
+    width var(--ui-speed) var(--ui-curve) !important;
+}
+
+/* The plate behind the dock fades with the state it belongs to rather than
+   appearing the instant the shell class changes. */
+.dock-plate {
+  transition: opacity var(--ui-speed) var(--ui-curve);
+}
+
+/* =========================================================
+   v1.5.5.2 — ONE OUTLINE
+
+   The corner had two rings around the same thing: the plate drew a rounded
+   border, and the buttons inside it drew their own 6px further in. Two
+   outlines that close a gap that small read as a mistake, not as depth.
+
+   The buttons keep theirs - they are what is pressed. The plate keeps only
+   its fill, as a ground for them to sit on.
+========================================================= */
+
+.dock-plate {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* =========================================================
+   STAGE COLOUR (was #reactivationActiveCount / #reactivationSleepingCount)
+   ---------------------------------------------------------
+   Active reads positive and Sleeping reads negative in both themes. The old
+   pair of id rules won by being ids and by shouting !important; these win by
+   being the last rules in the last stylesheet at matching specificity, which
+   is the ordinary way to say "this is the final word".
+========================================================= */
+.app .reactivation-metric--filter[data-reactivation-stage-filter="active"] strong {
+  color: var(--ui-positive);
+}
+
+.app .reactivation-metric--filter[data-reactivation-stage-filter="sleeping"] strong {
+  color: var(--ui-negative);
+}

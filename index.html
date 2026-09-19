@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>&#8203;</title>
+  <meta name="theme-color" content="#000000">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokens.css?v=1.5.6.2">
+  <link rel="stylesheet" href="main.css?v=1.5.6.2">
+  <link rel="stylesheet" href="reactivation-v30.css?v=1.5.6.2">
+</head>
+<body>
+  <div class="app-loader" id="appLoader" role="status" aria-live="polite" aria-busy="true">
+    <div class="app-loader__core">
+      <div class="app-loader__brand">VIP CRM</div>
+      <div class="app-loader__spinner" aria-hidden="true"><span></span><span></span></div>
+      <div class="app-loader__status" id="appLoaderStatus">Starting application</div>
+      <div class="app-loader__progress" aria-hidden="true">
+        <div class="app-loader__progress-fill" id="appLoaderProgress"></div>
+      </div>
+      <div class="app-loader__actions" id="appLoaderActions" hidden>
+        <button class="app-loader__retry" id="appLoaderRetry" type="button">Retry Sync</button>
+        <button class="app-loader__continue" id="appLoaderContinue" type="button">Open CRM Anyway</button>
+      </div>
+    </div>
+  </div>
+  <div class="app" id="app">
+
+    <!-- MAIN MENU ONLY: update/version block -->
+
+    <!-- REACTIVATION PORTAL BACK -->
+    <button
+      class="reactivation-portal-back"
+      id="reactivationPortalBack"
+      type="button"
+      aria-label="Back to previous window"
+      title="Back"
+    >
+      <span class="reactivation-exit__arrow" aria-hidden="true">←</span>
+      <span class="reactivation-exit__label">Back</span>
+    </button>
+
+    <!-- PAGE AREA -->
+    <main class="page-container" id="pageContainer">
+
+      <!-- YESTERDAY -->
+      <section class="page yesterday-page" id="page-yesterday" data-page-content="yesterday" aria-label="Yesterday" aria-hidden="true" inert>
+        <div class="yesterday-panel">
+          <header class="yesterday-header">
+            <h1 class="yesterday-title">Yesterday</h1>
+          </header>
+
+          <div class="yesterday-divider"></div>
+
+          <section class="yesterday-summary" aria-label="Previous day summary">
+            <article class="yesterday-metric">
+              <div class="yesterday-metric__label">Turnover</div>
+              <div class="yesterday-metric__value" id="yesterdayTurnover">1</div>
+              <div class="yesterday-metric__unit">EUR</div>
+            </article>
+
+            <article class="yesterday-metric">
+              <div class="yesterday-metric__label">GGR</div>
+              <div class="yesterday-metric__value" id="yesterdayGgr">1</div>
+              <div class="yesterday-metric__unit">EUR</div>
+            </article>
+
+            <article class="yesterday-metric">
+              <div class="yesterday-metric__label">NGR</div>
+              <div class="yesterday-metric__value" id="yesterdayNgr">1</div>
+              <div class="yesterday-metric__unit">EUR</div>
+            </article>
+
+            <article class="yesterday-metric">
+              <div class="yesterday-metric__label">Bonuses</div>
+              <div class="yesterday-metric__value" id="yesterdayBonuses">1</div>
+              <div class="yesterday-metric__unit">EUR</div>
+            </article>
+
+            <article class="yesterday-metric">
+              <div class="yesterday-metric__label">Deposits</div>
+              <div class="yesterday-metric__value" id="yesterdayDepositAmount">1</div>
+              <div class="yesterday-metric__unit"><span id="yesterdayDeposits">1</span> ops · EUR</div>
+            </article>
+
+            <article class="yesterday-metric">
+              <div class="yesterday-metric__label">Withdrawals</div>
+              <div class="yesterday-metric__value" id="yesterdayWithdrawalAmount">1</div>
+              <div class="yesterday-metric__unit"><span id="yesterdayWithdrawals">1</span> ops · EUR</div>
+            </article>
+          </section>
+
+          <section class="player-activity">
+            <h2 class="player-activity__title">Player Activity</h2>
+
+            <div class="player-table-wrapper" id="playerTableWrapper">
+              <div class="player-table">
+                <div class="player-table__header" role="row" aria-label="Sortable player activity columns">
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="name">Player</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="clientId">ID</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="toDay">TO Day</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="toSport">TO Sport</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="toCasino">TO Casino</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="toInstant">TO Instant</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="toLive">TO Live</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="toSlots">TO Slots</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="bonusDay">Bonus Day</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="ggrDay">GGR Day</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="ggrSport">GGR Sport</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="ggrCasino">GGR Casino</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="ggrInstant">GGR Instant</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="ggrLive">GGR Live</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="ggrSlots">GGR Slots</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="ngrDay">NGR Day</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="bonusRate30d">Bonus Rate 30D</button></div>
+                  <div><button class="player-table-sort" type="button" data-yesterday-sort="bonusRate12m">Bonus Rate 12M</button></div>
+                </div>
+                <div class="player-table__body" id="yesterdayPlayerRows"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section class="page dashboard-page" id="page-dashboard" data-page-content="dashboard" aria-label="Dashboard" aria-hidden="true" inert>
+        <div class="dashboard-panel">
+          <header class="dashboard-header">
+            <h1 class="dashboard-title">Dashboard</h1>
+          </header>
+
+          <div class="dashboard-divider"></div>
+
+          <section class="dashboard-summary" aria-label="Dashboard summary">
+            <article class="dashboard-metric" data-dashboard-metric="activeClients" data-format="integer">
+              <div class="dashboard-metric__label">Active Clients</div>
+              <div class="dashboard-metric__value">1</div>
+            </article>
+
+            <article class="dashboard-metric" data-dashboard-metric="turnoverPreviousDay" data-format="money">
+              <div class="dashboard-metric__label">Turnover Previous Day</div>
+              <div class="dashboard-metric__value">€1</div>
+            </article>
+
+            <article class="dashboard-metric" data-dashboard-metric="turnover30d" data-format="money">
+              <div class="dashboard-metric__label">Turnover Last 30 Days</div>
+              <div class="dashboard-metric__value">€1</div>
+            </article>
+
+            <article class="dashboard-metric" data-dashboard-metric="averageDailyTurnover" data-format="money">
+              <div class="dashboard-metric__label">Average Daily Turnover</div>
+              <div class="dashboard-metric__value">€1</div>
+            </article>
+
+            <article class="dashboard-metric" data-dashboard-metric="ggr30d" data-format="money">
+              <div class="dashboard-metric__label">GGR Last 30 Days</div>
+              <div class="dashboard-metric__value">€1</div>
+            </article>
+
+            <article class="dashboard-metric" data-dashboard-metric="ngr30d" data-format="money">
+              <div class="dashboard-metric__label">NGR Last 30 Days</div>
+              <div class="dashboard-metric__value">€1</div>
+            </article>
+
+            <article class="dashboard-metric" data-dashboard-metric="bonusRate30d" data-format="rate">
+              <div class="dashboard-metric__label">Bonus Rate Last 30 Days</div>
+              <div class="dashboard-metric__value">1%</div>
+            </article>
+
+            <article class="dashboard-metric" data-dashboard-metric="bonusRate12m" data-format="rate">
+              <div class="dashboard-metric__label">Bonus Rate 12M</div>
+              <div class="dashboard-metric__value">1%</div>
+            </article>
+          </section>
+
+          <section class="dashboard-top-section">
+            <h2 class="dashboard-section-title">Top Players - Last 7 Days</h2>
+            <div class="dashboard-top-grid">
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Turnover 7D</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>TO 7D</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topTurnover7d" data-value-format="money"></div>
+              </article>
+
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Positive NGR 7D</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>NGR 7D</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topPositiveNgr7d" data-value-format="money"></div>
+              </article>
+
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Negative NGR 7D</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>NGR 7D</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topNegativeNgr7d" data-value-format="money"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="dashboard-top-section">
+            <h2 class="dashboard-section-title">Top Players - Last 30 Days</h2>
+            <div class="dashboard-top-grid">
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top TO 30D</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>TO 30D</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topTo30d" data-value-format="money"></div>
+              </article>
+
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Positive NGR 30D</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>NGR 30D</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topPositiveNgr30d" data-value-format="money"></div>
+              </article>
+
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Negative NGR 30D</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>NGR 30D</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topNegativeNgr30d" data-value-format="money"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="dashboard-top-section dashboard-top-section--12m">
+            <h2 class="dashboard-section-title">Top Players - Last 12 Months</h2>
+            <div class="dashboard-top-grid">
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Turnover 12M</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>TO 12M</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topTurnover12m" data-value-format="money"></div>
+              </article>
+
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Positive NGR 12M</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>NGR 12M</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topPositiveNgr12m" data-value-format="money"></div>
+              </article>
+
+              <article class="dashboard-top-card">
+                <h3 class="dashboard-top-card__title">Top Negative NGR 12M</h3>
+                <div class="dashboard-top-table__head"><span>#</span><span>Player</span><span>NGR 12M</span></div>
+                <div class="dashboard-top-table__body" data-dashboard-list="topNegativeNgr12m" data-value-format="money"></div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- CLIENTS -->
+      <section class="page clients-page" id="page-clients" data-page-content="clients" aria-label="Clients" aria-hidden="true" inert>
+        <div class="clients-panel" id="clientsPanel">
+          <div class="clients-view-stack">
+
+            <!-- CLIENT DIRECTORY -->
+            <div class="clients-directory is-view-active" id="clientsDirectory" aria-hidden="false">
+              <header class="clients-header">
+                <h1 class="clients-title">Clients</h1>
+              </header>
+
+              <div class="clients-divider"></div>
+
+              <div class="clients-search-wrapper">
+                <input
+                  class="clients-search"
+                  id="clientsSearch"
+                  type="search"
+                  placeholder="Search by name or ID"
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-label="Search clients"
+                >
+              </div>
+
+              <div class="clients-scroll-area" id="clientsScrollArea">
+                <div class="clients-grid" id="clientsGrid"></div>
+                <div class="clients-empty" id="clientsEmpty" hidden>No clients found</div>
+              </div>
+            </div>
+
+            <!-- CLIENT PROFILE VIEW -->
+            <div class="client-profile-view" id="clientProfileView" aria-hidden="true">
+
+              <button class="client-profile-back" id="clientProfileBack" type="button">
+                <span class="client-profile-back__arrow" aria-hidden="true">←</span>
+                <span>Back to Clients</span>
+              </button>
+
+              <div class="client-profile" id="clientProfile">
+                <header class="client-profile-header">
+                  <h1 class="client-profile-title">Client Profile</h1>
+                </header>
+
+                <section class="profile-card profile-identity" aria-label="Client identity">
+                  <div class="profile-avatar" id="profileAvatar">1</div>
+                  <div class="profile-identity__content">
+                    <div class="profile-client-name" id="profileClientName">Name</div>
+                    <div class="profile-client-id" id="profileClientId">ID: 1</div>
+                  </div>
+                  <div class="profile-reactivation-control">
+                    <span class="reactivation-membership-badge" id="profileReactivationBadge" hidden>On Reactivation</span>
+                    <button class="reactivation-add-button" id="profileReactivationAdd" type="button">Add to Reactivation</button>
+                  </div>
+                </section>
+
+                <section class="profile-card" aria-label="Performance summary">
+                  <div class="profile-card-title">Performance Summary</div>
+
+                  <div class="profile-period-tabs" id="profilePeriodTabs" role="tablist" aria-label="Performance period">
+                    <button class="profile-period-tab is-active" type="button" data-profile-period="day" role="tab" aria-selected="true">Last Day</button>
+                    <button class="profile-period-tab" type="button" data-profile-period="30d" role="tab" aria-selected="false">Last 30 Days</button>
+                    <button class="profile-period-tab" type="button" data-profile-period="12m" role="tab" aria-selected="false">Last 12 Months</button>
+                  </div>
+
+                  <div class="profile-performance-scroll">
+                    <div class="profile-performance-table" id="profilePerformanceTable">
+                      <div class="profile-performance-header" aria-hidden="true">
+                        <div></div><div>Total</div><div>Sport</div><div>Casino</div><div>Live Casino</div><div>Slots</div><div>Instant</div>
+                      </div>
+
+                      <div class="profile-performance-row">
+                        <div class="profile-performance-label">TO (EUR)</div>
+                        <div data-performance="to.total">1</div><div data-performance="to.sport">1</div><div data-performance="to.casino">1</div><div data-performance="to.liveCasino">1</div><div data-performance="to.slots">1</div><div data-performance="to.instant">1</div>
+                      </div>
+
+                      <div class="profile-performance-row">
+                        <div class="profile-performance-label">GGR (EUR)</div>
+                        <div data-performance="ggr.total">1</div><div data-performance="ggr.sport">1</div><div data-performance="ggr.casino">1</div><div data-performance="ggr.liveCasino">1</div><div data-performance="ggr.slots">1</div><div data-performance="ggr.instant">1</div>
+                      </div>
+
+                      <div class="profile-performance-row">
+                        <div class="profile-performance-label">NGR (EUR)</div>
+                        <div data-performance="ngr.total">1</div><div data-performance="ngr.sport">1</div><div data-performance="ngr.casino">1</div><div data-performance="ngr.liveCasino">1</div><div data-performance="ngr.slots">1</div><div data-performance="ngr.instant">1</div>
+                      </div>
+
+                      <div class="profile-performance-row">
+                        <div class="profile-performance-label">Deposits (EUR)</div>
+                        <div data-performance="deposits">1</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div>
+                      </div>
+
+                      <div class="profile-performance-row">
+                        <div class="profile-performance-label">Withdrawals (EUR)</div>
+                        <div data-performance="withdrawals">1</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div>
+                      </div>
+
+                      <div class="profile-performance-row">
+                        <div class="profile-performance-label">Net Loss (EUR)</div>
+                        <div data-performance="netLoss">1</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div><div class="profile-performance-void">—</div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="profile-card" aria-label="Where he plays">
+                  <div class="profile-card-title">Where He Plays</div>
+                  <div class="where-plays-grid">
+                    <div class="where-plays-item"><span>Sport</span><strong id="profileSportActivity">1</strong></div>
+                    <div class="where-plays-item"><span>Casino</span><strong id="profileCasinoActivity">1</strong></div>
+                    <div class="where-plays-item"><span>Live Casino</span><strong id="profileLiveCasinoActivity">1</strong></div>
+                    <div class="where-plays-item"><span>Slots</span><strong id="profileSlotsActivity">1</strong></div>
+                    <div class="where-plays-item"><span>Instant</span><strong id="profileInstantActivity">1</strong></div>
+                  </div>
+                </section>
+
+                <section class="profile-card profile-quest-card" aria-label="Current quest">
+                  <button
+                    class="profile-quest-open"
+                    id="profileQuestOpen"
+                    type="button"
+                    aria-label="Open current quest"
+                  ></button>
+
+                  <div class="profile-card-title">Current Quest</div>
+
+                  <span class="profile-quest-chevron" aria-hidden="true">›</span>
+
+                  <div class="profile-quest-name" id="profileQuestName">Active Quest</div>
+
+                  <div class="profile-quest-progress-row">
+                    <div class="profile-quest-progress" aria-hidden="true">
+                      <div class="profile-quest-progress__fill" id="profileQuestProgressFill"></div>
+                    </div>
+                    <div class="profile-quest-progress-value" id="profileQuestProgressValue">1%</div>
+                  </div>
+
+                  <div class="profile-quest-dates">
+                    <div><span>Start:</span><strong id="profileQuestStart">1</strong></div>
+                    <div><span>End:</span><strong id="profileQuestEnd">1</strong></div>
+                  </div>
+                </section>
+
+                <section class="profile-card profile-bonuses-card" aria-label="Bonuses given">
+                  <button
+                    class="profile-bonuses-open"
+                    id="profileBonusesOpen"
+                    type="button"
+                    aria-label="Open bonus history"
+                  ></button>
+
+                  <div class="profile-card-title">Bonuses Given</div>
+                  <span class="profile-bonuses-chevron" aria-hidden="true">›</span>
+
+                  <div class="profile-info-row"><span>Total Bonuses (EUR)</span><strong id="profileTotalBonuses">€1</strong></div>
+                  <div class="profile-info-row"><span>Last Bonus Date</span><strong id="profileLastBonusDate">1</strong></div>
+                  <div class="profile-info-row"><span>Last Bonus Amount (EUR)</span><strong id="profileLastBonusAmount">€1</strong></div>
+                </section>
+              </div>
+            </div>
+
+            <!-- CURRENT QUEST DETAIL VIEW -->
+            <div class="client-quest-view" id="clientQuestView" aria-hidden="true">
+
+              <button class="client-quest-back" id="clientQuestBack" type="button">
+                <span class="client-quest-back__arrow" aria-hidden="true">←</span>
+                <span>Back to Client Profile</span>
+              </button>
+
+              <button class="client-quest-being-back" id="clientQuestBeingBack" type="button" hidden>
+                <span class="client-quest-being-back__arrow" aria-hidden="true">↩</span>
+                <span>Back to Being Card</span>
+              </button>
+
+              <button class="client-quest-reactivation-back" id="clientQuestReactivationBack" type="button" hidden>
+                <span class="client-quest-reactivation-back__arrow" aria-hidden="true">↩</span>
+                <span>Back to Reactivation Card</span>
+              </button>
+
+              <div class="client-quest-detail" id="clientQuestDetail">
+
+                <header class="client-quest-header">
+                  <h1 class="client-quest-title">Current Quest</h1>
+
+                  <div class="quest-header-actions">
+                    <button
+                      class="quest-save-button quest-save-button--header"
+                      id="questSaveButton"
+                      type="button"
+                      aria-label="Save quest changes"
+                      title="Save"
+                    >
+                      <span aria-hidden="true">✓</span>
+                    </button>
+
+                    <button
+                      class="quest-edit-button"
+                      id="questEditButton"
+                      type="button"
+                      aria-label="Edit quest"
+                      title="Edit quest"
+                    >
+                      <span aria-hidden="true">✎</span>
+                    </button>
+                  </div>
+                </header>
+
+                <!-- NAME + PROGRESS -->
+                <section class="quest-detail-card">
+                  <label class="quest-name-field">
+                    <span class="quest-detail-label">Quest Name</span>
+                    <input
+                      class="quest-name-input"
+                      id="questDetailNameInput"
+                      type="text"
+                      value="Active Quest"
+                      autocomplete="off"
+                      spellcheck="false"
+                      readonly
+                    >
+                  </label>
+
+                  <div class="quest-mechanic-row">
+                    <label class="quest-mechanic-field">
+                      <span>Tracking Mechanic</span>
+
+                      <select
+                        class="quest-mechanic-select"
+                        id="questMechanicSelect"
+                        disabled
+                      >
+                        <option value="turnover">Turnover</option>
+                        <option value="turnover_insurance">Turnover Insurance</option>
+                        <option value="net_loss">Net Loss</option>
+                      </select>
+                    </label>
+
+                    <button
+                      class="quest-name-sync-button"
+                      id="questNameSyncButton"
+                      type="button"
+                      aria-label="Use tracking mechanic as quest name"
+                      title="Use mechanic as quest name"
+                    >
+                      <span aria-hidden="true">↗</span>
+                    </button>
+                  </div>
+                  <div class="quest-scope-row">
+                    <label class="quest-mechanic-field">
+                      <span>Tracking Section</span>
+
+                      <select
+                        class="quest-mechanic-select"
+                        id="questSectionSelect"
+                        disabled
+                      >
+                        <option value="all">Casino + Sport</option>
+                        <option value="casino">Casino</option>
+                        <option value="sport">Sport</option>
+                      </select>
+                    </label>
+
+                    <label class="quest-mechanic-field">
+                      <span>Tracking Currency</span>
+
+                      <select
+                        class="quest-mechanic-select"
+                        id="questCurrencySelect"
+                        disabled
+                      >
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="USDC">USDC</option>
+                        <option value="USDT">USDT</option>
+                        <option value="CAD">CAD</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <label class="quest-goal-field">
+                    <span id="questGoalLabel">Tracking Goal, EUR</span>
+                    <input
+                      class="quest-edit-input quest-goal-input"
+                      id="questGoalInput"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputmode="decimal"
+                      readonly
+                    >
+                  </label>
+
+                  <div class="quest-detail-progress-head">
+                    <span>Progress</span>
+                    <strong id="questDetailProgressValue">1%</strong>
+                  </div>
+
+                  <div class="quest-detail-progress" aria-hidden="true">
+                    <div class="quest-detail-progress__fill" id="questDetailProgressFill"></div>
+                  </div>
+
+                  <div class="quest-live-progress" id="questLiveProgress" aria-live="polite">
+                    <div class="quest-live-progress__metric">
+                      <span id="questProgressPrimaryLabel">TO</span>
+                      <strong id="questProgressPrimaryValue">— / —</strong>
+                    </div>
+                    <div class="quest-live-progress__metric" id="questProgressSecondary" hidden>
+                      <span id="questProgressSecondaryLabel">GGR</span>
+                      <strong id="questProgressSecondaryValue">—</strong>
+                    </div>
+                    <div class="quest-live-progress__status" id="questProgressStatus">Set dates and goal</div>
+                  </div>
+                </section>
+
+                <!-- DATES / CONDITIONS / REWARD share one row -->
+                <div class="quest-detail-columns">
+                <!-- DATES -->
+                <section class="quest-detail-card">
+                  <div class="quest-detail-section-title">Dates</div>
+
+                  <div class="quest-detail-dates">
+                    <label class="quest-edit-field">
+                      <span class="quest-edit-field__head">Start Date</span>
+                      <input
+                        class="quest-edit-input"
+                        id="questDetailStartInput"
+                        type="date"
+                        autocomplete="off"
+                        disabled
+                      >
+                    </label>
+
+                    <div class="quest-edit-field">
+                      <span class="quest-edit-field__head">
+                        End Date
+                        <button
+                          class="quest-nolimit-toggle"
+                          id="questEndNoLimitToggle"
+                          type="button"
+                          aria-pressed="false"
+                          title="Count from the start date up to the latest available day"
+                          disabled
+                        >No limit</button>
+                      </span>
+                      <input
+                        class="quest-edit-input"
+                        id="questDetailEndInput"
+                        type="date"
+                        autocomplete="off"
+                        disabled
+                      >
+                      <div class="quest-open-end-note" id="questEndNoLimitNote" hidden>Runs until further notice</div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- CONDITIONS -->
+                <section class="quest-detail-card">
+                  <div class="quest-detail-section-title">Quest Conditions</div>
+
+                  <label class="quest-edit-field quest-edit-field--full">
+                    <span>One condition per line</span>
+                    <textarea
+                      class="quest-edit-textarea"
+                      id="questConditionsInput"
+                      rows="6"
+                      spellcheck="false"
+                      readonly
+                    >1</textarea>
+                  </label>
+                </section>
+
+                <!-- REWARD -->
+                <section class="quest-detail-card">
+                  <div class="quest-detail-section-title">Reward</div>
+
+                  <label class="quest-edit-field quest-edit-field--full">
+                    <input
+                      class="quest-edit-input"
+                      id="questRewardInput"
+                      type="text"
+                      value="1"
+                      autocomplete="off"
+                      spellcheck="false"
+                      readonly
+                    >
+                  </label>
+                </section>
+                </div>
+
+
+                <button class="quest-complete-button" id="questCompleteButton" type="button">
+                  <span class="quest-complete-button__mark" aria-hidden="true">✓</span>
+                  <span id="questCompleteButtonText">Complete</span>
+                </button>
+
+              </div>
+
+              <button class="quest-history-open" id="questHistoryOpen" type="button" aria-label="Open quest history" title="Quest history">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>History</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <!-- REACTIVATION -->
+      <section class="page reactivation-page" id="page-reactivation" data-page-content="reactivation" aria-label="Reactivation" aria-hidden="true" inert>
+        <div class="reactivation-panel">
+          <header class="reactivation-header">
+            <div class="reactivation-header__copy">
+              <h1 class="reactivation-title">Reactivation</h1>
+            </div>
+            <div class="reactivation-command-bar">
+              <label class="reactivation-search" for="reactivationSearch">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <circle cx="10.7" cy="10.7" r="6.7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                  <path d="m15.7 15.7 4.3 4.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+                <input id="reactivationSearch" type="search" aria-label="Find ID or name" placeholder="Find ID or name" autocomplete="off" spellcheck="false">
+              </label>
+              <div class="reactivation-count" id="reactivationCount">0 clients</div>
+            </div>
+          </header>
+
+          <section class="reactivation-summary" aria-label="Reactivation overview">
+            <div class="reactivation-summary-group reactivation-summary-group--queue">
+              <div class="reactivation-summary-group__label"><span>Queue</span></div>
+              <div class="reactivation-summary-group__grid">
+                <button class="reactivation-metric reactivation-metric--filter is-active" type="button" data-reactivation-stage-filter="all" aria-pressed="true"><span>Total</span><strong id="reactivationTotalClients">0</strong><small>reactivation</small></button>
+                <button class="reactivation-metric reactivation-metric--filter" type="button" data-reactivation-stage-filter="active" aria-pressed="false"><span>Active</span><strong id="reactivationActiveCount">0</strong><small>0–2 days</small></button>
+                <button class="reactivation-metric reactivation-metric--filter" type="button" data-reactivation-stage-filter="catch_up" aria-pressed="false"><span>Catch Up</span><strong id="reactivationCatchUpCount">0</strong><small>3–5 days</small></button>
+                <button class="reactivation-metric reactivation-metric--filter" type="button" data-reactivation-stage-filter="call_twice" aria-pressed="false"><span>Call Twice</span><strong id="reactivationCallTwiceCount">0</strong><small>6–13 days</small></button>
+                <button class="reactivation-metric reactivation-metric--filter" type="button" data-reactivation-stage-filter="pre_sleep" aria-pressed="false"><span>Pre-Sleep</span><strong id="reactivationPreSleepCount">0</strong><small>14–30 days</small></button>
+                <button class="reactivation-metric reactivation-metric--filter" type="button" data-reactivation-stage-filter="sleeping" aria-pressed="false"><span>Sleeping</span><strong id="reactivationSleepingCount">0</strong><small>31+ days</small></button>
+              </div>
+            </div>
+            <div class="reactivation-summary-group reactivation-summary-group--performance">
+              <div class="reactivation-summary-group__label"><span>Performance &amp; actions</span></div>
+              <div class="reactivation-summary-group__grid">
+                <article class="reactivation-metric"><span>Deposits</span><strong id="reactivationTotalDeposits">€0</strong></article>
+                <article class="reactivation-metric"><span>NGR</span><strong id="reactivationTotalNgr">€0</strong></article>
+                <article class="reactivation-metric"><span>Total Contacts</span><strong id="reactivationContactsTotal">0</strong></article>
+                <article class="reactivation-metric"><span>Calls</span><strong id="reactivationCallsCount">0</strong></article>
+                <article class="reactivation-metric"><span>Emails</span><strong id="reactivationEmailsCount">0</strong></article>
+              </div>
+            </div>
+          </section>
+
+          <section class="reactivation-list-section" aria-label="Reactivation clients">
+            <div class="reactivation-list-heading">
+              <div>
+                <h2>List</h2>
+              </div>
+              <div class="reactivation-list-controls">
+                <span class="reactivation-visible-count" id="reactivationVisibleCount">0 visible</span>
+                <button class="reactivation-clear-filters" id="reactivationClearFilters" type="button" hidden>Clear</button>
+              </div>
+            </div>
+
+            <div class="reactivation-table-shell">
+              <div class="reactivation-table">
+                <div class="reactivation-table__header" aria-label="Sortable reactivation table header">
+                  <div>Client</div>
+                  <div>Stage</div>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="lastActivityDate">
+                    <span>Last Activity</span><i aria-hidden="true"></i>
+                  </button>
+                  <div>Playing</div>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.to">
+                    <span>12M TO</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.ggr">
+                    <span>12M GGR</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.ngr">
+                    <span>12M NGR</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button is-active" type="button" data-reactivation-sort="performance.12m.bonusRate">
+                    <span>12M BR</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.sport">
+                    <span>Sport</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.casino">
+                    <span>Casino</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.slots">
+                    <span>Slots</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.live">
+                    <span>Live</span><i aria-hidden="true"></i>
+                  </button>
+                  <button class="reactivation-sort-button" type="button" data-reactivation-sort="performance.12m.instant">
+                    <span>Instant</span><i aria-hidden="true"></i>
+                  </button>
+                  <div>Contact</div>
+                  <div>Last Contact</div>
+                </div>
+
+                <div class="reactivation-table__body" id="reactivationRows"></div>
+                <div class="reactivation-empty" id="reactivationEmpty" hidden>No clients match this view</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+      <!-- BEING — daily contact workspace -->
+      <section class="page being-page" id="page-being" data-page-content="being" aria-label="Being" aria-hidden="true" inert>
+        <div class="being-panel">
+          <header class="being-header">
+            <div>
+              <h1 class="being-title">Being</h1>
+            </div>
+            <div class="being-header-tools">
+              <button
+                class="being-quest-filter"
+                id="beingQuestFilter"
+                type="button"
+                aria-pressed="false"
+                title="Show clients with an active quest, completed first, then by progress"
+              >Quests</button>
+
+              <label class="being-search" id="beingSearchShell" for="beingSearch">
+                <input id="beingSearch" type="search" aria-label="Find ID" placeholder="Enter ID" autocomplete="off" spellcheck="false">
+                <button class="being-search-toggle" id="beingSearchToggle" type="button" aria-label="Search by ID" aria-expanded="false">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="10.5" cy="10.5" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="m15.2 15.2 4.3 4.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </label>
+              <div class="being-count" id="beingCount">0 clients</div>
+            </div>
+          </header>
+
+          <div class="being-divider"></div>
+
+          <div class="being-table-shell">
+            <div class="being-table" role="table" aria-label="Client follow-up workspace">
+              <div class="being-table__header" role="row" aria-hidden="true">
+                <div class="being-table__pin-head">Pin</div>
+                <div>Client</div>
+                <div>Last Contact</div>
+                <div>Follow-up</div>
+                <div>Current Quest</div>
+                <div>Progress</div>
+                <div>My Notes</div>
+              </div>
+              <div class="being-table__body" id="beingRows" role="rowgroup"></div>
+              <div class="being-empty" id="beingEmpty" hidden>No clients to show</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+
+    <!-- NEW VERSION NOTIFICATION -->
+    <div class="version-notification" id="versionNotification" role="status" aria-live="polite">
+      <div class="version-notification__content">
+        <strong>New Version Available</strong>
+        <span id="versionNotificationText">Download the latest version of VIP CRM.</span>
+      </div>
+      <button class="version-notification__close" id="versionNotificationClose" type="button" aria-label="Close notification">×</button>
+    </div>
+  </div>
+
+    <!-- CORNER DOCK
+         The whole navigation lives in one small window in the top-left corner:
+         collapsed it is a single button, opened it is a column of icons whose
+         border stops exactly where the buttons stop. -->
+    <!-- The corner window cannot be narrower than Chrome's 178px minimum, so
+         the room left over beside the dock is given an engraved plate rather
+         than left looking like a window that failed to shrink. -->
+    <div class="dock-plate" id="dockPlate" aria-hidden="true"></div>
+
+    <aside class="menu-dock" id="menuShell" data-open="false">
+
+      <div class="menu-dock__bar">
+        <button class="menu-dock__back" id="mainMenuReturn" type="button" title="Back" aria-label="Back">
+          <span class="menu-dock__arrow" aria-hidden="true">←</span>
+        </button>
+
+        <button
+          class="menu-dock__toggle"
+          id="menuDockToggle"
+          type="button"
+          title="Menu"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mainMenu"
+        >
+          <span class="menu-dock__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M5 8h14M5 12h14M5 16h9"/>
+            </svg>
+          </span>
+        </button>
+
+        <button
+          class="menu-dock__collapse"
+          id="menuDockCollapse"
+          type="button"
+          title="Collapse to the corner"
+          aria-label="Collapse to the corner"
+          aria-pressed="false"
+        >
+          <span class="menu-dock__chevron" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 10l5 5 5-5"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <nav class="main-menu" id="mainMenu" aria-label="Main navigation">
+        <button class="main-menu__home" id="mainMenuHome" type="button" title="Main Menu">
+          <span class="main-menu__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 10.6 12 4l8 6.6"/><path d="M6.2 9.6V20h11.6V9.6"/>
+            </svg>
+          </span>
+          <span class="main-menu__label">Main Menu</span>
+        </button>
+
+        <button class="main-menu__button" type="button" data-page="yesterday" title="Yesterday">
+          <span class="main-menu__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/><path d="M12 7v5l3 2"/>
+            </svg>
+          </span>
+          <span class="main-menu__label">Yesterday</span>
+        </button>
+
+        <button class="main-menu__button" type="button" data-page="dashboard" title="Dashboard">
+          <span class="main-menu__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/>
+              <rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>
+            </svg>
+          </span>
+          <span class="main-menu__label">Dashboard</span>
+        </button>
+
+        <button class="main-menu__button" type="button" data-page="clients" title="Clients">
+          <span class="main-menu__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/>
+              <path d="M16.2 6.4a3 3 0 0 1 0 5.6M17.8 19a5.6 5.6 0 0 0-2.3-4.5"/>
+            </svg>
+          </span>
+          <span class="main-menu__label">Clients</span>
+        </button>
+
+        <button class="main-menu__button" type="button" data-page="reactivation" title="Reactivation">
+          <span class="main-menu__icon" aria-hidden="true">
+            <span class="main-menu__glyph">R+</span>
+          </span>
+          <span class="main-menu__label">Reactivation</span>
+        </button>
+
+        <button class="main-menu__button" type="button" data-page="being" title="Being">
+          <span class="main-menu__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/>
+            </svg>
+          </span>
+          <span class="main-menu__label">Being</span>
+        </button>
+
+        <span class="main-menu__rule" aria-hidden="true"></span>
+
+        <button class="update-button" id="updateButton" type="button" title="Update Data">
+          <span class="update-button__icon" aria-hidden="true">↻</span>
+          <span class="update-button__text">Update Data</span>
+        </button>
+
+        <!--
+          There is one theme now. The control keeps its place in the rail so
+          the row of buttons does not reflow, and says plainly that it does
+          nothing rather than looking live and swallowing the click.
+        -->
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          type="button"
+          disabled
+          aria-label="Theme switching is off: the console has one theme"
+          title="One theme"
+        >
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <button class="main-menu-exit" id="appExitButton" type="button" title="Save and exit">
+          <span class="main-menu__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 4v8"/><path d="M7.5 6.6a7.5 7.5 0 1 0 9 0"/>
+            </svg>
+          </span>
+          <span class="main-menu__label">Save &amp; Exit</span>
+        </button>
+
+        <div class="system-meta" id="systemPanel" title="CRM version">
+          <strong id="localVersion">1.5.4.44</strong>
+          <span class="system-meta__updated" id="dataUpdated" hidden>1</span>
+        </div>
+      </nav>
+    </aside>
+
+
+
+    <!-- CLIENT QUICK NAVIGATION -->
+    <div class="client-quick-nav" id="clientQuickNav" role="dialog" aria-modal="false" aria-labelledby="clientQuickNavName" aria-hidden="true">
+      <div class="client-quick-nav__identity">
+        <strong id="clientQuickNavName">Client</strong>
+        <span id="clientQuickNavId">ID</span>
+      </div>
+      <div class="client-quick-nav__actions" aria-label="Open client in">
+        <button type="button" data-client-quick-destination="reactivation">Reactivation</button>
+        <button type="button" data-client-quick-destination="being">Being</button>
+        <button type="button" data-client-quick-destination="clients">Clients</button>
+      </div>
+    </div>
+
+
+    <!-- REACTIVATION CLIENT CARD -->
+    <div class="reactivation-card-overlay" id="reactivationCardOverlay" aria-hidden="true">
+      <div class="reactivation-card-modal reactivation-card-dual-shell" id="reactivationCardModal" role="dialog" aria-modal="true" aria-labelledby="reactivationCardName">
+          <button class="reactivation-card-back-being" id="reactivationCardBackToBeing" type="button" aria-label="Return to the Being client card" title="Back to Being" hidden>← Being</button>
+        <section class="reactivation-card-main-panel">
+        <header class="reactivation-card-header">
+          <div>
+            <button class="reactivation-card-name reactivation-card-name-link" id="reactivationCardName" type="button" aria-label="Open this client in Being" title="Open in Being">Name</button>
+            <div class="reactivation-card-id-row">
+              <span id="reactivationCardClientId">ID: 1</span>
+              <span class="reactivation-stage-badge" id="reactivationCardStage">Active · 0 days</span>
+            </div>
+          </div>
+          <button class="reactivation-card-close" id="reactivationCardClose" type="button" aria-label="Close">×</button>
+        </header>
+
+        <div class="reactivation-card-scroll">
+          <section class="reactivation-card-strip">
+            <article><span>Playing</span><strong id="reactivationCardPlaying">—</strong></article>
+            <article><span>In Reactivation Since</span><strong id="reactivationCardStarted">—</strong></article>
+            <article><span>Last Activity</span><strong id="reactivationCardLastActivity">—</strong></article>
+            <article><span>12M TO</span><strong id="reactivationCard12mTo">—</strong></article>
+            <article><span>12M GGR</span><strong id="reactivationCard12mGgr">—</strong></article>
+            <article><span>12M NGR</span><strong id="reactivationCard12mNgr">—</strong></article>
+            <article><span>12M BR</span><strong id="reactivationCard12mBr">—</strong></article>
+            <article><span>Reactivation NGR</span><strong id="reactivationCardNgrTotal">—</strong></article>
+            <article><span>Deposit Amount</span><strong id="reactivationCardDepositsTotal">—</strong></article>
+            <article><span>Total Contacts</span><strong id="reactivationCardContactsTotal">0</strong></article>
+          </section>
+
+          <div class="reactivation-smart-core">
+          <section class="reactivation-card-block reactivation-12m-play-block">
+            <div class="reactivation-card-block__head">
+              <h3>12M Turnover Split</h3>
+            </div>
+            <div class="reactivation-12m-play-grid">
+              <article><span>Sport</span><strong id="reactivationCard12mSport">€0</strong></article>
+              <article><span>Casino</span><strong id="reactivationCard12mCasino">€0</strong></article>
+              <article><span>Slots</span><strong id="reactivationCard12mSlots">€0</strong></article>
+              <article><span>Live</span><strong id="reactivationCard12mLive">€0</strong></article>
+              <article><span>Instant</span><strong id="reactivationCard12mInstant">€0</strong></article>
+            </div>
+          </section>
+
+          <section class="reactivation-card-block reactivation-statistics-block">
+            <div class="reactivation-card-block__head reactivation-statistics-head">
+              <h3>Statistics</h3>
+              <div class="reactivation-period-toggle" role="tablist" aria-label="Statistics period">
+                <button class="is-active" id="reactivationStats30d" type="button" role="tab" aria-selected="true" data-reactivation-stats-period="30d">30 Days</button>
+                <button id="reactivationStats12m" type="button" role="tab" aria-selected="false" data-reactivation-stats-period="12m">12 Months</button>
+              </div>
+            </div>
+            <div class="reactivation-statistics-grid">
+              <article class="reactivation-statistics-panel">
+                <div class="reactivation-statistics-panel__head"><strong>Activity &amp; Profitability</strong></div>
+                <div class="reactivation-activity-grid">
+                  <div><span>Last Activity</span><strong id="reactivationStatsLastActivity">—</strong></div>
+                  <div><span>TO</span><strong id="reactivationStatsTo">—</strong></div>
+                  <div><span>GGR</span><strong id="reactivationStatsGgr">—</strong></div>
+                  <div><span>NGR</span><strong id="reactivationStatsNgr">—</strong></div>
+                  <div><span>BR</span><strong id="reactivationStatsBr">—</strong></div>
+                  <div><span>Sport GGR</span><strong id="reactivationStatsSportGgr">—</strong></div>
+                  <div><span>Casino GGR</span><strong id="reactivationStatsCasinoGgr">—</strong></div>
+                  <div><span>Deposits</span><strong id="reactivationStatsDeposits">—</strong></div>
+                  <div><span>Withdrawals</span><strong id="reactivationStatsWithdrawals">—</strong></div>
+                  <div><span>Net Loss</span><strong id="reactivationStatsNetLoss">—</strong></div>
+                </div>
+              </article>
+              <article class="reactivation-statistics-panel">
+                <div class="reactivation-statistics-panel__head"><strong>Casino Breakdown</strong></div>
+                <div class="reactivation-casino-grid">
+                  <div class="reactivation-casino-product"><span>Slots</span><strong id="reactivationStatsSlotsTo">—</strong></div>
+                  <div class="reactivation-casino-product"><span>Instant</span><strong id="reactivationStatsInstantTo">—</strong></div>
+                  <div class="reactivation-casino-product"><span>Live</span><strong id="reactivationStatsLiveTo">—</strong></div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <div class="reactivation-decision-grid">
+            <section class="reactivation-card-block reactivation-offer-block">
+              <div class="reactivation-card-block__head"><h3>Offer</h3><span id="reactivationOfferBr">Current plan</span></div>
+              <div class="reactivation-offer-content">
+                <div>
+                  <div class="reactivation-offer-name" id="reactivationOfferName">Research Required</div>
+                  <div class="reactivation-offer-rule" id="reactivationOfferRule">No automatic template for this BR range.</div>
+                </div>
+                <div class="reactivation-offer-research" id="reactivationOfferResearch">Research this client before deciding what to do.</div>
+              </div>
+            </section>
+
+            <section class="reactivation-card-block reactivation-current-quest-block">
+              <button class="reactivation-current-quest-open" id="reactivationCardQuestOpen" type="button" aria-label="Open Current Quest">
+                <span class="reactivation-current-quest-open__head"><strong>Quest</strong><span id="reactivationCardQuestProgress">0%</span></span>
+                <span class="reactivation-current-quest-open__name" id="reactivationCardQuestName">No Active Quest</span>
+                <span class="reactivation-quest-track"><span class="reactivation-quest-fill" id="reactivationCardQuestFill"></span></span>
+                <span class="reactivation-current-quest-open__footer">Open <b aria-hidden="true">→</b></span>
+              </button>
+            </section>
+          </div>
+
+          <section class="reactivation-card-block reactivation-contact-block">
+            <div class="reactivation-card-block__head"><h3>Contact</h3><span id="reactivationContactSourceState">Archive hook ready</span></div>
+
+            <div class="cbar" aria-label="Last contact">
+              <span class="cbar__name">Last</span>
+
+              <span class="cbar__item cbar__item--static" title="Date and time of the last contact">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                </svg>
+                <span id="reactivationCardContactLast">—</span>
+              </span>
+
+              <span class="cbar__dot" aria-hidden="true"></span>
+
+              <span class="cbar__item cbar__item--static" title="Emails">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>
+                </svg>
+                <b id="reactivationCardEmailCount">0</b>
+              </span>
+
+              <span class="cbar__item cbar__item--static" title="Calls">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/>
+                </svg>
+                <b id="reactivationCardCallCount">0</b>
+              </span>
+
+              <span class="cbar__dot" aria-hidden="true"></span>
+
+              <span class="cbar__item cbar__item--static" title="Total contacts">
+                <span class="cbar__sum">&Sigma;</span><b id="reactivationCardContactTotal">0</b>
+              </span>
+            </div>
+
+            <div class="reactivation-contact-grid">
+              <label><span>Date</span><input id="reactivationContactDate" type="date"></label>
+              <label><span>Time</span><input id="reactivationContactTime" type="time"></label>
+
+              <button class="reactivation-contact-main-button" id="reactivationCardEmail" type="button" aria-label="Add email contact" title="Email">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 6.5h16v11H4zM4.5 7l7.5 6 7.5-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                </svg>
+                <span>Email</span>
+              </button>
+              <button class="reactivation-contact-main-button" id="reactivationCardCall" type="button" aria-label="Add call contact" title="Call">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 4.5l3 3-1.8 2.4c1.2 2.2 2.8 3.8 5 5l2.4-1.8 3 3-1.8 3c-.5.8-1.4 1.2-2.3 1-5.7-1.2-10-5.5-11.2-11.2-.2-.9.2-1.8 1-2.3L7 4.5Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Call</span>
+              </button>
+              <button class="reactivation-contact-undo-action" id="reactivationCardContactUndo" type="button" hidden>Undo</button>
+            </div>
+          </section>
+
+          <div class="reactivation-history-actions" aria-label="Client histories">
+            <button class="reactivation-history-action" id="reactivationBonusHistoryOpen" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16v11H4zM3 6h18v3H3zM12 6v14M12 6c-2.8 0-4.5-1.1-4.5-2.5S10.3 2 12 6Zm0 0c2.8 0 4.5-1.1 4.5-2.5S13.7 2 12 6Z" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round"/></svg>
+              <span>Bonuses</span>
+            </button>
+          </div>
+          </div>
+        </div>
+        </section>
+
+        <aside class="reactivation-card-notes reactivation-work-panel" aria-label="Reactivation work menu">
+          <header class="reactivation-notes-panel-header">
+            <div>
+              <h3>Work Menu</h3>
+            </div>
+          </header>
+
+          <div class="reactivation-notes-panel-body reactivation-work-panel-body">
+            <nav class="reactivation-work-toolrail" aria-label="Reactivation tools">
+              <button id="reactivationToolNotes" type="button" data-reactivation-work-tool="notes" aria-controls="reactivationNotesPanel" aria-expanded="true" aria-label="Open Reactivation Notes" title="Reactivation Notes">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14v11H9l-4 3v-14Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><path d="M8 9h8M8 12.5h6" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg>
+              </button>
+              <button id="reactivationToolOffer" type="button" data-reactivation-work-tool="offer" aria-controls="reactivationOfferPanel" aria-expanded="false" aria-label="Open Offer" title="Offer">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5h9l6 6-7 7-8-8v-5Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><circle cx="9" cy="10.5" r="1.35" fill="currentColor"/></svg>
+              </button>
+              <button id="reactivationToolHistory" type="button" data-reactivation-work-tool="history" aria-controls="reactivationNoteHistoryPanel" aria-expanded="false" aria-label="Open Notes History" title="Notes History">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v5l3 2M5.5 6.5A8 8 0 1 1 4 12M4 5v5h5" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </nav>
+
+            <section class="reactivation-work-section reactivation-work-drawer reactivation-offer-editor" id="reactivationOfferPanel" data-reactivation-work-panel="offer" hidden>
+              <div class="reactivation-work-section__head">
+                <strong>Offer</strong>
+                <small class="reactivation-work-status" id="reactivationOfferStatus" aria-live="polite">Ready</small>
+              </div>
+              <div class="reactivation-offer-fields">
+                <label><span>BD</span><input id="reactivationOfferBd" type="text" maxlength="40"></label>
+                <label><span>FB</span><input id="reactivationOfferFb" type="text" maxlength="40"></label>
+                <label><span>TO Deposit</span><input id="reactivationOfferToDeposit" type="text" maxlength="40"></label>
+                <label class="reactivation-offer-quest-field"><span>Quest</span><input id="reactivationOfferQuest" type="text" maxlength="120"></label>
+              </div>
+              <div class="reactivation-offer-current" id="reactivationOfferCurrent" hidden></div>
+              <button id="reactivationOfferSave" type="button" aria-label="Save Offer" title="Save Offer">↑</button>
+            </section>
+
+            <section class="reactivation-work-section reactivation-comm-section" id="reactivationNotesPanel" data-reactivation-work-panel="notes">
+              <div class="reactivation-work-section__head">
+                <strong>Reactivation Notes</strong>
+                <small><b id="reactivationNotesCount">0</b> notes</small>
+              </div>
+              <div class="reactivation-comm-composer">
+                <input id="reactivationNoteDate" type="date" aria-label="Reactivation note date">
+                <textarea id="reactivationNoteText" rows="1" maxlength="1800"></textarea>
+                <button id="reactivationNoteSave" type="button" aria-label="Add Reactivation note" title="Add note">↑</button>
+              </div>
+              <div class="reactivation-work-status" id="reactivationNoteStatus" role="status" aria-live="polite">Ready</div>
+              <div class="reactivation-comm-list" id="reactivationNoteList" aria-label="Reactivation notes"></div>
+            </section>
+
+            <section class="reactivation-work-section reactivation-work-drawer reactivation-note-history-section" id="reactivationNoteHistoryPanel" data-reactivation-work-panel="history" hidden>
+              <div class="reactivation-work-section__head">
+                <strong>Notes History</strong>
+                <small>All previous since sheets</small>
+              </div>
+              <div class="reactivation-note-history-list" id="reactivationNoteHistoryList" aria-label="Historical Reactivation notes"></div>
+            </section>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+
+    <!-- REACTIVATION HISTORY -->
+    <div class="reactivation-history-overlay" id="reactivationHistoryOverlay" aria-hidden="true">
+      <section class="reactivation-history-modal" id="reactivationHistoryModal" role="dialog" aria-modal="true" aria-labelledby="reactivationHistoryTitle">
+        <header class="reactivation-history-header">
+          <div>
+            <h2 id="reactivationHistoryTitle">Reactivation History</h2>
+            <span id="reactivationHistoryClient">Client · ID</span>
+          </div>
+          <button id="reactivationHistoryClose" type="button" aria-label="Close Reactivation History">×</button>
+        </header>
+        <div class="reactivation-history-body">
+          <div class="reactivation-log-head"><span>Action</span><span>Date</span><span>Time</span><span></span></div>
+          <div class="reactivation-log-list" id="reactivationContactLog"></div>
+          <div class="reactivation-log-empty" id="reactivationContactLogEmpty">No contact actions yet</div>
+        </div>
+      </section>
+    </div>
+
+
+    <!-- BEING QUICK CLIENT CARD -->
+    <div class="being-card-overlay" id="beingCardOverlay" aria-hidden="true">
+      <section class="being-card-modal" id="beingCardModal" role="dialog" aria-modal="true" aria-labelledby="beingCardName">
+        <header class="being-card-header">
+          <div class="being-card-heading">
+            <h2 class="being-card-name" id="beingCardName">Name</h2>
+            <div class="being-card-client-id" id="beingCardClientId">ID: 1</div>
+          </div>
+
+          <div class="being-card-header-actions">
+            <button class="being-card-return-reactivation" id="beingCardBackToReactivation" type="button" aria-label="Return to Reactivation client card" title="Return to Reactivation" hidden>← Reactivation</button>
+            <button class="being-card-open-reactivation" id="beingCardOpenReactivation" type="button" aria-label="Open Reactivation profile" title="Open Reactivation profile" hidden>R →</button>
+            <button class="being-card-reactivation" id="beingCardReactivation" type="button" aria-label="Add ID to Reactivation" title="Add to Reactivation">+R</button>
+            <button class="being-card-pin" id="beingCardPin" type="button" aria-pressed="false" aria-label="Pin client" title="Pin client">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M8.5 3.5h7l-1 5 3 3v1.5H13v7l-1 1-1-1v-7H6.5v-1.5l3-3-1-5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="being-card-close" id="beingCardClose" type="button" aria-label="Close client card">×</button>
+          </div>
+        </header>
+
+        <div class="being-card-body">
+          <div class="being-card-date-grid">
+            <label class="being-card-field being-card-field--last-contact">
+              <span>Last Contact</span>
+              <input class="being-card-date-input" id="beingCardLastContact" type="date" autocomplete="off">
+            </label>
+
+            <button
+              class="being-card-today"
+              id="beingCardLastContactToday"
+              type="button"
+              aria-label="Set Last Contact to today"
+              title="Today"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M5 5.5h14v14H5z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"/>
+                <circle cx="12" cy="14" r="2.15" fill="currentColor"/>
+              </svg>
+            </button>
+
+            <label class="being-card-field being-card-field--follow-up">
+              <span>Follow-up</span>
+              <input class="being-card-date-input" id="beingCardFollowUp" type="date" autocomplete="off">
+            </label>
+          </div>
+
+          <section class="being-card-quest" aria-label="Current quest">
+            <button class="being-card-quest-open" id="beingCardQuestOpen" type="button" aria-label="Open current quest in client menu" title="Open Current Quest"></button>
+
+            <div class="being-card-quest-copy">
+              <span>Current Quest</span>
+              <strong id="beingCardQuestName">No Active Quest</strong>
+            </div>
+
+            <div class="being-card-quest-progress">
+              <div class="being-card-quest-progress__value" id="beingCardQuestProgress">0%</div>
+              <div class="being-card-quest-progress__track" aria-hidden="true">
+                <div class="being-card-quest-progress__fill" id="beingCardQuestProgressFill"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="being-card-notes" aria-label="Dated notes">
+            <div class="being-card-notes__head">
+              <span>Notes</span>
+              <strong id="beingNoteCount">0</strong>
+            </div>
+            <div class="being-note-composer">
+              <input class="being-note-date" id="beingNoteDate" type="date" aria-label="Note date" autocomplete="off">
+              <textarea class="being-note-text" id="beingNoteText" rows="1" aria-label="Note text" spellcheck="false"></textarea>
+              <button class="being-note-save" id="beingNoteSave" type="button" aria-label="Send note" title="Send note">Add</button>
+              <button class="being-note-cancel" id="beingNoteCancel" type="button" hidden aria-label="Cancel note editing">×</button>
+            </div>
+            <div class="being-note-list" id="beingNoteList"></div>
+          </section>
+        </div>
+
+        <footer class="being-card-footer">
+          <button class="being-card-done" id="beingCardDone" type="button">Done</button>
+        </footer>
+      </section>
+    </div>
+
+    <!-- QUEST COMPLETION CONFIRMATION -->
+    <div class="quest-confirm-overlay" id="questConfirmOverlay" aria-hidden="true">
+      <section class="quest-confirm-modal" id="questConfirmModal" role="dialog" aria-modal="true" aria-labelledby="questConfirmTitle">
+        <div class="quest-confirm-kicker">Quest Progress</div>
+        <h2 class="quest-confirm-title" id="questConfirmTitle">Complete this quest?</h2>
+        <p class="quest-confirm-text" id="questConfirmText">Progress is below 100%. Are you sure you want to complete this quest?</p>
+        <div class="quest-confirm-actions">
+          <button class="quest-confirm-continue" id="questConfirmContinue" type="button">Continue</button>
+          <button class="quest-confirm-no" id="questConfirmNo" type="button" aria-label="No" title="No">No</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- QUEST HISTORY -->
+    <div class="quest-history-overlay" id="questHistoryOverlay" aria-hidden="true">
+      <section class="quest-history-modal" id="questHistoryModal" role="dialog" aria-modal="true" aria-labelledby="questHistoryTitle">
+        <header class="quest-history-header">
+          <div>
+            <h2 class="quest-history-title" id="questHistoryTitle">History</h2>
+            <div class="quest-history-client" id="questHistoryClient">Name · ID: 1</div>
+          </div>
+          <button class="quest-history-close" id="questHistoryClose" type="button" aria-label="Close quest history">×</button>
+        </header>
+        <div class="quest-history-table-head" aria-hidden="true">
+          <span>Quest</span><span>Time</span><span>Prize</span>
+        </div>
+        <div class="quest-history-list" id="questHistoryList"></div>
+      </section>
+    </div>
+
+    <!-- BONUS HISTORY MODAL — second Google Sheet will be connected later -->
+    <div class="bonus-history-overlay" id="bonusHistoryOverlay" aria-hidden="true">
+      <section class="bonus-history-modal" id="bonusHistoryModal" role="dialog" aria-modal="true" aria-labelledby="bonusHistoryTitle">
+        <header class="bonus-history-header">
+          <div class="bonus-history-heading">
+            <h2 class="bonus-history-title" id="bonusHistoryTitle">Bonuses</h2>
+            <div class="bonus-history-client" id="bonusHistoryClient">Name · ID: 1</div>
+          </div>
+          <button class="bonus-history-close" id="bonusHistoryClose" type="button" aria-label="Close bonus history">×</button>
+        </header>
+
+        <div class="bonus-history-summary">
+          <div class="bonus-history-summary__item">
+            <span>Total Manual Bonuses</span>
+            <strong id="bonusHistoryTotal">€1</strong>
+          </div>
+          <div class="bonus-history-summary__item">
+            <span>Last Bonus Date</span>
+            <strong id="bonusHistoryLastDate">1</strong>
+          </div>
+          <div class="bonus-history-summary__item">
+            <span>Last Bonus Amount</span>
+            <strong id="bonusHistoryLastAmount">€1</strong>
+          </div>
+        </div>
+
+        <div class="bonus-history-table">
+          <div class="bonus-history-table__head" aria-hidden="true">
+            <span>Date</span>
+            <span>Bonus</span>
+            <span>Amount</span>
+          </div>
+          <div class="bonus-history-list" id="bonusHistoryList"></div>
+        </div>
+      </section>
+    </div>
+
+
+
+  <script src="main.js?v=1.5.6.2"></script>
+</body>
+</html>
+

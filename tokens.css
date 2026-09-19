@@ -1,0 +1,77 @@
+/* =========================================================================
+   VIP CRM - Black Console design tokens
+   ---------------------------------------------------------------------
+   Loaded first, before main.css. One theme: there is no light palette and
+   no data-theme switch. The attribute stays on <html> only because 348
+   rules in reactivation-v30.css are scoped to it and win by that step; it
+   is a cascade layer, not a theme.
+
+   Fonts come from the <link> in index.html rather than an @import here:
+   an @import inside a stylesheet is fetched only after this file parses,
+   which delays the text by a round trip.
+   ========================================================================= */
+
+:root {
+  color-scheme: dark;
+
+  /* --- surfaces ---------------------------------------------------------
+     Layers differ by a step of lightness and by their corner radius, not by
+     borders. The steps are wide enough to be seen: pure black with a 2.7%
+     tile on top of it read as one surface on a real screen, which is what
+     made the stage figures and the Yesterday rows hard to pick out.
+     Do not add levels. */
+  --ground: #0B0C0E;    /* app background */
+  --panel: #0B0C0E;     /* header, rail, modal */
+  --panel-2: #15171A;   /* tile, input, metric ribbon */
+  --panel-3: #1F2226;   /* active state, avatar, focused field */
+  --hover: #191C1F;     /* table row hover */
+
+  /* --- lines: only where a divider is genuinely needed ------------------- */
+  --line: #2E3237;      /* button border, header edge */
+  --line-soft: #23262A; /* row divider, progress track */
+
+  /* --- text: all three clear AA on black -------------------------------- */
+  --ink: #EDEEEF;       /* 17.6:1 - numbers, names, headings */
+  --ink-2: #A8ABAE;     /*  8.5:1 - secondary values */
+  --ink-3: #83868A;     /*  5.3:1 - labels, placeholders, em dashes */
+
+  /* --- accent: neutral, not coloured ------------------------------------
+     The system has no colour accent. Emphasis is made with light. */
+  --accent: #E3E5E6;
+  --accent-wash: rgba(237, 238, 239, .07);
+
+  /* --- white glow is the only "light" -----------------------------------
+     Achromatic only. Coloured shadows are not allowed. */
+  --glow: 0 0 0 1px rgba(255, 255, 255, .10), 0 0 22px rgba(255, 255, 255, .09);
+  --glow-soft: 0 0 18px rgba(255, 255, 255, .07);
+  --glow-text: 0 0 12px rgba(255, 255, 255, .28);
+  --shadow: 0 0 0 1px #26282A, 0 24px 60px rgba(0, 0, 0, .96);
+
+  /* --- urgency scale: the only role colour plays ------------------------
+     Sequential, from "fine" to "burning". Not to be used for anything but
+     lifecycle stages and status. */
+  --s1: #35BE85;  /* active     0-2 days  */
+  --s2: #9DBE44;  /* catch up   3-5 days  */
+  --s3: #D3A748;  /* call twice 6-13 days, and "pinned" in Being */
+  --s4: #D87C4A;  /* pre-sleep  14-30 days */
+  --s5: #DE555D;  /* sleeping   31+ days, and negative amounts */
+
+  /* --- radii: nothing in the system has a sharp corner ------------------- */
+  --r-s: 10px;    /* table row on hover */
+  --r-m: 16px;    /* tile, field, panel, stage block */
+  --r-l: 24px;    /* modal, client card */
+  /* circles (50% / 999px): avatar, icon button, pill, progress track */
+}
+
+/* --- typography ----------------------------------------------------------
+   Three families, three jobs. Nothing else is loaded.
+     Archivo        - headings, hero numbers, all caps
+     IBM Plex Sans  - interface text
+     IBM Plex Mono  - any digits in columns, IDs, dates
+   The size and spacing scales live in main.css and are unchanged.
+   ------------------------------------------------------------------------- */
+:root {
+  --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+}
