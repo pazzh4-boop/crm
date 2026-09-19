@@ -68,7 +68,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             if action == "getClients": return self._json({"ok": True, "clients": CLIENTS})
             if action == "getReactivation": return self._json({"ok": True, "ready": True, "currentSheet": "since 2026-09-01", "currentSheetDate": "2026-09-01", "rows": REACT_ROWS, "archiveRows": REACT_ROWS})
             if action == "getClientFields": return self._json({"ok": True, "fields": {}})
-            if action == "updatePinned": return self._json({"ok": True})
+            if action == "updatePinned":
+                pinned = q.get("pinned", ["false"])[0].strip().lower() in ("true", "1", "yes")
+                return self._json({"ok": True, "action": "updatePinned", "clientId": q.get("clientId", [""])[0], "pinned": pinned})
             return self._json({"ok": False, "error": "unknown action " + action}, 400)
         return super().do_GET()
     def do_POST(self):

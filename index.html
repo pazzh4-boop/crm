@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="tokens.css?v=1.5.6.2">
   <link rel="stylesheet" href="main.css?v=1.5.6.2">
   <link rel="stylesheet" href="reactivation-v30.css?v=1.5.6.2">
@@ -808,11 +808,10 @@
     </main>
 
 
-    <!-- NEW VERSION NOTIFICATION -->
+    <!-- EXIT STATUS STRIP: setExitStatus() writes here (Saving… / Saved / error) -->
     <div class="version-notification" id="versionNotification" role="status" aria-live="polite">
       <div class="version-notification__content">
-        <strong>New Version Available</strong>
-        <span id="versionNotificationText">Download the latest version of VIP CRM.</span>
+        <span id="versionNotificationText"></span>
       </div>
       <button class="version-notification__close" id="versionNotificationClose" type="button" aria-label="Close notification">×</button>
     </div>
@@ -956,7 +955,7 @@
         </button>
 
         <div class="system-meta" id="systemPanel" title="CRM version">
-          <strong id="localVersion">1.5.4.44</strong>
+          <strong id="localVersion">1.5.6.2</strong>
           <span class="system-meta__updated" id="dataUpdated" hidden>1</span>
         </div>
       </nav>
@@ -1059,13 +1058,12 @@
 
           <div class="reactivation-decision-grid">
             <section class="reactivation-card-block reactivation-offer-block">
-              <div class="reactivation-card-block__head"><h3>Offer</h3><span id="reactivationOfferBr">Current plan</span></div>
+              <div class="reactivation-card-block__head"><h3>Offer</h3><span>Current offer</span></div>
               <div class="reactivation-offer-content">
                 <div>
                   <div class="reactivation-offer-name" id="reactivationOfferName">Research Required</div>
                   <div class="reactivation-offer-rule" id="reactivationOfferRule">No automatic template for this BR range.</div>
                 </div>
-                <div class="reactivation-offer-research" id="reactivationOfferResearch">Research this client before deciding what to do.</div>
               </div>
             </section>
 
@@ -1204,25 +1202,6 @@
           </div>
         </aside>
       </div>
-    </div>
-
-
-    <!-- REACTIVATION HISTORY -->
-    <div class="reactivation-history-overlay" id="reactivationHistoryOverlay" aria-hidden="true">
-      <section class="reactivation-history-modal" id="reactivationHistoryModal" role="dialog" aria-modal="true" aria-labelledby="reactivationHistoryTitle">
-        <header class="reactivation-history-header">
-          <div>
-            <h2 id="reactivationHistoryTitle">Reactivation History</h2>
-            <span id="reactivationHistoryClient">Client · ID</span>
-          </div>
-          <button id="reactivationHistoryClose" type="button" aria-label="Close Reactivation History">×</button>
-        </header>
-        <div class="reactivation-history-body">
-          <div class="reactivation-log-head"><span>Action</span><span>Date</span><span>Time</span><span></span></div>
-          <div class="reactivation-log-list" id="reactivationContactLog"></div>
-          <div class="reactivation-log-empty" id="reactivationContactLogEmpty">No contact actions yet</div>
-        </div>
-      </section>
     </div>
 
 
