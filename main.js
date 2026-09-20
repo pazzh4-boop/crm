@@ -1223,12 +1223,11 @@
     return ids;
   }
 
-  function createClientCard(client, index = 0, membership = getReactivationMembershipSet()) {
+  function createClientCard(client, membership = getReactivationMembershipSet()) {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "client-card";
     card.dataset.clientKey = client._key;
-    card.style.setProperty("--card-index", String(index));
 
     const name = document.createElement("div");
     name.className = "client-card__name";
@@ -1264,8 +1263,8 @@
     const membership = getReactivationMembershipSet();
     const fragment = document.createDocumentFragment();
 
-    clients.forEach((client, index) => {
-      fragment.appendChild(createClientCard(client, index, membership));
+    clients.forEach((client) => {
+      fragment.appendChild(createClientCard(client, membership));
     });
 
     dom.clients.grid.replaceChildren(fragment);
@@ -3080,12 +3079,11 @@
     return svg;
   }
 
-  function createBeingRow(client, index, membership = getReactivationMembershipSet()) {
+  function createBeingRow(client, membership = getReactivationMembershipSet()) {
     const row = document.createElement("div");
     row.className = "being-row";
     row.classList.toggle("is-pinned", Boolean(client?.being?.pinned));
     row.dataset.clientKey = client._key;
-    row.style.setProperty("--being-index", String(index));
     row.setAttribute("role", "row");
     row.tabIndex = 0;
     row.setAttribute("aria-label", `Open ${client?.name || "client"} card`);
@@ -3497,7 +3495,7 @@
     const totalClients = state.clients.length;
     const membership = getReactivationMembershipSet();
     const fragment = document.createDocumentFragment();
-    clients.forEach((client, index) => fragment.appendChild(createBeingRow(client, index, membership)));
+    clients.forEach((client) => fragment.appendChild(createBeingRow(client, membership)));
 
     dom.being.rows.replaceChildren(fragment);
     dom.being.empty.hidden = clients.length !== 0;

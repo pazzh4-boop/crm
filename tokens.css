@@ -24,7 +24,6 @@
   --panel: #0B0C0E;     /* header, rail, modal */
   --panel-2: #15171A;   /* tile, input, metric ribbon */
   --panel-3: #1F2226;   /* active state, avatar, focused field */
-  --hover: #191C1F;     /* table row hover */
 
   /* --- lines: only where a divider is genuinely needed ------------------- */
   --line: #2E3237;      /* button border, header edge */
@@ -38,14 +37,11 @@
   /* --- accent: neutral, not coloured ------------------------------------
      The system has no colour accent. Emphasis is made with light. */
   --accent: #E3E5E6;
-  --accent-wash: rgba(237, 238, 239, .07);
 
   /* --- white glow is the only "light" -----------------------------------
      Achromatic only. Coloured shadows are not allowed. */
   --glow: 0 0 0 1px rgba(255, 255, 255, .10), 0 0 22px rgba(255, 255, 255, .09);
   --glow-soft: 0 0 18px rgba(255, 255, 255, .07);
-  --glow-text: 0 0 12px rgba(255, 255, 255, .28);
-  --shadow: 0 0 0 1px #26282A, 0 24px 60px rgba(0, 0, 0, .96);
 
   /* --- urgency scale: the only role colour plays ------------------------
      Sequential, from "fine" to "burning". Not to be used for anything but
@@ -59,19 +55,16 @@
   /* --- radii: nothing in the system has a sharp corner ------------------- */
   --r-s: 10px;    /* table row on hover */
   --r-m: 16px;    /* tile, field, panel, stage block */
-  --r-l: 24px;    /* modal, client card */
   /* circles (50% / 999px): avatar, icon button, pill, progress track */
 }
 
 /* --- typography ----------------------------------------------------------
-   Three families, three jobs. Nothing else is loaded.
-     Archivo        - headings, hero numbers, all caps
-     IBM Plex Sans  - interface text
-     IBM Plex Mono  - any digits in columns, IDs, dates
+   One family. IBM Plex Sans is the only face the stylesheets ever apply
+   (every other font-family is `inherit`); the Archivo and IBM Plex Mono
+   tokens were never read by a rule and are gone, so index.html should load
+   only Plex Sans.
    The size and spacing scales live in main.css and are unchanged.
    ------------------------------------------------------------------------- */
 :root {
   --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
 }

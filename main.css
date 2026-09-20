@@ -20,7 +20,6 @@
   */
   --ui-speed: 240ms;
   --ui-curve: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --ease-out: var(--ui-curve);
 }
 
 /* =========================================================
@@ -79,9 +78,6 @@
   --s-24: 24px;
   --s-27: 27px;
   --s-30: 30px;
-  --s-34: 34px;
-  --s-38: 38px;
-  --s-6-5: 8px; /* kept for the two icon glyphs that are sized, not read */
   --t-1:  clamp(8.5px, 0.52vw, 9.8px);
   --t-2:  clamp(9.4px, 0.63vw, 11.3px);
   --t-3:  clamp(10.6px, 0.73vw, 13.1px);
@@ -90,7 +86,6 @@
   --t-6:  clamp(14px, 0.98vw, 17.5px);
   --t-7:  clamp(17px, 1.20vw, 21px);
   --t-8:  clamp(20px, 1.45vw, 27px);
-  --t-9:  clamp(25px, 1.95vw, 35px);
   --t-10: clamp(30px, 2.35vw, 44px);
   --t-11: clamp(34px, 2.90vw, 54px);
   /*
@@ -204,9 +199,6 @@ button {
   width: 100%;
   min-height: 100dvh;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse at center, var(--panel), var(--panel) 35%, transparent 68%),
-    var(--ground);
 }
 
 .page-container {
@@ -222,9 +214,6 @@ button {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateY(8px) scale(0.994);
-  transition:
-    opacity var(--ui-speed) var(--ui-curve), transform var(--ui-speed) var(--ui-curve), visibility var(--ui-speed) var(--ui-curve);
 }
 
 .page.is-active {
@@ -314,7 +303,6 @@ button {
   /* The left column used to be 176-208px because the menu stood there. The
      dock needs 55, and only across the top, so the screens take the rest of
      the width back; the page headings keep the clearance they need. */
-  padding: clamp(var(--sp-12), 1vw, var(--sp-20));
   background: var(--ground);
 }
 
@@ -331,7 +319,7 @@ button {
   padding: clamp(var(--sp-16), 1.15vw, 23px);
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
-  background: linear-gradient(115deg, var(--panel), var(--panel));
+  background: var(--panel);
   overflow: hidden;
 }
 
@@ -473,7 +461,6 @@ button {
   position: sticky;
   top: 0;
   z-index: 30;
-  min-height: 39px;
   margin-bottom: var(--sp-6);
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
@@ -560,13 +547,6 @@ button {
   gap: var(--sp-5);
 }
 
-.player-table__row {
-  min-height: 41px;
-  border: 1px solid var(--ink-3);
-  border-radius: var(--r-s);
-  background: linear-gradient(110deg, var(--panel-2), var(--panel));
-}
-
 @media (hover: hover) and (pointer: fine) {
   .player-table__row:hover {
     border-color: var(--ink-2);
@@ -618,7 +598,7 @@ button {
   padding: clamp(var(--sp-14), 1vw, var(--sp-20));
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
-  background: linear-gradient(115deg, var(--panel), var(--panel));
+  background: var(--panel);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
@@ -726,7 +706,7 @@ button {
   overflow: hidden;
   border: 1px solid var(--ink-3);
   border-radius: var(--r-s);
-  background: linear-gradient(110deg, var(--panel), var(--panel));
+  background: var(--panel);
 }
 
 .dashboard-top-card__title {
@@ -1020,15 +1000,7 @@ button {
   padding: clamp(var(--sp-14), 1vw, var(--sp-20));
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
-  background: linear-gradient(115deg, var(--panel), var(--panel));
-}
-
-.clients-directory,
-.client-profile {
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
+  background: var(--panel);
 }
 
 .clients-directory[hidden],
@@ -1272,8 +1244,6 @@ button {
   .clients-search { height: 34px; }
   .clients-grid { gap: var(--sp-7); }
   .client-card { min-height: 56px; padding: var(--sp-8) var(--sp-11); }
-  .profile-performance-row { min-height: 26px; }
-  .profile-info-row { min-height: 26px; }
 }
 
 /* =========================================================
@@ -1281,62 +1251,10 @@ button {
    Keeps all previously approved screens intact.
 ========================================================= */
 
-/* Smooth entrances across the already-built application */
-@keyframes ui-rise-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.992);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-@keyframes ui-soft-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 7px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.page.is-active .yesterday-metric,
-.page.is-active .dashboard-metric,
-.page.is-active .dashboard-top-card {
-  animation: ui-rise-in 380ms var(--ease-out) both;
-}
-
-.page.is-active .yesterday-metric:nth-child(2),
-.page.is-active .dashboard-metric:nth-child(2) { animation-delay: 35ms; }
-.page.is-active .yesterday-metric:nth-child(3),
-.page.is-active .dashboard-metric:nth-child(3) { animation-delay: 60ms; }
-.page.is-active .yesterday-metric:nth-child(4),
-.page.is-active .dashboard-metric:nth-child(4) { animation-delay: 85ms; }
-.page.is-active .yesterday-metric:nth-child(5),
-.page.is-active .dashboard-metric:nth-child(5) { animation-delay: 110ms; }
-.page.is-active .yesterday-metric:nth-child(6),
-.page.is-active .dashboard-metric:nth-child(6) { animation-delay: 135ms; }
-
-.page.is-active .dashboard-top-section:nth-of-type(2) .dashboard-top-card { animation-delay: 90ms; }
-.page.is-active .dashboard-top-section:nth-of-type(3) .dashboard-top-card { animation-delay: 135ms; }
-.page.is-active .dashboard-top-section:nth-of-type(4) .dashboard-top-card { animation-delay: 180ms; }
-
-.page.is-active .player-table__row {
-  animation: ui-soft-in 300ms var(--ease-out) both;
-}
-.page.is-active .player-table__row:nth-child(n+9) {
-  animation-delay: 0ms;
-}
-
 /* CLIENTS panel can smoothly become a compact profile window */
 .clients-panel {
   position: relative;
   width: 100%;
-  max-width: 100%;
   overflow: visible;
 }
 
@@ -1372,12 +1290,6 @@ button {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-}
-
-/* Directory cards animate gently when shown / filtered */
-.clients-directory.is-view-active .client-card {
-  animation: ui-soft-in 320ms var(--ease-out) both;
-  animation-delay: min(calc(var(--card-index, 0) * 18ms), 180ms);
 }
 
 /* PROFILE: smaller, denser window; scroll only profile content */
@@ -1444,18 +1356,8 @@ button {
 
 .profile-card {
   margin-bottom: var(--sp-9);
-  padding: var(--sp-12) var(--sp-14);
   border-color: var(--ink-3);
 }
-
-.client-profile-view.is-view-active .profile-card {
-  animation: ui-rise-in 360ms var(--ease-out) both;
-}
-.client-profile-view.is-view-active .profile-card:nth-of-type(2) { animation-delay: 35ms; }
-.client-profile-view.is-view-active .profile-card:nth-of-type(3) { animation-delay: 70ms; }
-.client-profile-view.is-view-active .profile-card:nth-of-type(4) { animation-delay: 105ms; }
-.client-profile-view.is-view-active .profile-card:nth-of-type(5) { animation-delay: 140ms; }
-.client-profile-view.is-view-active .profile-card:nth-of-type(6) { animation-delay: 175ms; }
 
 .profile-card-title {
   margin-bottom: var(--sp-9);
@@ -1695,24 +1597,12 @@ button {
 
 /* Page transitions use compositor-friendly opacity + translate only. */
 
-.page.is-active {
-  transform: translate3d(0, 0, 0);
-}
-
 /*
   The previous build animated every metric, every dashboard card,
   every Yesterday row and every profile card independently.
   That created many simultaneous composited/repainted layers.
   The page/view itself now provides the motion instead.
 */
-.page.is-active .yesterday-metric,
-.page.is-active .dashboard-metric,
-.page.is-active .dashboard-top-card,
-.page.is-active .player-table__row,
-.clients-directory.is-view-active .client-card,
-.client-profile-view.is-view-active .profile-card {
-  animation: none !important;
-}
 
 /* Client cards stay lightweight during scroll/filtering. */
 .client-card {
@@ -1758,12 +1648,7 @@ button {
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
   background:
-    linear-gradient(
-      115deg,
-      var(--panel),
-      var(--panel)
-    ),
-    var(--ground);
+    var(--panel);
   overflow: visible;
 }
 
@@ -1908,12 +1793,7 @@ button {
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
   background:
-    linear-gradient(
-      115deg,
-      var(--panel),
-      var(--panel)
-    ),
-    var(--ground);
+    var(--panel);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -2074,9 +1954,6 @@ button {
 
 .quest-goal-field {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(132px, 0.42fr);
-  align-items: center;
-  gap: var(--sp-12);
   margin-top: var(--sp-8);
   color: var(--ink-2);
   font-size: var(--s-10);
@@ -2158,33 +2035,6 @@ button {
 .quest-detail-dates {
   display: grid;
   grid-template-columns: repeat(2,minmax(0,1fr));
-}
-
-.quest-detail-date {
-  min-width: 0;
-  padding: var(--sp-10) var(--sp-12);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-s);
-  background: var(--panel);
-}
-
-.quest-detail-date span {
-  display: block;
-  color: var(--ink-2);
-  font-size: var(--s-10);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.quest-detail-date strong {
-  display: block;
-  margin-top: var(--sp-5);
-  overflow: hidden;
-  color: var(--ink);
-  font-size: var(--s-14);
-  font-weight: 500;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* 1366-class desktop */
@@ -2274,26 +2124,9 @@ button {
     border-color var(--ui-speed) var(--ui-curve), background var(--ui-speed) var(--ui-curve), box-shadow var(--ui-speed) var(--ui-curve);
 }
 
-.quest-edit-input {
-  padding: 0 var(--sp-11);
-}
-
-.quest-edit-textarea {
-  min-height: 118px;
-  padding: var(--sp-10) var(--sp-11);
-  resize: vertical;
-}
-
 .quest-edit-input::placeholder,
 .quest-edit-textarea::placeholder {
   color: var(--ink-3);
-}
-
-.quest-edit-input:focus,
-.quest-edit-textarea:focus {
-  border-color: var(--ink-2);
-  background: var(--panel-2);
-  box-shadow: 0 0 0 1px var(--panel-2);
 }
 
 .quest-save-button {
@@ -2341,9 +2174,6 @@ button {
 ========================================================= */
 
 .quest-edit-button {
-  position: absolute;
-  top: -4px;
-  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2400,17 +2230,6 @@ button {
   padding: var(--sp-2) 0;
   resize: none;
   overflow: hidden;
-}
-
-.client-quest-view.is-editing .quest-edit-input,
-.client-quest-view.is-editing .quest-edit-textarea {
-  border-color: var(--ink-3);
-  background:
-    linear-gradient(
-      110deg,
-      var(--panel-2),
-      var(--panel)
-    );
 }
 
 .client-quest-view.is-editing .quest-edit-input {
@@ -2738,7 +2557,7 @@ button {
   display: flex; flex-direction: column; overflow: hidden;
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
-  background: linear-gradient(115deg, var(--panel), var(--panel)), var(--panel-2);
+  background: var(--panel);
   box-shadow: 0 24px 70px rgba(0,0,0,0.62);
   opacity: 0;
   transform: translate3d(0,9px,0) scale(0.988);
@@ -3002,9 +2821,6 @@ body.is-bonus-modal-open { overflow: hidden; }
 
 .reactivation-decision-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr);
-  gap: var(--sp-8);
-  margin-top: var(--sp-8);
 }
 
 .reactivation-current-quest-block {
@@ -3013,13 +2829,7 @@ body.is-bonus-modal-open { overflow: hidden; }
 
 .reactivation-current-quest-open {
   width: 100%;
-  min-height: 100%;
-  padding: var(--sp-12);
-  display: flex;
-  flex-direction: column;
   align-items: stretch;
-  border: 0;
-  background: transparent;
   color: inherit;
   text-align: left;
   cursor: pointer;
@@ -3073,15 +2883,11 @@ body.is-bonus-modal-open { overflow: hidden; }
 /* Larger, touch-friendly contact controls. */
 
 .reactivation-history-actions {
-  margin-top: var(--sp-8);
   display: flex;
   justify-content: flex-end;
-  gap: var(--sp-6);
 }
 
 .reactivation-history-action {
-  min-height: 34px;
-  padding: 0 var(--sp-10);
   display: inline-flex;
   align-items: center;
   gap: var(--sp-7);
@@ -3089,7 +2895,6 @@ body.is-bonus-modal-open { overflow: hidden; }
   border-radius: var(--r-s);
   background: var(--panel-2);
   color: var(--ink-2);
-  font-size: var(--s-8);
   font-weight: 700;
   letter-spacing: var(--ls-caps-tight);
   text-transform: uppercase;
@@ -3111,90 +2916,7 @@ body.is-bonus-modal-open { overflow: hidden; }
   }
 }
 
-/* Dedicated Reactivation History dialog. */
-.reactivation-history-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2850;
-  display: grid;
-  place-items: center;
-  padding: var(--sp-18);
-  background: rgba(0, 0, 0, .78);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity var(--ui-speed) var(--ui-curve), visibility var(--ui-speed) var(--ui-curve);
-}
-
-.reactivation-history-overlay.is-open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.reactivation-history-modal {
-  width: min(720px, calc(100vw - 36px));
-  max-height: min(680px, calc(100dvh - 36px));
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--ink-3);
-  border-radius: var(--r-s);
-  background: var(--panel-2);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .75);
-  transform: translateY(5px);
-  transition: transform var(--ui-speed) var(--ui-curve);
-}
-
-.reactivation-history-overlay.is-open .reactivation-history-modal {
-  transform: translateY(0);
-}
-
-.reactivation-history-header {
-  padding: 17px var(--sp-18);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--sp-16);
-  border-bottom: 1px solid var(--line-soft);
-}
-
-.reactivation-history-header span {
-  color: var(--ink-3);
-  font-size: var(--s-8);
-  font-weight: 650;
-  letter-spacing: var(--ls-caps);
-  text-transform: uppercase;
-}
-
-.reactivation-history-header h2 {
-  margin: var(--sp-6) 0 var(--sp-5);
-  color: var(--ink);
-  font-size: var(--s-24);
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.reactivation-history-header button {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-s);
-  background: var(--panel-2);
-  color: var(--ink-2);
-  font-size: var(--s-20);
-  cursor: pointer;
-}
-
-.reactivation-history-body {
-  min-height: 0;
-  padding: var(--sp-12);
-  overflow-y: auto;
-}
-
 body.is-reactivation-card-open .bonus-history-overlay {
-  z-index: 2850;
   background: rgba(0, 0, 0, .78);
 }
 
@@ -3268,11 +2990,10 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .client-card {
   min-height: clamp(64px, 4.75vw, 82px);
-  padding: clamp(var(--sp-10), 0.68vw, var(--sp-13)) clamp(var(--sp-12), 0.82vw, var(--sp-15));
   border-color: var(--ink-3);
   border-radius: var(--r-s);
   background:
-    linear-gradient(110deg, var(--panel), var(--panel));
+    var(--panel);
   transform: translate3d(0,0,0);
   box-shadow: inset 0 1px 0 var(--panel);
   overflow: hidden;
@@ -3344,8 +3065,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .quest-name-input {
   width:100%; padding:0;
   border:0; border-bottom:1px solid transparent; outline:0;
-  background:transparent; color:var(--accent);
-  font-size:clamp(19px,1.25vw,23px); font-weight:600; line-height:1.2;
+  background:transparent; color:var(--accent); font-weight:600; line-height:1.2;
   transition:border-color var(--ui-speed) var(--ui-curve), background var(--ui-speed) var(--ui-curve), padding var(--ui-speed) var(--ui-curve);
 }
 .quest-name-input[readonly] { cursor:default; }
@@ -3355,7 +3075,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 .client-quest-view.is-editing .quest-name-input:focus { border-color:var(--ink-2); }
 
-.quest-mechanic-row { display:flex; align-items:flex-end; gap:var(--sp-8); }
+.quest-mechanic-row { display:flex; gap:var(--sp-8); }
 .quest-mechanic-row .quest-mechanic-field { flex:1 1 auto; min-width:0; }
 .quest-name-sync-button { height:40px; flex:0 0 40px; margin-bottom:0; padding:0;
   display:flex; align-items:center; justify-content:center;
@@ -3385,13 +3105,10 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .quest-complete-button.is-completed,
 .quest-complete-button:disabled { opacity:.42; cursor:default; }
 
-.quest-history-open {
-  position:absolute; left:12px; bottom:12px; z-index:90;
-  min-width:102px; height:36px; padding:0 var(--sp-11);
+.quest-history-open { left:12px; bottom:12px; z-index:90; padding:0 var(--sp-11);
   display:flex; align-items:center; justify-content:center; gap:var(--sp-7);
   border:1px solid var(--ink-3); border-radius:var(--r-s);
-  background:rgba(7,7,7,0.96); color:var(--ink-2);
-  font-size:var(--s-9); font-weight:700; letter-spacing:var(--ls-caps-tight); text-transform:uppercase;
+  background:rgba(7,7,7,0.96); color:var(--ink-2); font-weight:700; letter-spacing:var(--ls-caps-tight); text-transform:uppercase;
   cursor:pointer; transition:border-color var(--ui-speed) var(--ui-curve), background var(--ui-speed) var(--ui-curve), color var(--ui-speed) var(--ui-curve), transform var(--ui-speed) var(--ui-curve);
 }
 .quest-history-open svg { width:15px; height:15px; }
@@ -3412,7 +3129,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .quest-confirm-modal {
   width:min(92vw,440px); padding:21px;
   border:1px solid var(--ink-2); border-radius:var(--r-s);
-  background:linear-gradient(115deg,var(--panel),var(--panel)),var(--panel-2);
+  background:var(--panel);
   box-shadow:0 24px 70px rgba(0,0,0,.68); opacity:0; transform:translate3d(0,8px,0) scale(.988);
   transition:opacity var(--ui-speed) var(--ui-curve), transform var(--ui-speed) var(--ui-curve);
 }
@@ -3434,7 +3151,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .quest-history-modal {
   width:min(92vw,680px); max-height:min(78dvh,680px); display:flex; flex-direction:column; overflow:hidden;
   border:1px solid var(--ink-2); border-radius:var(--r-s);
-  background:linear-gradient(115deg,var(--panel),var(--panel)),var(--panel-2);
+  background:var(--panel);
   box-shadow:0 24px 70px rgba(0,0,0,.66); opacity:0; transform:translate3d(0,9px,0) scale(.988);
   transition:opacity var(--ui-speed) var(--ui-curve), transform var(--ui-speed) var(--ui-curve);
 }
@@ -3475,7 +3192,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .profile-quest-open.is-no-active-quest {
   border-color: var(--ink-3);
-  background: linear-gradient(110deg, var(--panel), var(--panel));
+  background: var(--panel);
 }
 
 .quest-complete-button.is-inactive {
@@ -3566,10 +3283,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   margin-top: clamp(var(--sp-6), 0.72dvh, var(--sp-11));
 }
 
-.quest-edit-input {
-  min-height: clamp(32px, 3.8dvh, 40px);
-}
-
 /* Conditions stays visible without making the quest page scroll. */
 .quest-edit-textarea,
 .quest-edit-textarea[readonly],
@@ -3629,9 +3342,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 /* =========================================================
    v1.5.0 — BEING / DAILY CONTACT WORKSPACE
 ========================================================= */
-.being-page {
-  background: var(--ground);
-}
 
 .being-panel {
   width: 100%;
@@ -3644,7 +3354,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
   overflow: hidden;
   border: 1px solid var(--ink-2);
   border-radius: var(--r-s);
-  background: linear-gradient(115deg, var(--panel), var(--panel));
+  background: var(--panel);
 }
 
 .being-header {
@@ -3730,21 +3440,15 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .being-row {
   position: relative;
-  min-height: 70px;
-  margin-bottom: var(--sp-6);
-  padding: var(--sp-9) var(--sp-12);
   overflow: hidden;
   border: 1px solid var(--ink-3);
   border-radius: var(--r-s);
-  background: linear-gradient(110deg, var(--panel), var(--panel));
+  background: var(--panel);
   transition: border-color var(--ui-speed) var(--ui-curve), background var(--ui-speed) var(--ui-curve), box-shadow var(--ui-speed) var(--ui-curve);
 }
 
 .being-row.is-pinned {
   border-color: color-mix(in srgb, var(--s3) 82%, transparent);
-  background:
-    linear-gradient(100deg, color-mix(in srgb, var(--s3) 10.5%, transparent), color-mix(in srgb, var(--s3) 2.2%, transparent) 45%, var(--panel));
-  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--s3) 78%, transparent);
 }
 
 @media (hover:hover) and (pointer:fine) {
@@ -3799,7 +3503,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   white-space: nowrap;
 }
 .being-client__id {
-  margin-top: var(--sp-5);
   overflow: hidden;
   color: var(--ink-3);
   font-size: var(--s-10);
@@ -3853,33 +3556,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 .being-row.is-pinned .being-progress__fill { background: color-mix(in srgb, var(--s3) 92%, transparent); }
 
-.being-note {
-  width: 100%;
-  height: 48px;
-  min-height: 48px;
-  max-height: 48px;
-  resize: none;
-  padding: var(--sp-8) var(--sp-9);
-  overflow-y: auto;
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-s);
-  outline: 0;
-  background: var(--panel);
-  color: var(--ink);
-  font-size: var(--s-11);
-  font-weight: 400;
-  line-height: 1.3;
-  scrollbar-width: none;
-  transition: border-color var(--ui-speed) var(--ui-curve), background var(--ui-speed) var(--ui-curve);
-}
-.being-note::-webkit-scrollbar { display: none; }
-.being-note::placeholder { color: var(--ink-3); }
-.being-note:focus {
-  border-color: var(--ink-2);
-  background: var(--panel);
-}
-.being-row.is-pinned .being-note { border-color: color-mix(in srgb, var(--s3) 27%, transparent); }
-
 .being-empty {
   padding: 42px var(--sp-18);
   text-align: center;
@@ -3928,7 +3604,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   outline-offset: -2px;
 }
 
-.being-row:has(.being-note:focus),
 .being-row:has(.being-pin:focus-visible) {
   cursor: default;
 }
@@ -3973,7 +3648,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--sp-18);
   border-bottom: 1px solid var(--line-soft);
 }
 
@@ -4053,7 +3727,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 /* v1.5.4.30 — isolated since-sheet Comm, inactivity stages and final card geometry */
 
 .reactivation-offer-editor > button {
-  height: 26px !important;
   margin-top: var(--sp-5) !important;
 }
 
@@ -4120,13 +3793,11 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .reactivation-comm-list {
-  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--sp-5);
   padding-right: var(--sp-3);
-  overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-gutter: stable;
@@ -4212,19 +3883,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   border-color: var(--ink-3) !important;
 }
 
-.reactivation-log-row--fixed {
-  grid-template-columns: 90px 92px 90px minmax(0, 1fr) !important;
-}
-
-.reactivation-log-fixed-text {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--ink-2);
-  font-size: var(--s-9);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 @media (max-width: 520px) {
 
   .reactivation-comm-composer {
@@ -4253,24 +3911,12 @@ body.is-reactivation-card-open .bonus-history-overlay {
   text-align: center;
 }
 
-.reactivation-money--ngr {
-  color: var(--ink);
-}
-
-.reactivation-money--deposit {
-  color: var(--ink);
-}
-
 .reactivation-card-overlay {
   transition: opacity var(--ui-speed) var(--ui-curve), visibility var(--ui-speed) var(--ui-curve) !important;
 }
 
 .reactivation-card-modal {
   transition: transform var(--ui-speed) var(--ui-curve), opacity var(--ui-speed) var(--ui-curve) !important;
-}
-
-.reactivation-card-strip article {
-  border-color: var(--line-soft) !important;
 }
 
 .reactivation-contact-undo-action {
@@ -4301,10 +3947,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   opacity: .42;
 }
 
-.reactivation-work-panel {
-  background: var(--panel-2) !important;
-}
-
 .reactivation-work-panel .reactivation-notes-panel-header {
   border-bottom-color: var(--line-soft) !important;
 }
@@ -4321,21 +3963,11 @@ body.is-reactivation-card-open .bonus-history-overlay {
   text-align: center;
 }
 
-.reactivation-work-section {
-  min-width: 0;
-  padding: var(--sp-9);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-s);
-  background: var(--panel-2);
-}
-
 .reactivation-work-section__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-8);
-  min-height: 24px;
-  margin-bottom: var(--sp-7);
 }
 
 .reactivation-work-section__head > div {
@@ -4366,11 +3998,8 @@ body.is-reactivation-card-open .bonus-history-overlay {
   border-color: var(--ink-3);
 }
 .reactivation-offer-editor > button {
-  width: 100%;
-  height: 29px;
   margin-top: var(--sp-6);
   border: 1px solid var(--line);
-  border-radius: var(--r-s);
   background: var(--panel-3);
   color: var(--ink);
   font: 800 8px/1 inherit;
@@ -4402,8 +4031,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .reactivation-offer-fields select {
   width: 100%;
   min-width: 0;
-  height: 30px;
-  padding: 0 var(--sp-7);
   border: 1px solid var(--line-soft);
   border-radius: var(--r-s);
   outline: 0;
@@ -4460,7 +4087,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .being-card-body {
-  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -4492,7 +4118,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .being-card-date-input {
   width: 100%;
-  padding: 0 var(--sp-12);
   border: 1px solid var(--line);
   border-radius: var(--r-s);
   outline: 0;
@@ -4549,7 +4174,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(180px, 0.42fr);
   align-items: center;
-  gap: 24px;
   border: 1px solid var(--line-soft);
   border-radius: var(--r-s);
   background: var(--panel);
@@ -5156,8 +4780,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .reactivation-contact-button:focus-visible,
 .reactivation-contact-undo:focus-visible,
 .reactivation-card-close:focus-visible,
-.reactivation-contact-main-button:focus-visible,
-.reactivation-log-undo:focus-visible {
+.reactivation-contact-main-button:focus-visible {
   outline:2px solid var(--ink);
   outline-offset:2px;
 }
@@ -5186,7 +4809,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   overflow:hidden;
   border:1px solid var(--line-soft);
   border-radius:var(--r-s);
-  color:var(--ink-2);
   font-weight:700;
   letter-spacing:var(--ls-caps-tight);
   text-transform:uppercase;
@@ -5310,7 +4932,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   flex-direction:column;
   overflow:hidden;
   border:1px solid var(--ink-2);
-  border-radius:var(--r-s);
   transform:translateY(8px) scale(.993);
   transition:transform var(--ui-speed) var(--ui-curve);
 }
@@ -5325,30 +4946,24 @@ body.is-reactivation-card-open .bonus-history-overlay {
   align-items:flex-start;
   justify-content:space-between;
   gap:var(--sp-18);
-  padding:19px var(--sp-20) var(--sp-16);
   border-bottom:1px solid var(--line-soft);
 }
 
 .reactivation-card-name {
   margin:0;
   color:rgba(255,255,255,.98);
-  font-size:clamp(28px,2vw,36px);
   font-weight:800;
-  line-height:.95;
   letter-spacing:-.025em;
 }
 
 .reactivation-card-id-row {
-  margin-top:var(--sp-7);
   display:flex;
   align-items:center;
-  gap:var(--sp-10);
   color:var(--ink-3);
   font-size:var(--s-10);
 }
 
 .reactivation-stage-badge {
-  padding:var(--sp-3) var(--sp-6);
   border:1px solid var(--line);
   border-radius:var(--r-s);
   color:var(--ink-2);
@@ -5359,8 +4974,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .reactivation-card-close {
-  width:38px;
-  height:38px;
   flex:0 0 auto;
   padding:0;
   border:1px solid var(--line);
@@ -5373,10 +4986,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .reactivation-card-scroll {
-  min-height:0;
   flex:1 1 auto;
-  padding:var(--sp-14);
-  overflow-y:auto;
   scrollbar-width:thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
@@ -5386,20 +4996,10 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .reactivation-card-strip {
   display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:var(--sp-7);
-}
-
-.reactivation-card-strip article,
-.reactivation-card-block {
-  border:1px solid var(--line);
-  border-radius:var(--r-s);
 }
 
 .reactivation-card-strip article {
   min-width:0;
-  min-height:64px;
-  padding:var(--sp-10) var(--sp-11);
 }
 
 .reactivation-card-strip span,
@@ -5413,10 +5013,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .reactivation-card-strip strong {
   display:block;
-  margin-top:var(--sp-7);
   overflow:hidden;
-  color:var(--ink);
-  font-size:15px;
   font-weight:750;
   line-height:1.12;
   text-overflow:ellipsis;
@@ -5425,7 +5022,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .reactivation-card-block {
   min-width:0;
-  padding:var(--sp-12);
 }
 
 .reactivation-offer-block,
@@ -5463,7 +5059,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .reactivation-offer-content {
-  display:grid;
   grid-template-columns:minmax(0,1.2fr) minmax(240px,.8fr);
 }
 
@@ -5477,34 +5072,21 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .reactivation-offer-name {
   color:var(--ink);
-  font-size:var(--s-14);
   font-weight:800;
 }
 
-.reactivation-offer-rule,
-.reactivation-offer-research {
+.reactivation-offer-rule {
   margin-top:var(--sp-6);
   color:var(--ink-2);
   font-weight:450;
 }
 
-.reactivation-offer-research {
-  margin-top:0;
-  display:flex;
-  align-items:center;
-}
-
 .reactivation-contact-grid {
   display:grid;
-  grid-template-columns:150px 120px 145px 145px minmax(220px,1fr);
-  gap:var(--sp-7);
-  align-items:stretch;
 }
 
 .reactivation-contact-grid label {
-  display:flex;
   flex-direction:column;
-  gap:var(--sp-6);
 }
 
 .reactivation-contact-grid label > span{
@@ -5515,21 +5097,14 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .reactivation-contact-grid input {
-  min-height:38px;
-  padding:0 var(--sp-9);
-  border:1px solid var(--line);
   border-radius:var(--r-s);
   outline:0;
-  background:var(--panel);
   color:var(--ink);
   color-scheme:dark;
-  font-size:var(--s-10);
 }
 
 .reactivation-contact-main-button {
   align-self:end;
-  align-items:center;
-  gap:var(--sp-8);
   border:1px solid var(--ink-3);
   border-radius:var(--r-s);
   color:var(--ink);
@@ -5537,7 +5112,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .reactivation-contact-main-button span {
-  font-size:var(--s-10);
   font-weight:750;
   text-transform:uppercase;
 }
@@ -5545,68 +5119,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .reactivation-contact-main-button strong {
   font-weight:850;
   font-variant-numeric:tabular-nums;
-}
-
-.reactivation-log-head,
-.reactivation-log-row {
-  display:grid;
-  grid-template-columns:140px 130px 90px minmax(80px,1fr);
-  align-items:center;
-  column-gap:var(--sp-8);
-}
-
-.reactivation-log-head {
-  min-height:28px;
-  padding:0 var(--sp-8);
-  border:1px solid var(--line-soft);
-  border-radius:var(--r-s) var(--r-s) 0 0;
-  color:var(--ink-3);
-  font-size:var(--s-8);
-  font-weight:700;
-  letter-spacing:var(--ls-caps);
-  text-transform:uppercase;
-}
-
-.reactivation-log-row {
-  min-height:36px;
-  padding:0 var(--sp-8);
-  border:1px solid var(--line-soft);
-  border-top:0;
-  color:var(--ink-2);
-  font-size:var(--s-9);
-}
-
-.reactivation-log-action {
-  color:var(--ink);
-  font-weight:700;
-  text-transform:uppercase;
-}
-
-.reactivation-log-undo {
-  justify-self:end;
-  min-height:25px;
-  padding:0 var(--sp-9);
-  border:1px solid var(--line-soft);
-  border-radius:var(--r-s);
-  background:transparent;
-  color:var(--ink-2);
-  font-size:var(--s-8);
-  font-weight:750;
-  text-transform:uppercase;
-  cursor:pointer;
-}
-
-.reactivation-log-undo:disabled {
-  opacity:.5;
-  cursor:default;
-}
-
-.reactivation-log-empty {
-  padding:var(--sp-14) var(--sp-8);
-  border:1px solid var(--line-soft);
-  border-top:0;
-  color:var(--ink-3);
-  font-size:var(--s-9);
 }
 
 body.is-reactivation-card-open { overflow:hidden; }
@@ -5632,8 +5144,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   .reactivation-card-header { padding:var(--sp-15); }
   .reactivation-card-scroll { padding:var(--sp-9); }
   .reactivation-contact-grid { grid-template-columns:1fr; }
-  .reactivation-log-head,
-  .reactivation-log-row { grid-template-columns:90px 92px 60px minmax(60px,1fr); }
 }
 
 /* =========================================================
@@ -5805,7 +5315,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 
 .reactivation-contact-button {
   width: 29px;
-  height: 27px;
   padding: 0;
   gap: 0;
   position: relative;
@@ -5822,33 +5331,18 @@ body.is-reactivation-card-open { overflow:hidden; }
   line-height: 1;
 }
 
-.reactivation-contact-undo {
-  width: 27px;
-  height: 27px;
-}
-
 /* Client Card must always sit above the Reactivation portal. */
 .reactivation-card-overlay {
   z-index: 3200;
 }
 
-.reactivation-12m-play-block {
-  margin-top: var(--sp-8);
-}
-
 .reactivation-12m-play-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0,1fr));
-  gap: var(--sp-6);
 }
 
 .reactivation-12m-play-grid article {
   min-width: 0;
-  min-height: 52px;
-  padding: var(--sp-8) var(--sp-9);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-s);
-  background: var(--panel);
 }
 
 .reactivation-12m-play-grid span {
@@ -5933,15 +5427,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   padding: 0;
 }
 
-.reactivation-panel {
-  border: 0;
-  border-radius: 0;
-  background:
-    radial-gradient(circle at 82% -12%, var(--panel-2), transparent 30%),
-    linear-gradient(125deg, var(--panel), transparent 36%),
-    var(--ground);
-}
-
 .reactivation-header {
   display: grid;
   grid-template-columns: minmax(260px, 1fr) auto;
@@ -5950,10 +5435,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 
 .reactivation-header__copy {
   min-width: 0;
-}
-
-.reactivation-title {
-  letter-spacing: -.032em;
 }
 
 .reactivation-command-bar {
@@ -6027,7 +5508,7 @@ body.is-reactivation-card-open { overflow:hidden; }
 
 .reactivation-summary-group--queue {
   border-color: var(--ink-3);
-  background: linear-gradient(105deg, var(--panel), var(--panel));
+  background: var(--panel);
 }
 
 .reactivation-summary-group__label {
@@ -6110,10 +5591,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   letter-spacing: .015em;
 }
 
-.reactivation-list-heading span {
-  font-size: var(--s-8);
-}
-
 .reactivation-list-controls {
   display: flex;
   align-items: center;
@@ -6152,12 +5629,6 @@ body.is-reactivation-card-open { overflow:hidden; }
     background: var(--panel-2);
     color: var(--accent);
   }
-}
-
-.reactivation-table-shell {
-  border: 1px solid var(--line);
-  border-radius: var(--r-s);
-  background: var(--panel-2);
 }
 
 .reactivation-table__header {
@@ -6288,59 +5759,19 @@ body.is-reactivation-card-open { overflow:hidden; }
 ========================================================= */
 /* Notes read like short private messages. Old Notes rows intentionally
    have no artificial date; new records carry their own YYYY-MM-DD stamp. */
-.being-card-notes {
-  min-height: 176px;
-  padding: var(--sp-8);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-s);
-  background: linear-gradient(180deg, var(--panel-2), var(--panel-2));
-}
 
 .being-card-notes__head { padding: 0 var(--sp-2) var(--sp-2); }
 .being-card-notes__head > span { letter-spacing: .095em; }
-
-.being-note-date,
-.being-card-notes .being-note-text {
-  height: 32px;
-  min-height: 32px;
-  border-color: transparent;
-  border-radius: var(--r-m);
-  background: var(--line);
-}
-
-.being-card-notes .being-note-text {
-  color: var(--ink);
-}
-
-.being-note-list { padding: var(--sp-2) var(--sp-1); }
-.being-note-item__edit span { order: 2; }
-.being-note-item__edit strong {
-  text-align: left;
-}
-
-.being-note-item__delete {
-  font-size: var(--s-14);
-}
-
-.being-note-list__empty {
-  background: var(--panel-3);
-}
 
 /* Reactivation: one dense operator panel, not a report made of oversized cards. */
 .reactivation-card-strip span,
 .reactivation-12m-play-grid span{ font-size: var(--s-7); }
 
-.reactivation-card-block{ border-radius: var(--r-s); }
 .reactivation-card-block__head { padding: 0 var(--sp-1); }
-.reactivation-card-block__head h3 { font-size: var(--s-10); }
-.reactivation-card-block__head span { font-size: var(--s-7); }
-.reactivation-12m-play-grid strong { margin-top: var(--sp-3); font-size: var(--s-11); }
+.reactivation-12m-play-grid strong { margin-top: var(--sp-3); }
 .reactivation-offer-content { gap: var(--sp-7); }
-.reactivation-offer-rule,
-.reactivation-offer-research { font-size: var(--s-8); line-height: 1.25; }
-.reactivation-current-quest-open__name { margin-top: var(--sp-4); font-size: var(--s-11); }
+.reactivation-current-quest-open__name { margin-top: var(--sp-4); }
 
-.reactivation-contact-block { padding: var(--sp-7) var(--sp-9); }
 .reactivation-contact-grid label > span{ font-size: var(--s-7); }
 .reactivation-history-action svg { width: 13px; height: 13px; }
 
@@ -6367,9 +5798,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 /* =========================================================
    v1.5.4.19 — REACTIVATION FULL-SCREEN FIT
 ========================================================= */
-.reactivation-panel {
-  padding: clamp(var(--sp-10), .68vw, var(--sp-14));
-}
 
 .reactivation-portal-back {
   left: clamp(10px, .74vw, 15px);
@@ -6382,10 +5810,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   min-height: clamp(60px, 7.1dvh, 76px);
   padding-left: clamp(68px, 4vw, 78px);
   gap: clamp(var(--sp-14), 1.1vw, 22px);
-}
-
-.reactivation-title {
-  font-size: clamp(31px, 1.95vw, 40px);
 }
 
 .reactivation-command-bar {
@@ -6528,7 +5952,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 }
 
 .reactivation-sort-button {
-  height: 39px;
   font-size: var(--t-2);
 }
 
@@ -6539,8 +5962,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 
 .reactivation-row {
   height: var(--reactivation-row-height, 54px);
-  min-height: var(--reactivation-row-height, 54px);
-  padding: 0 var(--sp-11);
 }
 
 .reactivation-row::before {
@@ -6557,7 +5978,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 }
 
 .reactivation-client-id {
-  margin-top: var(--sp-4);
   font-size: var(--t-2);
 }
 .reactivation-playing,
@@ -6745,17 +6165,6 @@ body.is-reactivation-card-open { overflow:hidden; }
    v1.5.4.20 — REACTIVATION VISUAL POLISH
 ========================================================= */
 .app.app--reactivation-portal {
-  --reactivation-surface: var(--panel-2);
-  --reactivation-surface-raised: var(--ground);
-  --reactivation-line: color-mix(in srgb, var(--ink) 13%, transparent);
-  --reactivation-line-strong: color-mix(in srgb, var(--ink) 22%, transparent);
-  --reactivation-text: var(--ink);
-  --reactivation-muted: var(--ink-2);
-  --reactivation-active: var(--s1);
-  --reactivation-catch-up: var(--s2);
-  --reactivation-call-twice: var(--s5);
-  --reactivation-sleeping: var(--ink-3);
-  --reactivation-focus: var(--accent);
   overflow: clip;
 }
 
@@ -6767,7 +6176,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 }
 
 .app.app--reactivation-portal .reactivation-title {
-  font-size: var(--s-38);
   font-weight: 750;
   letter-spacing: -.035em;
 }
@@ -6795,10 +6203,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   font-weight: 500;
 }
 
-.app.app--reactivation-portal .reactivation-search input::placeholder {
-  color: var(--ink-3);
-}
-
 .app.app--reactivation-portal .reactivation-count {
   color: var(--ink-2);
   font-size: var(--s-9);
@@ -6810,15 +6214,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   border-radius: var(--r-s);
   background: linear-gradient(115deg, color-mix(in srgb, var(--panel-3) 88%, transparent), color-mix(in srgb, var(--panel-2) 76%, transparent));
   box-shadow: inset 0 1px 0 var(--panel);
-}
-
-.app.app--reactivation-portal .reactivation-summary-group--queue {
-  border-color: color-mix(in srgb, var(--ink) 18%, transparent);
-  background: linear-gradient(115deg, color-mix(in srgb, var(--panel-3) 92%, transparent), color-mix(in srgb, var(--panel-2) 78%, transparent));
-}
-
-.app.app--reactivation-portal .reactivation-summary-group__label {
-  color: var(--ink-2);
 }
 
 .app.app--reactivation-portal .reactivation-summary-group__label span {
@@ -6835,7 +6230,7 @@ body.is-reactivation-card-open { overflow:hidden; }
   overflow: hidden;
   border-color: color-mix(in srgb, var(--ink) 12%, transparent);
   border-radius: var(--r-s);
-  background: linear-gradient(145deg, var(--panel), var(--panel));
+  background: var(--panel);
   box-shadow: none;
 }
 
@@ -6857,7 +6252,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 
 .app.app--reactivation-portal .reactivation-metric strong {
   color: var(--ink);
-  font-size: var(--s-24);
   font-weight: 700;
   letter-spacing: -.025em;
 }
@@ -6868,29 +6262,7 @@ body.is-reactivation-card-open { overflow:hidden; }
 }
 
 .app.app--reactivation-portal .reactivation-metric--filter {
-  --stage-accent: var(--ink-2);
   transition: border-color var(--ui-speed) var(--ui-curve), background var(--ui-speed) var(--ui-curve), color var(--ui-speed) var(--ui-curve);
-}
-
-.app.app--reactivation-portal .reactivation-metric--filter[data-reactivation-stage-filter="active"] {
-  --stage-accent: var(--reactivation-active);
-}
-
-.app.app--reactivation-portal .reactivation-metric--filter[data-reactivation-stage-filter="catch_up"] {
-  --stage-accent: var(--reactivation-catch-up);
-}
-
-.app.app--reactivation-portal .reactivation-metric--filter[data-reactivation-stage-filter="call_twice"] {
-  --stage-accent: var(--reactivation-call-twice);
-}
-
-.app.app--reactivation-portal .reactivation-metric--filter[data-reactivation-stage-filter="sleeping"] {
-  --stage-accent: var(--reactivation-sleeping);
-}
-
-.app.app--reactivation-portal .reactivation-metric--filter.is-active span,
-.app.app--reactivation-portal .reactivation-metric--filter.is-active strong {
-  color: color-mix(in srgb, var(--stage-accent) 72%, white);
 }
 
 .app.app--reactivation-portal .reactivation-metric--filter:focus-visible,
@@ -6960,13 +6332,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   border-top-color: color-mix(in srgb, var(--ink-3) 22%, transparent);
 }
 
-.app.app--reactivation-portal .reactivation-table__header > :first-child {
-  position: static;
-  z-index: auto;
-  background: transparent;
-  box-shadow: none;
-}
-
 .app.app--reactivation-portal .reactivation-row {
   border-bottom-color: color-mix(in srgb, var(--ink) 9%, transparent);
   background: var(--panel);
@@ -7005,7 +6370,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 
 .app.app--reactivation-portal .reactivation-client-cell {
   position: static;
-  z-index: auto;
   padding-right: var(--sp-10);
   background: transparent;
   box-shadow: none;
@@ -7047,10 +6411,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   font-weight: 550;
 }
 
-.app.app--reactivation-portal .reactivation-playing {
-  color: var(--ink);
-}
-
 .app.app--reactivation-portal .reactivation-rate {
   color: var(--s3);
   font-weight: 750;
@@ -7082,46 +6442,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   border-radius: 50%;
   background: var(--ink-3);
   transform: translateY(-50%);
-}
-
-.app.app--reactivation-portal .reactivation-stage--active span {
-  border-color: color-mix(in srgb, var(--s1) 28%, transparent);
-  background: color-mix(in srgb, var(--s1) 5.5%, transparent);
-  color: var(--s1);
-}
-
-.app.app--reactivation-portal .reactivation-stage--active span::before {
-  background: var(--reactivation-active);
-}
-
-.app.app--reactivation-portal .reactivation-stage--catch_up span {
-  border-color: color-mix(in srgb, var(--s2) 25%, transparent);
-  background: color-mix(in srgb, var(--s2) 5%, transparent);
-  color: var(--s4);
-}
-
-.app.app--reactivation-portal .reactivation-stage--catch_up span::before {
-  background: var(--reactivation-catch-up);
-}
-
-.app.app--reactivation-portal .reactivation-stage--call_twice span {
-  border-color: color-mix(in srgb, var(--s5) 25%, transparent);
-  background: color-mix(in srgb, var(--s5) 5%, transparent);
-  color: var(--s5);
-}
-
-.app.app--reactivation-portal .reactivation-stage--call_twice span::before {
-  background: var(--reactivation-call-twice);
-}
-
-.app.app--reactivation-portal .reactivation-stage--sleeping span {
-  border-color: rgba(118, 129, 141, .18);
-  background: rgba(118, 129, 141, .035);
-  color: var(--ink-3);
-}
-
-.app.app--reactivation-portal .reactivation-stage--sleeping span::before {
-  background: var(--reactivation-sleeping);
 }
 
 .app.app--reactivation-portal .reactivation-contact-actions {
@@ -7164,20 +6484,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   border-color: color-mix(in srgb, var(--ink) 7%, transparent);
   color: var(--line);
   opacity: .62;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .app.app--reactivation-portal .reactivation-contact-button:hover {
-    border-color: color-mix(in srgb, var(--accent) 46%, transparent);
-    background: color-mix(in srgb, var(--accent) 7.5%, transparent);
-    color: var(--accent);
-  }
-
-  .app.app--reactivation-portal .reactivation-contact-undo:not(:disabled):hover {
-    border-color: color-mix(in srgb, var(--s5) 38%, transparent);
-    background: color-mix(in srgb, var(--s5) 5.5%, transparent);
-    color: var(--s5);
-  }
 }
 
 .app.app--reactivation-portal .reactivation-last-contact {
@@ -7357,11 +6663,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 }
 
 /* One quiet transition language across the workspace. */
-.page {
-  transform: none !important;
-  transition:
-    opacity var(--ui-speed) var(--ui-curve), visibility var(--ui-speed) var(--ui-curve) !important;
-}
 .main-menu,
 .main-menu__button,
 .version-notification,
@@ -7407,22 +6708,13 @@ body.is-reactivation-card-open { overflow:hidden; }
 
 /* Reactivation: grayscale surfaces, no neon or cool-color haze. */
 .app.app--reactivation-portal {
-  --reactivation-surface: var(--panel-2);
-  --reactivation-surface-raised: var(--panel-2);
   --reactivation-line: var(--line-soft);
   --reactivation-line-strong: var(--line);
-  --reactivation-text: var(--ink);
-  --reactivation-muted: var(--ink-3);
-  --reactivation-active: var(--ink-3);
-  --reactivation-catch-up: var(--ink-3);
-  --reactivation-call-twice: var(--ink-3);
-  --reactivation-sleeping: var(--ink-3);
   --reactivation-focus: var(--accent);
 }
 
 .app.app--reactivation-portal .reactivation-panel {
   border-color: var(--ink-3);
-  background: linear-gradient(135deg, var(--panel-2), var(--ground) 58%, var(--ground));
   box-shadow: inset 0 1px 0 var(--panel);
 }
 
@@ -7466,10 +6758,6 @@ body.is-reactivation-card-open { overflow:hidden; }
 .app.app--reactivation-portal .reactivation-metric span,
 .app.app--reactivation-portal .reactivation-metric small {
   color: var(--ink-3);
-}
-
-.app.app--reactivation-portal .reactivation-metric--filter {
-  --stage-accent: var(--ink-3) !important;
 }
 
 .app.app--reactivation-portal .reactivation-metric--filter.is-active {
@@ -7669,33 +6957,18 @@ body.is-reactivation-card-open { overflow:hidden; }
 /* v1.5.4.24 final cascade: keep the redesigned Reactivation card above all
    historical compatibility layers in this accumulated stylesheet. */
 .reactivation-card-modal {
-  width: min(1360px, calc(100vw - 30px));
-  max-height: min(900px, calc(100dvh - 24px));
   border-color: var(--ink-3);
-  background: var(--panel-2);
   box-shadow: 0 28px 88px rgba(0, 0, 0, .78);
 }
-
-.reactivation-card-strip article,
-.reactivation-card-block{
-  border-color: var(--line-soft);
-  background: var(--panel-2);
-}
-
-.reactivation-12m-play-block,
-.reactivation-contact-block { margin-top: var(--sp-8); }
 
 .reactivation-decision-grid .reactivation-card-block { margin-top: 0; }
 .reactivation-current-quest-block { padding: 0; }
 
 .reactivation-contact-main-button {
   width: 100%;
-  min-height: 64px;
   justify-self: stretch;
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
   justify-content: initial;
-  padding: 0 var(--sp-13);
   border-color: var(--ink-3);
   background: var(--panel-2);
 }
@@ -7709,7 +6982,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   border: 0;
   border-radius: 0;
   background: transparent;
-  font-size: 19px;
 }
 
 .client-quest-being-back {
@@ -7737,7 +7009,6 @@ body.is-reactivation-card-open { overflow:hidden; }
   .reactivation-contact-grid { grid-template-columns: 1fr; }
 }
 
-.reactivation-history-overlay,
 body.is-reactivation-card-open .bonus-history-overlay {
   z-index: 3600;
 }
@@ -7910,12 +7181,10 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .being-note-preview {
   min-width: 0;
-  min-height: 32px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--sp-7);
-  padding: var(--sp-5) var(--sp-7);
   border: 1px solid var(--line-soft);
   border-radius: var(--r-s);
   background: var(--panel-2);
@@ -8048,14 +7317,10 @@ body.is-reactivation-card-open .bonus-history-overlay {
   background: var(--panel-2);
 }
 
-.being-card-header { padding: var(--sp-14) var(--sp-16) var(--sp-12); }
-.being-card-body { gap: var(--sp-8); padding: var(--sp-11) var(--sp-16); }
-.being-card-footer { min-height: 50px; padding: var(--sp-7) var(--sp-16); }
+.being-card-footer { min-height: 50px; }
 .being-card-name { font-size: clamp(22px, 2vw, 30px); }
-.being-card-date-input { height: 38px; font-size: var(--s-11); }
-.being-card-today { width: 38px; height: 38px; }
 .being-card-date-grid { grid-template-columns: minmax(0, 1fr) 38px minmax(0, 1fr); }
-.being-card-quest { min-height: 60px; padding: var(--sp-10) var(--sp-12); }
+.being-card-quest { padding: var(--sp-10) var(--sp-12); }
 
 .being-card-notes__head {
   display: flex;
@@ -8081,9 +7346,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .being-note-composer {
   display: grid;
-  grid-template-columns: 128px minmax(0, 1fr) 54px 32px;
   align-items: stretch;
-  gap: var(--sp-6);
 }
 
 .being-note-date,
@@ -8091,8 +7354,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .being-note-save,
 .being-note-cancel {
   width: 100%;
-  height: 38px;
-  min-height: 38px;
   margin: 0;
   padding: 0 var(--sp-9);
   border: 1px solid var(--line);
@@ -8109,7 +7370,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   resize: none;
   overflow: hidden;
   /* 10px top and bottom pushed the single line past the pill height. */
-  padding: var(--sp-8) var(--sp-10);
   line-height: 16px;
 }
 
@@ -8138,8 +7398,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 .being-note-list {
-  flex: 1 1 auto;
-  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
@@ -8148,22 +7406,9 @@ body.is-reactivation-card-open .bonus-history-overlay {
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-.being-note-item {
-  min-height: 34px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 30px;
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-s);
-  background: var(--panel-2);
-}
-
 .being-note-item__edit {
   min-width: 0;
-  display: grid;
   grid-template-columns: 78px minmax(0, 1fr);
-  align-items: center;
-  gap: var(--sp-8);
-  padding: var(--sp-6) var(--sp-8);
   border: 0;
   background: transparent;
   color: inherit;
@@ -8173,38 +7418,21 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .being-note-item__edit span {
   color: var(--ink-3);
-  font-size: var(--s-8);
   font-variant-numeric: tabular-nums;
 }
 
-.being-note-item__edit strong {
-  overflow: hidden;
-  color: var(--ink);
-  font-size: var(--s-9);
-  font-weight: 500;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .being-note-item__delete {
-  border: 0;
   border-left: 1px solid var(--line-soft);
-  background: transparent;
   color: var(--ink-3);
   font: 300 17px/1 var(--font-ui);
   cursor: pointer;
 }
 
 .being-note-list__empty {
-  flex: 1 1 auto;
-  min-height: 54px;
   display: grid;
   place-items: center;
-  border: 1px dashed var(--line-soft);
   border-radius: var(--r-s);
   color: var(--ink-3);
-  font-size: var(--s-9);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -8224,16 +7452,11 @@ body.is-reactivation-card-open .bonus-history-overlay {
 }
 
 /* v1.5.4.25 final priority layer */
-.being-note-composer { gap:var(--sp-5) !important; padding:var(--sp-5) !important; border-radius:var(--r-m) !important; background:var(--panel-3) !important; }
-.being-note-date,.being-card-notes .being-note-text { height:32px !important; min-height:32px !important; border-color:transparent !important; border-radius:var(--r-m) !important; background:var(--line) !important; }
-.being-note-save { height:32px !important; min-height:32px !important; padding:0 !important; border:0 !important; border-radius:50% !important; background:var(--ink) !important; color:var(--panel-2) !important; font-size:0 !important; }
+.being-note-save { padding:0 !important; border:0 !important; border-radius:50% !important; background:var(--ink) !important; color:var(--panel-2) !important; font-size:0 !important; }
 .being-note-save::before { content:"↑"; font-size:var(--s-18); font-weight:700; line-height:1; }
 .being-note-cancel { width:30px !important; height:30px !important; min-height:30px !important; border:0 !important; border-radius:50% !important; background:var(--line) !important; }
-.being-note-item { width:fit-content !important; max-width:min(82%,600px) !important; min-height:0 !important; grid-template-columns:minmax(0,1fr) 25px !important; align-self:flex-end !important; overflow:hidden; border:0 !important; border-radius:var(--r-m) var(--r-m) var(--r-s) var(--r-m) !important; background:var(--line) !important; }
-.being-note-item.is-undated { align-self:flex-start !important; border-radius:var(--r-m) var(--r-m) var(--r-m) var(--r-s) !important; background:var(--panel-3) !important; }
 .being-note-item__edit { display:flex !important; flex-direction:column !important; align-items:flex-end !important; gap:var(--sp-3) !important; padding:var(--sp-7) var(--sp-10) var(--sp-6) var(--sp-12) !important; }
-.being-note-item.is-undated .being-note-item__edit { align-items:flex-start !important; }
-.being-note-item__edit strong { overflow:visible !important; color:var(--ink) !important; line-height:1.32 !important; text-overflow:clip !important; white-space:normal !important; }
+.being-note-item__edit strong { color:var(--ink) !important; }
 .reactivation-card-modal { border-radius:var(--r-s) !important; }
 .reactivation-12m-play-block,.reactivation-contact-block { margin-top:var(--sp-6) !important; }
 .reactivation-12m-play-block,.reactivation-contact-block { padding:var(--sp-7) var(--sp-9) !important; }
@@ -8244,10 +7467,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 @media (max-width:560px) { .being-note-composer { grid-template-columns:92px minmax(0,1fr) 32px !important; } .being-note-cancel { grid-column:1 / -1; justify-self:end; } .reactivation-card-strip { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } .reactivation-decision-grid{ grid-template-columns:1fr !important; } }
 
 /* v1.5.4.26 — compact note surfaces and list-first Reactivation client card */
-
-.being-card-notes {
-  gap: var(--sp-5) !important;
-}
 
 .reactivation-card-modal {
   width: min(1180px, calc(100vw - 20px)) !important;
@@ -8279,8 +7498,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .reactivation-smart-core {
   min-width: 0;
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-s);
 }
 
 .reactivation-smart-core .reactivation-card-block {
@@ -8333,10 +7550,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 .reactivation-offer-content {
   display: block !important;
-}
-
-.reactivation-offer-research {
-  display: none !important;
 }
 
 .reactivation-current-quest-open {
@@ -8394,8 +7607,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   min-width: 0;
   min-height: 0;
   max-height: none;
-  gap: var(--sp-6);
-  padding: var(--sp-8);
   border: 1px solid var(--line-soft);
   border-radius: var(--r-s);
   background: var(--panel-2);
@@ -8494,12 +7705,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   border: 0 !important;
 }
 
-.reactivation-card-strip article {
-  border: 1px solid var(--line-soft) !important;
-  border-radius: var(--r-s) !important;
-  background: var(--panel-2) !important;
-}
-
 .reactivation-card-strip strong {
   margin-top: var(--sp-3) !important;
   font-size: var(--s-12)!important;
@@ -8519,12 +7724,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .reactivation-smart-core .reactivation-decision-grid,
 .reactivation-smart-core .reactivation-history-actions {
   margin: 0 !important;
-}
-
-.reactivation-12m-play-block {
-  border: 1px solid var(--line-soft) !important;
-  border-radius: var(--r-s) !important;
-  background: var(--panel-2) !important;
 }
 
 .reactivation-12m-play-grid {
@@ -8637,7 +7836,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .reactivation-notes-panel-header h3 {
   margin: 0;
   color: var(--ink);
-  font-size: var(--s-20);
   font-weight: 760;
   line-height: 1.22;
 }
@@ -8684,14 +7882,8 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 @media (max-width: 820px) {
   .reactivation-card-dual-shell {
-    grid-template-columns: 1fr !important;
     align-items: start;
-    overflow-y: auto !important;
     scrollbar-width: thin;
-  }
-
-  .reactivation-card-main-panel {
-    max-height: none;
   }
 
   .reactivation-contact-block {
@@ -8736,7 +7928,7 @@ body.is-reactivation-card-open .bonus-history-overlay {
 .reactivation-notes-panel-header h3 { font-size: var(--s-22)!important; }
 .reactivation-card-scroll { padding: 0 var(--sp-9) var(--sp-9) !important; }
 .reactivation-card-strip { gap: var(--sp-6) !important; padding: var(--sp-8) 0 !important; }
-.reactivation-card-strip article { min-height: 46px !important; padding: var(--sp-6) var(--sp-9) !important; }
+.reactivation-card-strip article { min-height: 46px !important; }
 .reactivation-12m-play-block { padding: var(--sp-7) var(--sp-9) !important; }
 .reactivation-decision-grid .reactivation-card-block { min-height: 57px !important; }
 .reactivation-current-quest-open { min-height: 55px !important; }
@@ -8754,25 +7946,12 @@ body.is-reactivation-card-open .bonus-history-overlay {
   min-height: 34.5px !important;
 }
 
-.being-note-save {
-  width: 34.5px !important;
-  min-width: 34.5px !important;
-}
-
 .being-note-item,
 .being-note-item.is-undated {
   flex: 0 0 auto !important;
   align-self: flex-start !important;
   border-radius: var(--r-m) var(--r-m) var(--r-m) var(--r-s) !important;
 }
-
-.being-note-item__edit,
-.being-note-item.is-undated .being-note-item__edit {
-  align-items: flex-start !important;
-  text-align: left !important;
-}
-
-.being-note-item__edit strong { font-size: var(--s-11)!important; }
 
 .being-note-list{ scrollbar-gutter: stable; }
 
@@ -9297,26 +8476,11 @@ body.is-reactivation-card-open .bonus-history-overlay {
     console is flat, and a two-stop wash of near-black over black was doing
     nothing that a single surface step does not do better.
   */
-  --bg-primary: var(--ground);
-  --bg-secondary: var(--panel-2);
-  --surface-primary: var(--panel-2);
-  --surface-secondary: var(--panel-3);
-  --surface-elevated: var(--panel-3);
-  --text-primary: var(--ink);
   --text-secondary: var(--ink-2);
-  --text-muted: var(--ink-3);
-  --border-primary: var(--line);
-  --border-soft: var(--line-soft);
-  --accent-primary: var(--accent);
+  --border-primary: var(--line-soft);
+  --accent-primary: var(--ink);
   --accent-hover: var(--accent);
-  --accent-soft: var(--accent-wash);
-  --button-primary-bg: var(--panel-2);
-  --button-primary-text: var(--ink);
-  --button-secondary-bg: var(--panel-2);
-  --table-header-bg: var(--panel);
-  --row-hover-bg: var(--hover);
-  --modal-backdrop: rgba(0, 0, 0, 0.72);
-  --shadow-soft: var(--glow-soft);
+  --button-secondary-bg: var(--panel-3);
   --scrollbar-track: transparent;
   --scrollbar-thumb: var(--line);
   /* The panes that want a quieter thumb than the rest. */
@@ -9394,24 +8558,22 @@ body.is-reactivation-card-open .bonus-history-overlay {
 
 @media (prefers-reduced-motion: reduce) {
   body,
-.app,
-.main-menu__button,
-.reactivation-portal-back,
-.update-button,
-.system-meta__row,
-.system-meta__row strong,
-.version-notification,
-.theme-toggle,
-.yesterday-panel,
-.yesterday-title,
-.yesterday-metric,
-.yesterday-metric__label,
-.yesterday-metric__value,
-.yesterday-metric__unit,
-.player-table__header,
-.player-table__row,
-.player-table__cell,
-.player-table-sort {
+  .app,
+  .main-menu__button,
+  .reactivation-portal-back,
+  .update-button,
+  .version-notification,
+  .theme-toggle,
+  .yesterday-panel,
+  .yesterday-title,
+  .yesterday-metric,
+  .yesterday-metric__label,
+  .yesterday-metric__value,
+  .yesterday-metric__unit,
+  .player-table__header,
+  .player-table__row,
+  .player-table__cell,
+  .player-table-sort {
     transition: none;
   }
 }
@@ -9449,7 +8611,6 @@ body.is-reactivation-card-open .bonus-history-overlay {
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr) minmax(0, 0.8fr);
-  gap: clamp(var(--sp-6), 0.72dvh, var(--sp-10));
   align-items: stretch;
 }
 
