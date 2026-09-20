@@ -981,7 +981,7 @@ CURRENT FUNCTIONALITY
   white ground.
 
 IMPORTANT â APPS SCRIPT UPDATE REQUIRED
-The deployed /exec endpoint must report API version 3.3.
+The deployed /exec endpoint must report API version 3.4.
 
 INSTALL / UPDATE
 1. Replace the full Apps Script with Code.gs from this folder.
@@ -1000,7 +1000,7 @@ INSTALL / UPDATE
    http://127.0.0.1:8765/being-api?action=ping
 
 Expected:
-  {"ok":true,"service":"VIP CRM Being API","version":"3.3","status":"online"}
+  {"ok":true,"service":"VIP CRM Being API","version":"3.4","status":"online"}
 
 PERFORMANCE NOTES
 - getClients_ is memoised for the length of one execution and cleared by every

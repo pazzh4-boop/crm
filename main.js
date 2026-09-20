@@ -2,7 +2,6 @@
   "use strict";
 
   const APP_VERSION = "1.5.6.2";
-  document.title = "\u200B";
   const CRM_CONTROL_URL = "/crm-control";
 
   /*
@@ -151,22 +150,9 @@
   const QUEST_OPEN_END_TEXT = "no limit";
 
   /*
-    Manual bonuses are prepared as a separate data domain for a SECOND Google Sheet.
-    Future adapter input, newest first:
-      { date: "...", name: "...", amount: 123.45 }
-
-    Exact FG / ID matching and sheet columns are intentionally not bound yet.
+    Manual bonuses are a separate data domain for a SECOND Google Sheet that
+    is not bound yet: Bonus History shows the profile totals over an empty list.
   */
-  const MANUAL_BONUS_VISIBLE_ROWS = 5;
-  const createManualBonusTestHistory = () => Array.from(
-    { length: MANUAL_BONUS_VISIBLE_ROWS },
-    () => ({ date: "1", name: "Bonus Name", amount: 1 })
-  );
-
-  const TEST_SYSTEM_DATA = Object.freeze({
-    siteVersion: APP_VERSION,
-    dataUpdatedAt: "1"
-  });
 
   const YESTERDAY_TEST_DATA = {
     totals: { turnover: 1, ggr: 1, ngr: 1, bonuses: 1, depositsCount: 1, withdrawalsCount: 1 },
@@ -213,18 +199,17 @@
   /*
     REACTIVATION DATA CONTRACT
     --------------------------------------------
-    Live since-sheet fields:
-      clientId, name, daysInReactivation, daysInactive, reactivationStartedAt,
-      lastActivityDate, reactivationNgr, depositAmount,
-      previousWeekLog, reactivationNotes, currentCommText, offerText,
-      calls, emails, contactsTotal, currentSheetName,
-      quest.
+    Since-sheet fields read from getReactivation rows:
+      clientId, name, daysInactive, reactivationStartedAt, lastActivityDate,
+      lastContactDate, reactivationNgr, depositAmount, reactivationNotes,
+      currentCommText, offerText, calls, emails, contactsTotal,
+      currentSheetName, playing, performance, quest.name.
 
-    Future online adapter:
-      VIPCRM.setReactivationData(rows)
-      VIPCRM.setReactivationChangeHandler(handler)
+    contactLog is session state only: the sheet keeps counters, not entries,
+    so Undo works until the page is reloaded.
 
-    Contact mutations emitted to handler:
+    Mutations sent through the change handler (updateReactivation):
+      client:add
       contact:add
       contact:undo
       plan:update
@@ -250,16 +235,6 @@
     unassigned: "—"
   });
 
-  const REACTIVATION_PLAY_LABELS = Object.freeze({
-    sport: "Sport",
-    casino: "Casino",
-    liveCasino: "Live Casino",
-    slots: "Slots",
-    instant: "Instant"
-  });
-
-  const REACTIVATION_TEST_DATA = [];
-
   const makePerformancePeriod = () => ({
     to: { total: 1, casino: 1, liveCasino: 1, slots: 1, instant: 1 },
     ggr: { total: 1, casino: 1, liveCasino: 1, slots: 1, instant: 1 },
@@ -276,16 +251,14 @@
       ? { name: "Turnover Insurance", progress: 20, mechanic: "turnover_insurance", start: "2026-08-19", end: "2026-08-21", conditions: [], reward: "" }
       : { name: "", progress: 0, mechanic: DEFAULT_QUEST_MECHANIC, start: "", end: "", conditions: [], reward: "" },
     questHistory: [],
-    activity: { lastContact: "1", lastClientActivity: "1", lastDeposit: "1" },
+    activity: { lastContact: "1", lastClientActivity: "1" },
     being: {
       lastContactDate: `2026-08-${String(Math.max(1, 14 - (index % 8))).padStart(2, "0")}`,
       followUpDate: `2026-08-${String(15 + (index % 6)).padStart(2, "0")}`,
       note: "",
       pinned: index < 2
     },
-    bonuses: { total: 1, lastDate: "1", lastAmount: 1 },
-    manualBonusHistory: createManualBonusTestHistory(),
-    manualBonusSourceReady: false
+    bonuses: { total: 1, lastDate: "1", lastAmount: 1 }
   }));
 
   const dom = {
@@ -359,7 +332,6 @@
       emailsCount: document.getElementById("reactivationEmailsCount"),
       sortButtons: Array.from(document.querySelectorAll("[data-reactivation-sort]")),
       tableShell: document.querySelector("#page-reactivation .reactivation-table-shell"),
-      tableHeader: document.querySelector("#page-reactivation .reactivation-table__header"),
       rows: document.getElementById("reactivationRows"),
       empty: document.getElementById("reactivationEmpty"),
       card: {
@@ -403,10 +375,8 @@
         questProgress: document.getElementById("reactivationCardQuestProgress"),
         questFill: document.getElementById("reactivationCardQuestFill"),
         questOpen: document.getElementById("reactivationCardQuestOpen"),
-        offerBr: document.getElementById("reactivationOfferBr"),
         offerName: document.getElementById("reactivationOfferName"),
         offerRule: document.getElementById("reactivationOfferRule"),
-        offerResearch: document.getElementById("reactivationOfferResearch"),
         contactDate: document.getElementById("reactivationContactDate"),
         contactTime: document.getElementById("reactivationContactTime"),
         email: document.getElementById("reactivationCardEmail"),
@@ -438,15 +408,7 @@
         noteSave: document.getElementById("reactivationNoteSave"),
         noteStatus: document.getElementById("reactivationNoteStatus"),
         noteList: document.getElementById("reactivationNoteList"),
-        notesCount: document.getElementById("reactivationNotesCount"),
-        contactLog: document.getElementById("reactivationContactLog"),
-        contactLogEmpty: document.getElementById("reactivationContactLogEmpty")
-      },
-      history: {
-        overlay: document.getElementById("reactivationHistoryOverlay"),
-        modal: document.getElementById("reactivationHistoryModal"),
-        close: document.getElementById("reactivationHistoryClose"),
-        client: document.getElementById("reactivationHistoryClient")
+        notesCount: document.getElementById("reactivationNotesCount")
       }
     },
 
@@ -528,11 +490,9 @@
       questGoalInput: document.getElementById("questGoalInput"),
       questDetailProgressValue: document.getElementById("questDetailProgressValue"),
       questDetailProgressFill: document.getElementById("questDetailProgressFill"),
-      questLiveProgress: document.getElementById("questLiveProgress"),
       questProgressPrimaryLabel: document.getElementById("questProgressPrimaryLabel"),
       questProgressPrimaryValue: document.getElementById("questProgressPrimaryValue"),
       questProgressSecondary: document.getElementById("questProgressSecondary"),
-      questProgressSecondaryLabel: document.getElementById("questProgressSecondaryLabel"),
       questProgressSecondaryValue: document.getElementById("questProgressSecondaryValue"),
       questProgressStatus: document.getElementById("questProgressStatus"),
       questDetailStartInput: document.getElementById("questDetailStartInput"),
@@ -555,7 +515,6 @@
 
     questConfirm: {
       overlay: document.getElementById("questConfirmOverlay"),
-      modal: document.getElementById("questConfirmModal"),
       title: document.getElementById("questConfirmTitle"),
       text: document.getElementById("questConfirmText"),
       continueButton: document.getElementById("questConfirmContinue"),
@@ -564,7 +523,6 @@
 
     questHistory: {
       overlay: document.getElementById("questHistoryOverlay"),
-      modal: document.getElementById("questHistoryModal"),
       close: document.getElementById("questHistoryClose"),
       client: document.getElementById("questHistoryClient"),
       list: document.getElementById("questHistoryList")
@@ -572,7 +530,6 @@
 
     bonusHistory: {
       overlay: document.getElementById("bonusHistoryOverlay"),
-      modal: document.getElementById("bonusHistoryModal"),
       close: document.getElementById("bonusHistoryClose"),
       client: document.getElementById("bonusHistoryClient"),
       total: document.getElementById("bonusHistoryTotal"),
@@ -602,15 +559,12 @@
     yesterdayData: null,
     yesterdaySortKey: "ggrDay",
     yesterdaySortDirection: "desc",
-    reactivationClients: JSON.parse(JSON.stringify(REACTIVATION_TEST_DATA)),
-    reactivationArchiveClients: JSON.parse(JSON.stringify(REACTIVATION_TEST_DATA)),
-    reactivationRevision: 0,
-    reactivationRenderedRevision: -1,
+    reactivationClients: [],
     reactivationSortKey: "performance.12m.bonusRate",
     reactivationSortDirection: "asc",
     reactivationQuery: "",
+    reactivationSearchFrame: 0,
     reactivationStageFilter: "all",
-    reactivationLayoutFrame: 0,
     reactivationPortalOrigin: null,
     reactivationPortalReturning: false,
     reactivationSelectedId: null,
@@ -623,13 +577,9 @@
     reactivationWorkTool: "notes",
     reactivationOfferDirty: false,
     reactivationNotePending: false,
-    reactivationHistoryOpen: false,
-    reactivationHistoryReturnFocus: null,
     reactivationChangeHandler: null,
     reactivationSourceReady: false,
     reactivationActionSequence: 0,
-    beingRevision: 0,
-    beingRenderedRevision: -1,
     beingPinOrder: new Map(),
     beingQuestFilter: false,
     beingChangeHandler: null,
@@ -655,8 +605,8 @@
     bonusHistoryClientKey: null,
     quickNavOpen: false,
     quickNavReference: null,
+    quickNavTargets: null,
     quickNavReturnFocus: null,
-    manualBonusStore: new Map(),
     pendingWrites: new Set(),
     dockOpen: false,
     windowCollapsed: false,
@@ -664,7 +614,6 @@
     // the menu gives the screen back and a deliberate collapse does not.
     dockFoldedScreen: false,
     exitInProgress: false,
-    exitReturnFocus: null,
     crmControlAvailable: false,
     crmHeartbeatTimer: 0
   };
@@ -755,23 +704,6 @@
       () => state.pendingWrites.delete(tracked)
     );
     return tracked;
-  }
-
-  function parseVersion(version) {
-    return String(version).trim().split(".").map((part) => Number.parseInt(part, 10) || 0);
-  }
-
-  function isNewerVersion(currentVersion, onlineVersion) {
-    const current = parseVersion(currentVersion);
-    const online = parseVersion(onlineVersion);
-    const length = Math.max(current.length, online.length);
-    for (let i = 0; i < length; i += 1) {
-      const a = current[i] || 0;
-      const b = online[i] || 0;
-      if (b > a) return true;
-      if (b < a) return false;
-    }
-    return false;
   }
 
   function makeTextCell(text, className = "") {
@@ -1101,31 +1033,43 @@
     };
   }
 
+  /*
+    A reference resolves only when it is unambiguous: two rows with the same
+    ID (or the same name) are a question, not an answer. The scan stops at the
+    second match instead of collecting every one.
+  */
+  function findUniqueClient(clients, predicate) {
+    let found = null;
+    for (const client of clients) {
+      if (!predicate(client)) continue;
+      if (found) return { unique: false, client: found };
+      found = client;
+    }
+    return { unique: Boolean(found), client: found };
+  }
+
   function findClientByReference(collection, reference) {
     const normalized = normalizeClientReference(reference);
     const clients = Array.isArray(collection) ? collection : [];
     const usableId = normalized.clientId && !/^client id$/i.test(normalized.clientId);
     const normalizedName = normalizeSearch(normalized.name);
+    const idMatches = (client) => String(client?.clientId ?? "").trim() === normalized.clientId;
+    const nameMatches = (client) => normalizeSearch(client?.name) === normalizedName;
 
     if (usableId) {
-      const idMatches = clients.filter(
-        (client) => String(client?.clientId ?? "").trim() === normalized.clientId
-      );
-      if (idMatches.length === 1) return idMatches[0];
+      const byId = findUniqueClient(clients, idMatches);
+      if (byId.unique) return byId.client;
 
-      if (idMatches.length > 1 && normalizedName) {
-        const exactMatches = idMatches.filter(
-          (client) => normalizeSearch(client?.name) === normalizedName
-        );
-        return exactMatches.length === 1 ? exactMatches[0] : null;
+      // Several rows share the ID: the name decides, or nothing does.
+      if (byId.client && normalizedName) {
+        const exact = findUniqueClient(clients, (client) => idMatches(client) && nameMatches(client));
+        return exact.unique ? exact.client : null;
       }
     }
 
     if (!normalizedName) return null;
-    const nameMatches = clients.filter(
-      (client) => normalizeSearch(client?.name) === normalizedName
-    );
-    return nameMatches.length === 1 ? nameMatches[0] : null;
+    const byName = findUniqueClient(clients, nameMatches);
+    return byName.unique ? byName.client : null;
   }
 
   function findWorkspaceClient(reference) {
@@ -1162,15 +1106,23 @@
     popover.style.top = `${Math.round(top)}px`;
   }
 
+  function resolveQuickNavTargets(reference) {
+    return {
+      workspaceClient: findWorkspaceClient(reference),
+      reactivationClient: findReactivationClientByReference(reference)
+    };
+  }
+
   function openClientQuickNav(trigger) {
     if (!trigger) return;
 
     const reference = getQuickNavReferenceFromTrigger(trigger);
-    const workspaceClient = findWorkspaceClient(reference);
-    const reactivationClient = findReactivationClientByReference(reference);
+    const targets = resolveQuickNavTargets(reference);
+    const { workspaceClient, reactivationClient } = targets;
 
     state.quickNavOpen = true;
     state.quickNavReference = reference;
+    state.quickNavTargets = targets;
     state.quickNavReturnFocus = trigger;
 
     dom.quickNav.name.textContent = reference.name || "Client";
@@ -1201,6 +1153,7 @@
     const target = state.quickNavReturnFocus;
     state.quickNavOpen = false;
     state.quickNavReference = null;
+    state.quickNavTargets = null;
     state.quickNavReturnFocus = null;
     dom.quickNav.popover.classList.remove("is-open");
     dom.quickNav.popover.setAttribute("aria-hidden", "true");
@@ -1214,8 +1167,15 @@
     const reference = state.quickNavReference;
     if (!reference) return;
 
-    const workspaceClient = findWorkspaceClient(reference);
-    const reactivationClient = findReactivationClientByReference(reference);
+    // Resolved when the popover opened; looked up again only if a list was
+    // replaced underneath it in the meantime.
+    const stored = state.quickNavTargets;
+    const stale = !stored
+      || (stored.workspaceClient && !state.clients.includes(stored.workspaceClient))
+      || (stored.reactivationClient && !state.reactivationClients.includes(stored.reactivationClient));
+    const { workspaceClient, reactivationClient } = stale
+      ? resolveQuickNavTargets(reference)
+      : stored;
     closeClientQuickNav({ restoreFocus: false });
 
     if (destination === PAGES.REACTIVATION && reactivationClient) {
@@ -1248,12 +1208,26 @@
     return state.clients.filter((client) => normalizeSearch(client.name).includes(query) || normalizeSearch(client.clientId).includes(query));
   }
 
-  function createClientCard(client, index = 0) {
+  /*
+    One pass over the queue per list render instead of a linear search per
+    row. The badge marks every ID on Reactivation with at least four inactive
+    days, the same rule shouldShowReactivationMembership applies to one ID.
+  */
+  function getReactivationMembershipSet() {
+    const ids = new Set();
+    state.reactivationClients.forEach((client) => {
+      if (Number.isFinite(client.daysInactive) && client.daysInactive >= 4) {
+        ids.add(String(client.clientId));
+      }
+    });
+    return ids;
+  }
+
+  function createClientCard(client, membership = getReactivationMembershipSet()) {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "client-card";
     card.dataset.clientKey = client._key;
-    card.style.setProperty("--card-index", String(index));
 
     const name = document.createElement("div");
     name.className = "client-card__name";
@@ -1265,7 +1239,7 @@
 
     card.append(name, id);
 
-    if (shouldShowReactivationMembership(client.clientId)) {
+    if (membership.has(String(client.clientId ?? ""))) {
       const badge = document.createElement("span");
       badge.className = "reactivation-membership-badge reactivation-membership-badge--card";
       badge.textContent = "On Reactivation";
@@ -1286,10 +1260,11 @@
     }
 
     const clients = getFilteredClients();
+    const membership = getReactivationMembershipSet();
     const fragment = document.createDocumentFragment();
 
-    clients.forEach((client, index) => {
-      fragment.appendChild(createClientCard(client, index));
+    clients.forEach((client) => {
+      fragment.appendChild(createClientCard(client, membership));
     });
 
     dom.clients.grid.replaceChildren(fragment);
@@ -1397,18 +1372,6 @@
     return REACTIVATION_STATUS_LABELS[getReactivationStatus(daysValue)] || "—";
   }
 
-  function normalizeReactivationContact(entry, index = 0) {
-    const date = normalizeBeingDateValue(entry?.date);
-    const timeText = String(entry?.time ?? "");
-    return {
-      id: String(entry?.id ?? `contact-${Date.now()}-${index}`),
-      type: String(entry?.type ?? "").toLowerCase() === "call" ? "call" : "email",
-      date,
-      time: /^\d{2}:\d{2}$/.test(timeText) ? timeText : "",
-      undone: Boolean(entry?.undone)
-    };
-  }
-
   function normalizeReactivationNote(entry, index = 0) {
     return {
       id: String(entry?.id ?? `reactivation-note-${index}`),
@@ -1467,91 +1430,6 @@
     };
   }
 
-  function readWorkspaceMetric(period, metric, key = "total") {
-    const source = period?.[metric];
-    if (source && typeof source === "object") {
-      const aliases = key === "live" ? ["live", "liveCasino"] : [key];
-      for (const alias of aliases) {
-        const value = normalizeOptionalNumber(source?.[alias]);
-        if (value !== null) return value;
-      }
-      return null;
-    }
-
-    return key === "total" ? normalizeOptionalNumber(source) : null;
-  }
-
-  function createReactivationPeriodFromWorkspace(period) {
-    return {
-      lastActivityDate: normalizeBeingDateValue(period?.lastActivityDate ?? period?.lastActivity),
-      to: readWorkspaceMetric(period, "to", "total"),
-      ggr: readWorkspaceMetric(period, "ggr", "total"),
-      ngr: readWorkspaceMetric(period, "ngr", "total"),
-      bonusRate: normalizeOptionalNumber(period?.bonusRate ?? period?.br),
-      ggrSport: readWorkspaceMetric(period, "ggr", "sport"),
-      ggrCasino: readWorkspaceMetric(period, "ggr", "casino"),
-      ggrSlots: readWorkspaceMetric(period, "ggr", "slots"),
-      ngrSlots: readWorkspaceMetric(period, "ngr", "slots"),
-      ggrInstant: readWorkspaceMetric(period, "ggr", "instant"),
-      ngrInstant: readWorkspaceMetric(period, "ngr", "instant"),
-      ggrLive: readWorkspaceMetric(period, "ggr", "live"),
-      ngrLive: readWorkspaceMetric(period, "ngr", "live"),
-      sport: readWorkspaceMetric(period, "to", "sport"),
-      casino: readWorkspaceMetric(period, "to", "casino"),
-      slots: readWorkspaceMetric(period, "to", "slots"),
-      live: readWorkspaceMetric(period, "to", "live"),
-      instant: readWorkspaceMetric(period, "to", "instant"),
-      deposits: normalizeOptionalNumber(period?.deposits),
-      depositCount: normalizeOptionalNumber(period?.depositCount),
-      withdrawals: normalizeOptionalNumber(period?.withdrawals),
-      withdrawalCount: normalizeOptionalNumber(period?.withdrawalCount),
-      netLoss: deriveNetLoss(period?.deposits, period?.withdrawals)
-    };
-  }
-
-  function getReactivationDisplayClient(client) {
-    const workspace = findWorkspaceClient(client);
-    if (!workspace || state.clientsSource === "being-sheet" || state.clientsSource === "placeholder") {
-      return client;
-    }
-
-    const p30 = createReactivationPeriodFromWorkspace(workspace.performance?.["30d"]);
-    const p12 = createReactivationPeriodFromWorkspace(workspace.performance?.["12m"]);
-    return {
-      ...client,
-      name: workspace.name || client.name,
-      playing: client.playing || deriveWorkspacePlaying(workspace.whereHePlays),
-      performance: {
-        "30d": {
-          ...client.performance["30d"],
-          ...Object.fromEntries(Object.entries(p30).filter(([, value]) => value !== null))
-        },
-        "12m": {
-          ...client.performance["12m"],
-          ...Object.fromEntries(Object.entries(p12).filter(([, value]) => value !== null))
-        }
-      },
-      quest: {
-        ...client.quest,
-        ...(workspace.quest || {})
-      }
-    };
-  }
-
-  function deriveWorkspacePlaying(whereHePlays) {
-    const source = whereHePlays && typeof whereHePlays === "object" ? whereHePlays : {};
-    let best = "";
-    let value = 0;
-    Object.entries(REACTIVATION_PLAY_LABELS).forEach(([key, label]) => {
-      const candidate = normalizeNumber(source[key]);
-      if (candidate > value) {
-        value = candidate;
-        best = label;
-      }
-    });
-    return best;
-  }
-
   function normalizeReactivationClient(source, index = 0) {
     const p30 = source?.performance?.["30d"] || {};
     const p12 = source?.performance?.["12m"] || {};
@@ -1571,7 +1449,6 @@
     return {
       clientId: String(source?.clientId ?? `reactivation-${index + 1}`),
       name: String(source?.name ?? "Name"),
-      daysInReactivation: Math.max(0, Math.floor(normalizeNumber(source?.daysInReactivation))),
       daysInactive: suppliedInactiveDays === null
         ? derivedInactiveDays
         : Math.max(0, Math.floor(suppliedInactiveDays)),
@@ -1581,13 +1458,6 @@
       reactivationNgr: normalizeOptionalNumber(source?.reactivationNgr ?? totals.ngr),
       depositAmount: normalizeOptionalNumber(source?.depositAmount ?? totals.deposits),
       contactsTotal: Math.max(0, Math.floor(normalizeNumber(source?.contactsTotal))),
-      previousWeekLog: Array.isArray(source?.previousWeekLog)
-        ? source.previousWeekLog.map((item) => ({
-            date: normalizeBeingDateValue(item?.date),
-            sheetName: String(item?.sheetName ?? ""),
-            text: String(item?.text ?? "").trim()
-          })).filter((item) => item.text)
-        : [],
       reactivationNotes: Array.isArray(source?.reactivationNotes)
         ? source.reactivationNotes
             .map(normalizeReactivationNote)
@@ -1597,66 +1467,38 @@
       currentCommText: String(source?.currentCommText ?? ""),
       offerText: String(source?.offerText ?? ""),
       currentSheetName: String(source?.currentSheetName ?? ""),
-      currentSheetDate: normalizeBeingDateValue(source?.currentSheetDate),
       playing: String(source?.playing ?? ""),
-      playTurnover: source?.playTurnover && typeof source.playTurnover === "object"
-        ? { ...source.playTurnover }
-        : {},
       performance: {
         "30d": normalizeReactivationPerformancePeriod(p30),
         "12m": normalizeReactivationPerformancePeriod(p12)
       },
-      reactivationTotals: {
-        deposits: normalizeOptionalNumber(totals.deposits ?? source?.depositAmount),
-        ngr: normalizeOptionalNumber(totals.ngr ?? source?.reactivationNgr)
-      },
       calls: Math.max(0, Math.floor(normalizeNumber(source?.calls))),
       emails: Math.max(0, Math.floor(normalizeNumber(source?.emails))),
-      contactLog: Array.isArray(source?.contactLog)
-        ? source.contactLog.map(normalizeReactivationContact)
-        : [],
+      // Session-only: the sheet stores counters, not the entries behind them.
+      contactLog: [],
       quest: {
-        name: String(source?.quest?.name ?? ""),
-        progress: Math.max(0, Math.min(100, normalizeNumber(source?.quest?.progress)))
-      },
-      questHistory: Array.isArray(source?.questHistory)
-        ? source.questHistory.map((item) => ({
-            name: String(item?.name ?? "Quest"),
-            completedAt: normalizeBeingDateValue(item?.completedAt) || String(item?.completedAt ?? "—")
-          }))
-        : []
+        name: String(source?.quest?.name ?? "")
+      }
     };
   }
 
+  /*
+    The current since-sheet is the only list: it drives the count, the stage
+    chips and the Deposits / NGR / contact totals alike. The feed also carries
+    archiveRows for everyone who ever entered Reactivation, but nothing on
+    screen reads them, so they are not kept.
+  */
   function setReactivationData(rows) {
     if (!Array.isArray(rows)) throw new TypeError("Reactivation data must be an array.");
     state.reactivationClients = dedupeReactivationClients(
       rows.map(normalizeReactivationClient)
     );
-    state.reactivationRevision += 1;
-    state.reactivationRenderedRevision = -1;
-    renderReactivation(true);
+    renderReactivation();
     renderClients(true);
-    state.beingRevision += 1;
-    renderBeing(true);
+    renderBeing();
 
     if (state.selectedClient) renderProfile(state.selectedClient);
     if (state.beingCardOpen) renderBeingCard(getBeingCardClient());
-  }
-
-  /*
-    Separate historical source:
-    current list drives Total Reactivation + stage counts,
-    archive drives all-time TO / GGR / NGR / Call / Email totals.
-    This matches "everyone who has ever entered Reactivation" without duplicates.
-  */
-  function setReactivationArchiveData(rows) {
-    if (!Array.isArray(rows)) throw new TypeError("Reactivation archive data must be an array.");
-    state.reactivationArchiveClients = dedupeReactivationClients(
-      rows.map(normalizeReactivationClient)
-    );
-    state.reactivationRevision += 1;
-    renderReactivation(true);
   }
 
   function setReactivationChangeHandler(handler) {
@@ -1675,6 +1517,8 @@
     }
   }
 
+  // state.reactivationClients is unique by ID from here on:
+  // addWorkspaceClientToReactivation checks membership before it pushes.
   function dedupeReactivationClients(rows) {
     const map = new Map();
     (Array.isArray(rows) ? rows : []).forEach((client) => {
@@ -1682,10 +1526,6 @@
       if (id && !map.has(id)) map.set(id, client);
     });
     return Array.from(map.values());
-  }
-
-  function getReactivationUniqueClients() {
-    return dedupeReactivationClients(state.reactivationClients);
   }
 
   function isClientOnReactivation(clientId) {
@@ -1740,31 +1580,25 @@
     return normalizeReactivationClient({
       clientId: String(client?.clientId ?? "").trim(),
       name: String(client?.name ?? "Name").trim() || "Name",
-      daysInReactivation: 0,
       daysInactive: null,
       lastActivityDate: p12.lastActivityDate || client?.activity?.lastClientActivity || "",
-      reactivationStartedAt: getBeingLocalTodayIso(),
+      reactivationStartedAt: getLocalTodayIso(),
       playing: "",
       performance: {
         "30d": p30,
         "12m": p12
       },
-      reactivationTotals: { to: null, ggr: null, ngr: null },
       calls: 0,
       emails: 0,
-      contactLog: [],
       quest: {
-        name: String(client?.quest?.name ?? ""),
-        progress: normalizeNumber(client?.quest?.progress)
-      },
-      questHistory: []
+        name: String(client?.quest?.name ?? "")
+      }
     });
   }
 
   function refreshReactivationMembershipViews(client) {
     renderClients(true);
-    state.beingRevision += 1;
-    renderBeing(true);
+    renderBeing();
 
     if (state.selectedClient?._key === client?._key) {
       renderProfile(client);
@@ -1785,17 +1619,7 @@
     const entry = createReactivationClientFromWorkspace(client);
     state.reactivationClients.push(entry);
 
-    if (!state.reactivationArchiveClients.some(
-      (item) => String(item?.clientId ?? "").trim() === clientId
-    )) {
-      state.reactivationArchiveClients.push(
-        normalizeReactivationClient(JSON.parse(JSON.stringify(entry)))
-      );
-    }
-
-    state.reactivationRevision += 1;
-    state.reactivationRenderedRevision = -1;
-    renderReactivation(true);
+    renderReactivation();
     refreshReactivationMembershipViews(client);
 
     try {
@@ -1811,77 +1635,68 @@
     return true;
   }
 
-  function syncReactivationArchiveFromClient(client) {
-    if (!client) return;
-
-    const archived = state.reactivationArchiveClients.find(
-      (item) => String(item.clientId) === String(client.clientId)
-    );
-
-    if (!archived) {
-      state.reactivationArchiveClients.push(
-        normalizeReactivationClient(JSON.parse(JSON.stringify(client)))
-      );
-      return;
-    }
-
-    archived.calls = client.calls;
-    archived.emails = client.emails;
-    archived.contactsTotal = client.contactsTotal;
-    archived.contactLog = JSON.parse(JSON.stringify(client.contactLog));
-  }
-
   function getReactivationSortValue(client, key) {
-    const values = {
-      lastActivityDate: client?.lastActivityDate
-        ? -parseBeingDate(client.lastActivityDate)
-        : Number.POSITIVE_INFINITY,
-      reactivationNgr: client?.reactivationNgr,
-      depositAmount: client?.depositAmount
-    };
+    const name = String(key);
 
-    if (String(key).startsWith("performance.12m.")) {
-      const field = String(key).slice("performance.12m.".length);
+    if (name.startsWith("performance.12m.")) {
+      const field = name.slice("performance.12m.".length);
       const raw = client?.performance?.["12m"]?.[field];
       return field === "bonusRate"
         ? getBonusRateRank(raw)
         : normalizeOptionalNumber(raw);
     }
 
-    return normalizeOptionalNumber(values[key]);
+    if (name === "lastActivityDate") {
+      // Negated so "desc" reads newest first; a missing or unreadable date
+      // is no value at all and sorts to the bottom either way.
+      return client?.lastActivityDate
+        ? normalizeOptionalNumber(-parseBeingDate(client.lastActivityDate))
+        : null;
+    }
+
+    if (name === "reactivationNgr" || name === "depositAmount") {
+      return normalizeOptionalNumber(client?.[name]);
+    }
+
+    return null;
   }
 
-  function getReactivationSortedClients() {
+  /*
+    Decorated once: the comparator used to recompute both sort values, dates
+    included, on every comparison.
+  */
+  function sortReactivationClients(clients) {
     const direction = state.reactivationSortDirection === "desc" ? -1 : 1;
     const key = state.reactivationSortKey;
 
-    return getReactivationUniqueClients().sort((a, b) => {
-      const aValue = getReactivationSortValue(a, key);
-      const bValue = getReactivationSortValue(b, key);
+    return clients
+      .map((client) => ({ client, value: getReactivationSortValue(client, key) }))
+      .sort((a, b) => {
+        if (a.value === null && b.value !== null) return 1;
+        if (a.value !== null && b.value === null) return -1;
+        if (a.value === null && b.value === null) {
+          return String(a.client.clientId).localeCompare(String(b.client.clientId), undefined, { numeric: true });
+        }
 
-      if (aValue === null && bValue !== null) return 1;
-      if (aValue !== null && bValue === null) return -1;
-      if (aValue === null && bValue === null) {
-        return String(a.clientId).localeCompare(String(b.clientId), undefined, { numeric: true });
-      }
+        if (a.value !== b.value) {
+          return (a.value - b.value) * direction;
+        }
 
-      if (aValue !== bValue) {
-        return (aValue - bValue) * direction;
-      }
-
-      return String(a.clientId).localeCompare(
-        String(b.clientId),
-        undefined,
-        { numeric: true, sensitivity: "base" }
-      );
-    });
+        return String(a.client.clientId).localeCompare(
+          String(b.client.clientId),
+          undefined,
+          { numeric: true, sensitivity: "base" }
+        );
+      })
+      .map((item) => item.client);
   }
 
   function getReactivationFilteredClients() {
     const query = String(state.reactivationQuery || "").trim().toLocaleLowerCase();
     const stageFilter = state.reactivationStageFilter;
 
-    return getReactivationSortedClients().filter((client) => {
+    // Narrow first, then order only what is left.
+    const visible = state.reactivationClients.filter((client) => {
       const stageMatches = stageFilter === "all"
         || getReactivationStatus(client.daysInactive) === stageFilter;
 
@@ -1890,6 +1705,8 @@
 
       return `${client.clientId} ${client.name}`.toLocaleLowerCase().includes(query);
     });
+
+    return sortReactivationClients(visible);
   }
 
   function setReactivationStageFilter(filter) {
@@ -1901,16 +1718,14 @@
     const validFilters = new Set(["all", ...Object.values(REACTIVATION_STATUS)]);
 
     state.reactivationStageFilter = validFilters.has(filter) ? filter : "all";
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    renderReactivation();
   }
 
   function clearReactivationView() {
     state.reactivationQuery = "";
     state.reactivationStageFilter = "all";
     dom.reactivation.search.value = "";
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    renderReactivation();
     dom.reactivation.search.focus();
   }
 
@@ -1926,8 +1741,7 @@
         key === "performance.12m.bonusRate" ? "asc" : "desc";
     }
 
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    renderReactivation();
   }
 
   function renderReactivationSortControls() {
@@ -2077,7 +1891,7 @@
       deposits: 0, ngr: 0, contactsTotal: 0, calls: 0, emails: 0
     };
 
-    getReactivationUniqueClients().forEach((client) => {
+    state.reactivationClients.forEach((client) => {
       summary.totalClients += 1;
 
       const status = getReactivationStatus(client.daysInactive);
@@ -2145,7 +1959,11 @@
     const period12m = client.performance?.["12m"] || {};
     const status = getReactivationStatus(client.daysInactive);
     row.dataset.stage = status;
-    const lastEntry = getLastReactivationContact(client);
+    const pending = state.reactivationContactPending.has(String(client.clientId));
+    const activeContacts = getActiveReactivationContacts(client);
+    const lastEntry = activeContacts[0] || null;
+    const lastEmail = activeContacts.find((entry) => entry.type === "email") || null;
+    const lastCall = activeContacts.find((entry) => entry.type === "call") || null;
     const last = formatReactivationLastContact(lastEntry, client.lastContactDate);
     const clientCell = document.createElement("button");
     clientCell.type = "button";
@@ -2180,7 +1998,7 @@
     email.title = "Email";
     email.setAttribute("aria-label", `Add email contact for ${client.name}`);
     email.innerHTML = `${getReactivationMailIcon()}<strong>${formatInteger(client.emails)}</strong>`;
-    email.disabled = state.reactivationContactPending.has(String(client.clientId));
+    email.disabled = pending;
 
     const call = document.createElement("button");
     call.type = "button";
@@ -2189,7 +2007,7 @@
     call.title = "Call";
     call.setAttribute("aria-label", `Add call contact for ${client.name}`);
     call.innerHTML = `${getReactivationCallIcon()}<strong>${formatInteger(client.calls)}</strong>`;
-    call.disabled = state.reactivationContactPending.has(String(client.clientId));
+    call.disabled = pending;
 
     const emailUndo = document.createElement("button");
     emailUndo.type = "button";
@@ -2198,8 +2016,8 @@
     emailUndo.innerHTML = getReactivationUndoIcon();
     emailUndo.title = "Undo latest mail";
     emailUndo.setAttribute("aria-label", `Undo latest mail for ${client.name}`);
-    emailUndo.hidden = !getLastReactivationContactByType(client, "email");
-    emailUndo.disabled = state.reactivationContactPending.has(String(client.clientId));
+    emailUndo.hidden = !lastEmail;
+    emailUndo.disabled = pending;
 
     const callUndo = document.createElement("button");
     callUndo.type = "button";
@@ -2208,8 +2026,8 @@
     callUndo.innerHTML = getReactivationUndoIcon();
     callUndo.title = "Undo latest call";
     callUndo.setAttribute("aria-label", `Undo latest call for ${client.name}`);
-    callUndo.hidden = !getLastReactivationContactByType(client, "call");
-    callUndo.disabled = state.reactivationContactPending.has(String(client.clientId));
+    callUndo.hidden = !lastCall;
+    callUndo.disabled = pending;
 
     contacts.append(email, emailUndo, call, callUndo);
 
@@ -2244,21 +2062,7 @@
     return row;
   }
 
-  function fitReactivationRowsToViewport() {
-    window.cancelAnimationFrame(state.reactivationLayoutFrame);
-    state.reactivationLayoutFrame = window.requestAnimationFrame(() => {
-      // CSS owns operational-row geometry. Clear legacy inline variables so
-      // loaded data and viewport changes cannot resize individual clients.
-      dom.reactivation.rows.style.removeProperty("--reactivation-row-height");
-      Array.from(dom.reactivation.rows.children).forEach((row) => {
-        row.style.removeProperty("--reactivation-row-height");
-      });
-    });
-  }
-
-  function renderReactivation(force = false) {
-    if (!force && state.reactivationRenderedRevision === state.reactivationRevision) return;
-
+  function renderReactivation() {
     const summary = getReactivationSummary();
     renderReactivationSortControls();
 
@@ -2282,8 +2086,6 @@
 
     dom.reactivation.rows.replaceChildren(fragment);
     dom.reactivation.empty.hidden = clients.length !== 0;
-    state.reactivationRenderedRevision = state.reactivationRevision;
-    fitReactivationRowsToViewport();
   }
 
   function getReactivationClient(clientId) {
@@ -2294,7 +2096,7 @@
   function getReactivationLocalDateTime() {
     const now = new Date();
     return {
-      date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`,
+      date: getLocalTodayIso(),
       time: `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
     };
   }
@@ -2331,10 +2133,8 @@
     client.contactsTotal += 1;
     state.reactivationContactPending.add(String(clientId));
 
-    syncReactivationArchiveFromClient(client);
 
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    renderReactivation();
     if (state.reactivationCardOpen) renderReactivationCard(client);
 
     try {
@@ -2350,7 +2150,6 @@
         client.calls = Math.max(0, Math.floor(normalizeNumber(result.counters.calls)));
         client.emails = Math.max(0, Math.floor(normalizeNumber(result.counters.emails)));
         client.contactsTotal = Math.max(0, Math.floor(normalizeNumber(result.counters.total)));
-        syncReactivationArchiveFromClient(client);
       }
       if (state.reactivationCardOpen) {
         dom.reactivation.card.sourceState.textContent =
@@ -2362,13 +2161,11 @@
       client.calls = previous.calls;
       client.emails = previous.emails;
       client.contactsTotal = previous.contactsTotal;
-      syncReactivationArchiveFromClient(client);
       console.error("[Reactivation] contact:add adapter failed:", error);
       if (state.reactivationCardOpen) dom.reactivation.card.sourceState.textContent = "Contact was not saved";
     } finally {
       state.reactivationContactPending.delete(String(clientId));
-      state.reactivationRevision += 1;
-      renderReactivation(true);
+      renderReactivation();
       if (state.reactivationCardOpen && state.reactivationSelectedId === String(clientId)) {
         renderReactivationCard(client);
       }
@@ -2397,10 +2194,8 @@
     client.contactsTotal = Math.max(0, client.contactsTotal - 1);
     state.reactivationContactPending.add(String(clientId));
 
-    syncReactivationArchiveFromClient(client);
 
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    renderReactivation();
     if (state.reactivationCardOpen) renderReactivationCard(client);
 
     try {
@@ -2416,7 +2211,6 @@
         client.calls = Math.max(0, Math.floor(normalizeNumber(result.counters.calls)));
         client.emails = Math.max(0, Math.floor(normalizeNumber(result.counters.emails)));
         client.contactsTotal = Math.max(0, Math.floor(normalizeNumber(result.counters.total)));
-        syncReactivationArchiveFromClient(client);
       }
       if (state.reactivationCardOpen) {
         dom.reactivation.card.sourceState.textContent =
@@ -2427,99 +2221,14 @@
       client.calls = previous.calls;
       client.emails = previous.emails;
       client.contactsTotal = previous.contactsTotal;
-      syncReactivationArchiveFromClient(client);
       console.error("[Reactivation] contact:undo adapter failed:", error);
       if (state.reactivationCardOpen) dom.reactivation.card.sourceState.textContent = "Undo was not saved";
     } finally {
       state.reactivationContactPending.delete(String(clientId));
-      state.reactivationRevision += 1;
-      renderReactivation(true);
+      renderReactivation();
       if (state.reactivationCardOpen && state.reactivationSelectedId === String(clientId)) {
         renderReactivationCard(client);
       }
-    }
-  }
-
-  function renderReactivationContactLog(client) {
-    const fragment = document.createDocumentFragment();
-    const events = [];
-
-    client.contactLog
-      .filter((entry) => !entry.undone)
-      .forEach((entry) => events.push({
-        kind: "contact",
-        date: entry.date,
-        time: entry.time || "00:00",
-        entry
-      }));
-
-    getReactivationNotes(client).forEach((entry) => events.push({
-      kind: "comm",
-      date: entry.date,
-      time: "00:00",
-      entry
-    }));
-
-    (Array.isArray(client.previousWeekLog) ? client.previousWeekLog : []).forEach((entry) => events.push({
-      kind: "week",
-      date: entry.date,
-      time: "00:00",
-      entry
-    }));
-
-    events.sort((a, b) => `${b.date || ""}T${b.time}`.localeCompare(`${a.date || ""}T${a.time}`));
-
-    events.forEach((event) => {
-      const entry = event.entry;
-      const row = document.createElement("div");
-      row.className = `reactivation-log-row${event.kind === "contact" ? "" : " reactivation-log-row--fixed"}`;
-
-      const action = document.createElement("span");
-      action.className = "reactivation-log-action";
-      action.textContent = event.kind === "contact"
-        ? (entry.type === "call" ? "Call" : "Email")
-        : event.kind === "comm" ? "Comm" : "Week Log";
-
-      const date = document.createElement("span");
-      date.textContent = formatBeingDate(entry.date);
-
-      const time = document.createElement("span");
-      time.textContent = event.kind === "contact" ? (entry.time || "—") : (entry.sheetName || "since");
-
-      if (event.kind === "contact") {
-        const undo = document.createElement("button");
-        undo.type = "button";
-        undo.className = "reactivation-log-undo";
-        undo.dataset.reactivationUndo = entry.id;
-        undo.textContent = "Undo";
-        row.append(action, date, time, undo);
-      } else {
-        const text = document.createElement("span");
-        text.className = "reactivation-log-fixed-text";
-        text.textContent = entry.text;
-        text.title = entry.text;
-        row.append(action, date, time, text);
-      }
-
-      fragment.appendChild(row);
-    });
-
-    dom.reactivation.card.contactLog.replaceChildren(fragment);
-    dom.reactivation.card.contactLogEmpty.hidden = dom.reactivation.card.contactLog.childElementCount !== 0;
-  }
-
-  function closeReactivationHistory({ restoreFocus = true } = {}) {
-    if (!state.reactivationHistoryOpen) return;
-
-    const target = state.reactivationHistoryReturnFocus;
-    state.reactivationHistoryOpen = false;
-    state.reactivationHistoryReturnFocus = null;
-    dom.reactivation.history.overlay.classList.remove("is-open");
-    dom.reactivation.history.overlay.setAttribute("aria-hidden", "true");
-    if ("inert" in dom.reactivation.card.modal) dom.reactivation.card.modal.inert = false;
-
-    if (restoreFocus && target?.isConnected) {
-      window.requestAnimationFrame(() => target.focus({ preventScroll: true }));
     }
   }
 
@@ -2530,9 +2239,9 @@
     openBonusHistory(client, dom.reactivation.card.bonusHistoryOpen);
   }
 
-  function renderReactivationStatistics(displayClient) {
+  function renderReactivationStatistics(client) {
     const periodKey = state.reactivationStatsPeriod === "12m" ? "12m" : "30d";
-    const period = displayClient.performance?.[periodKey] || {};
+    const period = client.performance?.[periodKey] || {};
 
     dom.reactivation.card.statsPeriodButtons.forEach((button) => {
       const active = button.dataset.reactivationStatsPeriod === periodKey;
@@ -2541,7 +2250,7 @@
       button.tabIndex = active ? 0 : -1;
     });
     dom.reactivation.card.statsLastActivity.textContent = formatBeingDate(
-      period.lastActivityDate || displayClient.lastActivityDate
+      period.lastActivityDate || client.lastActivityDate
     );
     dom.reactivation.card.statsTo.textContent = formatOptionalMoney(period.to);
     dom.reactivation.card.statsGgr.textContent = formatOptionalMoney(period.ggr);
@@ -2551,9 +2260,7 @@
     dom.reactivation.card.statsCasinoGgr.textContent = formatOptionalMoney(period.ggrCasino);
     dom.reactivation.card.statsDeposits.textContent = formatOptionalMoney(period.deposits);
     dom.reactivation.card.statsWithdrawals.textContent = formatOptionalMoney(period.withdrawals);
-    dom.reactivation.card.statsNetLoss.textContent = formatOptionalMoney(
-      period.netLoss ?? deriveNetLoss(period.deposits, period.withdrawals)
-    );
+    dom.reactivation.card.statsNetLoss.textContent = formatOptionalMoney(period.netLoss);
     // Slots, Instant and Live carry turnover only: sheet 365 has no GGR or NGR
     // split for them, so those rows were a pair of permanent dashes.
     dom.reactivation.card.statsSlotsTo.textContent = formatOptionalMoney(period.slots);
@@ -2562,20 +2269,19 @@
   }
 
   function renderReactivationCard(client) {
-    const displayClient = getReactivationDisplayClient(client);
-    const period12m = displayClient.performance?.["12m"] || {};
-    const questName = displayClient.quest.name.trim();
+    const period12m = client.performance?.["12m"] || {};
+    const questName = client.quest.name.trim();
     const workspaceClient = findWorkspaceClient(client);
-    const questTracking = calculateQuestProgress(workspaceClient || displayClient, displayClient.quest);
+    const questTracking = calculateQuestProgress(workspaceClient || client, client.quest);
     const progress = questTracking.percent ?? 0;
     const currentOfferText = String(client.offerText ?? "").trim();
     const lastAction = getLastReactivationContact(client);
     const contactPending = state.reactivationContactPending.has(String(client.clientId));
 
-    dom.reactivation.card.name.textContent = displayClient.name;
+    dom.reactivation.card.name.textContent = client.name;
     dom.reactivation.card.name.disabled = !workspaceClient;
     dom.reactivation.card.name.title = workspaceClient
-      ? `Open ${displayClient.name} in Being`
+      ? `Open ${client.name} in Being`
       : "This ID is not available in Being";
     dom.reactivation.card.clientId.textContent = `ID: ${client.clientId}`;
     dom.reactivation.card.stage.textContent = client.daysInactive === null
@@ -2590,7 +2296,7 @@
       String(state.beingReactivationOrigin.clientId) === String(client.clientId)
     );
 
-    dom.reactivation.card.playing.textContent = deriveReactivationPlaying(displayClient);
+    dom.reactivation.card.playing.textContent = deriveReactivationPlaying(client);
     dom.reactivation.card.started.textContent = formatBeingDate(client.reactivationStartedAt);
     dom.reactivation.card.lastActivity.textContent = formatBeingDate(client.lastActivityDate);
     dom.reactivation.card.period12mTo.textContent = formatOptionalMoney(period12m.to);
@@ -2601,7 +2307,7 @@
     dom.reactivation.card.depositsTotal.textContent = formatOptionalMoney(client.depositAmount);
     dom.reactivation.card.contactsTotal.textContent = formatInteger(client.contactsTotal);
 
-    renderReactivationStatistics(displayClient);
+    renderReactivationStatistics(client);
 
     dom.reactivation.card.period12mSport.textContent = formatOptionalMoney(period12m.sport);
     dom.reactivation.card.period12mCasino.textContent = formatOptionalMoney(period12m.casino);
@@ -2619,12 +2325,10 @@
       ? `Open Current Quest for ${client.name}`
       : "This client is not available in Clients data";
 
-    dom.reactivation.card.offerBr.textContent = "Current offer";
     dom.reactivation.card.offerName.textContent = currentOfferText || "No offer saved";
     dom.reactivation.card.offerRule.textContent = currentOfferText
       ? `${client.currentSheetName || "Newest since sheet"} · Offer`
       : "Open Offer in the Reactivation menu.";
-    dom.reactivation.card.offerResearch.hidden = true;
 
     dom.reactivation.card.emailCount.textContent = formatInteger(client.emails);
     dom.reactivation.card.callCount.textContent = formatInteger(client.calls);
@@ -2646,10 +2350,6 @@
       : "This client is not available in Clients data";
 
     renderReactivationWorkPanel(client);
-    renderReactivationContactLog(client);
-    if (state.reactivationHistoryOpen) {
-      dom.reactivation.history.client.textContent = `${client.name} · ID: ${client.clientId}`;
-    }
   }
 
   function openReactivationCard(clientId, returnFocus = null) {
@@ -2682,10 +2382,6 @@
 
   function closeReactivationCard({ restoreFocus = true } = {}) {
     if (!state.reactivationCardOpen) return;
-
-    if (state.reactivationHistoryOpen) {
-      closeReactivationHistory({ restoreFocus: false });
-    }
 
     const target = state.reactivationCardReturnFocus;
     state.reactivationCardOpen = false;
@@ -2778,8 +2474,25 @@
       .join("\n");
   }
 
+  /*
+    Parsing the Notes cell is a regex pass plus a sort, and the Being list
+    asked for it once per row on every render. The parse only changes when
+    the cell text does, so the last result is kept per client and handed out
+    as a copy: the composer edits the array it gets back.
+  */
+  const beingNotesCache = new Map();
+
   function getBeingNotes(client) {
-    return parseBeingNotes(client?.being?.note);
+    const key = client?._key;
+    const note = String(client?.being?.note ?? "");
+    if (!key) return parseBeingNotes(note);
+
+    const cached = beingNotesCache.get(key);
+    if (cached && cached.note === note) return cached.entries.slice();
+
+    const entries = parseBeingNotes(note);
+    beingNotesCache.set(key, { note, entries });
+    return entries.slice();
   }
 
   function applySevenNoteViewport(list, entryCount) {
@@ -2850,7 +2563,7 @@
       .slice()
       .sort(compareReactivationNotes)
       .map((entry) => {
-        const date = normalizeBeingDateValue(entry?.date) || getBeingLocalTodayIso();
+        const date = normalizeBeingDateValue(entry?.date) || getLocalTodayIso();
         const text = String(entry?.text ?? "").trim().replace(/\r?\n/g, "\n  ");
         return `${date}: ${text}`;
       })
@@ -2881,13 +2594,18 @@
     });
   }
 
-  function renderReactivationNotes(client) {
-    const entries = getCurrentReactivationNotes(client);
+  /*
+    Current notes and the history differ only in the modifier class, the
+    delete button and the empty-state line, so one builder serves both.
+  */
+  function buildReactivationNoteList(entries, { history = false } = {}) {
     const fragment = document.createDocumentFragment();
 
     entries.forEach((entry) => {
       const item = document.createElement("article");
-      item.className = "reactivation-comm-item";
+      item.className = history
+        ? "reactivation-comm-item reactivation-comm-item--history"
+        : "reactivation-comm-item";
 
       const body = document.createElement("div");
       body.className = "reactivation-comm-item__body";
@@ -2901,12 +2619,14 @@
       body.append(text, meta);
       item.appendChild(body);
 
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.dataset.reactivationNoteDelete = String(entry.sourceIndex);
-      remove.setAttribute("aria-label", `Delete Reactivation note from ${formatBeingDate(entry.date)}`);
-      remove.textContent = "×";
-      item.appendChild(remove);
+      if (!history) {
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.dataset.reactivationNoteDelete = String(entry.sourceIndex);
+        remove.setAttribute("aria-label", `Delete Reactivation note from ${formatBeingDate(entry.date)}`);
+        remove.textContent = "×";
+        item.appendChild(remove);
+      }
 
       fragment.appendChild(item);
     });
@@ -2914,45 +2634,27 @@
     if (!entries.length) {
       const empty = document.createElement("div");
       empty.className = "reactivation-comm-empty";
-      empty.textContent = "No notes in the current since sheet";
+      empty.textContent = history
+        ? "No notes in previous since sheets"
+        : "No notes in the current since sheet";
       fragment.appendChild(empty);
     }
 
+    return fragment;
+  }
+
+  function renderReactivationNotes(client) {
+    const entries = getCurrentReactivationNotes(client);
     dom.reactivation.card.notesCount.textContent = formatInteger(entries.length);
-    dom.reactivation.card.noteList.replaceChildren(fragment);
+    dom.reactivation.card.noteList.replaceChildren(buildReactivationNoteList(entries));
     applySevenNoteViewport(dom.reactivation.card.noteList, entries.length);
   }
 
   function renderReactivationNoteHistory(client) {
     const entries = getHistoricalReactivationNotes(client);
-    const fragment = document.createDocumentFragment();
-
-    entries.forEach((entry) => {
-      const item = document.createElement("article");
-      item.className = "reactivation-comm-item reactivation-comm-item--history";
-
-      const body = document.createElement("div");
-      body.className = "reactivation-comm-item__body";
-
-      const text = document.createElement("strong");
-      text.textContent = entry.text;
-
-      const meta = document.createElement("span");
-      meta.textContent = `${formatBeingDate(entry.date)} · ${entry.sheetName || "since"}`;
-
-      body.append(text, meta);
-      item.appendChild(body);
-      fragment.appendChild(item);
-    });
-
-    if (!entries.length) {
-      const empty = document.createElement("div");
-      empty.className = "reactivation-comm-empty";
-      empty.textContent = "No notes in previous since sheets";
-      fragment.appendChild(empty);
-    }
-
-    dom.reactivation.card.noteHistoryList.replaceChildren(fragment);
+    dom.reactivation.card.noteHistoryList.replaceChildren(
+      buildReactivationNoteList(entries, { history: true })
+    );
   }
 
   async function commitReactivationComm(client, currentEntries, statusText) {
@@ -2973,8 +2675,7 @@
     client.currentCommText = value;
     client.reactivationNotes = historical.concat(nextCurrent).sort(compareReactivationNotes);
     renderReactivationNotes(client);
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    renderReactivation();
 
     try {
       const result = await emitReactivationChange({
@@ -2990,8 +2691,7 @@
       client.reactivationNotes = previous.notes;
       client.offerText = previous.offerText;
       renderReactivationNotes(client);
-      state.reactivationRevision += 1;
-      renderReactivation(true);
+      renderReactivation();
       dom.reactivation.card.noteStatus.textContent = "Not saved · Reactivation Comm unchanged";
       console.error("[Reactivation] Comm save failed:", error);
       return false;
@@ -3008,7 +2708,7 @@
 
     const current = client.reactivationNotes.filter((entry) => entry.isCurrent);
     current.unshift({
-      date: normalizeBeingDateValue(dom.reactivation.card.noteDate.value) || getBeingLocalTodayIso(),
+      date: normalizeBeingDateValue(dom.reactivation.card.noteDate.value) || getLocalTodayIso(),
       text,
       sheetName: client.currentSheetName,
       isCurrent: true
@@ -3088,7 +2788,7 @@
     }
 
     if (force || changedClient) {
-      dom.reactivation.card.noteDate.value = getBeingLocalTodayIso();
+      dom.reactivation.card.noteDate.value = getLocalTodayIso();
       dom.reactivation.card.noteText.value = "";
       dom.reactivation.card.noteStatus.textContent = `${client.currentSheetName || "Current since sheet"} · COMM only`;
     }
@@ -3115,8 +2815,7 @@
     dom.reactivation.card.offerStatus.textContent = "Saving Offer…";
 
     client.offerText = value;
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    renderReactivation();
 
     try {
       const result = await emitReactivationChange({
@@ -3133,8 +2832,7 @@
       return true;
     } catch (error) {
       client.offerText = previousOffer;
-      state.reactivationRevision += 1;
-      renderReactivation(true);
+      renderReactivation();
       renderReactivationCard(client);
       dom.reactivation.card.offerStatus.textContent = "Not saved · PLAN unchanged";
       console.error("[Reactivation] Offer save failed:", error);
@@ -3147,7 +2845,7 @@
 
   function resetBeingNoteComposer() {
     state.beingNoteEditIndex = -1;
-    dom.being.card.noteDate.value = getBeingLocalTodayIso();
+    dom.being.card.noteDate.value = getLocalTodayIso();
     dom.being.card.noteText.value = "";
     dom.being.card.noteSave.textContent = "Add";
     dom.being.card.noteCancel.hidden = true;
@@ -3155,7 +2853,7 @@
 
   function setBeingNoteComposer(entry, index) {
     state.beingNoteEditIndex = index;
-    dom.being.card.noteDate.value = normalizeBeingDateValue(entry?.date) || getBeingLocalTodayIso();
+    dom.being.card.noteDate.value = normalizeBeingDateValue(entry?.date) || getLocalTodayIso();
     dom.being.card.noteText.value = String(entry?.text ?? "");
     dom.being.card.noteSave.textContent = "Save";
     dom.being.card.noteCancel.hidden = false;
@@ -3222,7 +2920,7 @@
 
     const entries = getBeingNotes(client);
     const entry = {
-      date: normalizeBeingDateValue(dom.being.card.noteDate.value) || getBeingLocalTodayIso(),
+      date: normalizeBeingDateValue(dom.being.card.noteDate.value) || getLocalTodayIso(),
       text: noteText
     };
 
@@ -3237,20 +2935,15 @@
     updateBeingNote(client._key, nextNote);
     renderBeingNotes(client);
     resetBeingNoteComposer();
-    state.beingRevision += 1;
-    renderBeing(true);
-    dom.being.card.saveState.textContent = "Saving note…";
+    renderBeing();
 
     try {
       await commitBeingNote(client._key);
-      dom.being.card.saveState.textContent = "Note saved to Google Sheet";
       return true;
     } catch (error) {
       updateBeingNote(client._key, previousNote);
       renderBeingNotes(client);
-      state.beingRevision += 1;
-      renderBeing(true);
-      dom.being.card.saveState.textContent = "Note save failed · rolled back";
+      renderBeing();
       console.error("[Being] Dated note save failed:", error);
       return false;
     }
@@ -3269,19 +2962,14 @@
     updateBeingNote(client._key, nextNote);
     renderBeingNotes(client);
     resetBeingNoteComposer();
-    state.beingRevision += 1;
-    renderBeing(true);
-    dom.being.card.saveState.textContent = "Removing note…";
+    renderBeing();
 
     try {
       await commitBeingNote(client._key);
-      dom.being.card.saveState.textContent = "Note removed from Google Sheet";
     } catch (error) {
       updateBeingNote(client._key, previousNote);
       renderBeingNotes(client);
-      state.beingRevision += 1;
-      renderBeing(true);
-      dom.being.card.saveState.textContent = "Delete failed · rolled back";
+      renderBeing();
       console.error("[Being] Dated note delete failed:", error);
     }
   }
@@ -3372,8 +3060,7 @@
     if (clear) {
       dom.being.search.value = "";
       state.beingQuery = "";
-      state.beingRevision += 1;
-      renderBeing(true);
+      renderBeing();
     }
 
     if (state.beingSearchOpen) {
@@ -3392,12 +3079,11 @@
     return svg;
   }
 
-  function createBeingRow(client, index) {
+  function createBeingRow(client, membership = getReactivationMembershipSet()) {
     const row = document.createElement("div");
     row.className = "being-row";
     row.classList.toggle("is-pinned", Boolean(client?.being?.pinned));
     row.dataset.clientKey = client._key;
-    row.style.setProperty("--being-index", String(index));
     row.setAttribute("role", "row");
     row.tabIndex = 0;
     row.setAttribute("aria-label", `Open ${client?.name || "client"} card`);
@@ -3422,7 +3108,7 @@
     id.textContent = `ID: ${client?.clientId ?? ""}`;
     clientCell.append(name, id);
 
-    if (shouldShowReactivationMembership(client?.clientId)) {
+    if (membership.has(String(client?.clientId ?? ""))) {
       const badge = document.createElement("span");
       badge.className = "reactivation-membership-badge reactivation-membership-badge--row";
       badge.textContent = "On Reactivation";
@@ -3483,16 +3169,13 @@
   }
 
 
-  function getBeingLocalTodayIso() {
+  // Local calendar date, no UTC shift: the day the user sees on the clock.
+  function getLocalTodayIso() {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
     const day = String(now.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
-  }
-
-  function toBeingDateInputValue(value) {
-    return normalizeBeingDateValue(value);
   }
 
   function getBeingCardClient() {
@@ -3700,8 +3383,8 @@
     // The Reactivation card only exists for IDs that are in the queue.
     dom.being.card.openReactivation.hidden =
       canReturnToReactivation || !getReactivationClient(client?.clientId);
-    dom.being.card.lastContact.value = toBeingDateInputValue(client?.being?.lastContactDate);
-    dom.being.card.followUp.value = toBeingDateInputValue(client?.being?.followUpDate);
+    dom.being.card.lastContact.value = normalizeBeingDateValue(client?.being?.lastContactDate);
+    dom.being.card.followUp.value = normalizeBeingDateValue(client?.being?.followUpDate);
     resetBeingNoteComposer();
     renderBeingNotes(client);
 
@@ -3757,7 +3440,6 @@
     if (!state.beingCardOpen) return;
 
     const clientKey = state.beingCardClientKey;
-    const client = getBeingCardClient();
 
     // Dated notes are committed explicitly by Add / Save. Closing the card
     // must never replay the same Notes payload a second time.
@@ -3771,7 +3453,7 @@
 
     if ("inert" in dom.app) dom.app.inert = false;
 
-    renderBeing(true);
+    renderBeing();
 
     const storedFocus = state.beingCardReturnFocus;
     state.beingCardReturnFocus = null;
@@ -3804,18 +3486,16 @@
     };
 
     emitBeingChange(client, { [field]: normalized });
-    state.beingRevision += 1;
-    renderBeing(true);
+    renderBeing();
     return true;
   }
 
-  function renderBeing(force = false) {
-    if (!force && state.beingRenderedRevision === state.beingRevision) return;
-
+  function renderBeing() {
     const clients = getBeingVisibleClients();
     const totalClients = state.clients.length;
+    const membership = getReactivationMembershipSet();
     const fragment = document.createDocumentFragment();
-    clients.forEach((client, index) => fragment.appendChild(createBeingRow(client, index)));
+    clients.forEach((client) => fragment.appendChild(createBeingRow(client, membership)));
 
     dom.being.rows.replaceChildren(fragment);
     dom.being.empty.hidden = clients.length !== 0;
@@ -3824,7 +3504,6 @@
     dom.being.count.textContent = narrowed
       ? `${formatInteger(clients.length)} / ${formatInteger(totalClients)}`
       : `${formatInteger(totalClients)} ${totalClients === 1 ? "client" : "clients"}`;
-    state.beingRenderedRevision = state.beingRevision;
   }
 
   function emitBeingChange(client, patch) {
@@ -3882,21 +3561,13 @@
       );
     }
 
-    state.beingRevision += 1;
-    renderBeing(true);
+    renderBeing();
 
     if (
       state.beingCardOpen &&
       state.beingCardClientKey === client._key
     ) {
       updateBeingCardPinButton(client);
-
-      setBeingCardSourceStatus(
-        client.clientId,
-        nextPinned
-          ? "Saving pin online…"
-          : "Removing pin online…"
-      );
     }
 
     try {
@@ -3922,18 +3593,6 @@
         );
       }
 
-      if (
-        state.beingCardOpen &&
-        state.beingCardClientKey === client._key
-      ) {
-        setBeingCardSourceStatus(
-          client.clientId,
-          nextPinned
-            ? "Pinned · saved online"
-            : "Unpinned · saved online"
-        );
-      }
-
     } catch (error) {
       client.being = {
         ...(client.being || {}),
@@ -3951,19 +3610,13 @@
         );
       }
 
-      state.beingRevision += 1;
-      renderBeing(true);
+      renderBeing();
 
       if (
         state.beingCardOpen &&
         state.beingCardClientKey === client._key
       ) {
         updateBeingCardPinButton(client);
-
-        setBeingCardSourceStatus(
-          client.clientId,
-          "Pin save failed · rolled back"
-        );
       }
 
       console.error(
@@ -3983,17 +3636,6 @@
     const client = state.clients.find((item) => item._key === clientKey);
     if (!client) return Promise.resolve(null);
     return emitBeingChange(client, { note: String(client?.being?.note ?? "") });
-  }
-
-  function isBeingPlaceholderClientSource() {
-    if (!state.clients.length) return true;
-
-    return (
-      state.clientsSource === "placeholder" ||
-      state.clients.every((client) =>
-        String(client?._key ?? "").startsWith("test-")
-      )
-    );
   }
 
   function createBeingPerformanceFromProfile(source) {
@@ -4336,8 +3978,7 @@
       questHistory: [],
       activity: {
         lastContact: normalizeBeingDateValue(source?.lastContactDate),
-        lastClientActivity: normalizeBeingDateValue(period12m.lastActivityDate),
-        lastDeposit: ""
+        lastClientActivity: normalizeBeingDateValue(period12m.lastActivityDate)
       },
       being: {
         lastContactDate: normalizeBeingDateValue(source?.lastContactDate),
@@ -4350,9 +3991,7 @@
         total: 0,
         lastDate: "",
         lastAmount: 0
-      },
-      manualBonusHistory: [],
-      manualBonusSourceReady: false
+      }
     };
   }
 
@@ -4377,133 +4016,29 @@
       .filter((row) => row.clientId);
 
     /*
-      Being_Archive owns the directory while the build is using placeholders
-      or an earlier Being Sheet snapshot. Replacing the full list on every
-      successful refresh keeps new/deleted IDs in sync.
-
-      If a future main CRM adapter supplies an explicit external client list,
-      Being_Archive only overlays Being-specific fields on matching IDs.
+      Being_Archive owns the directory: every successful refresh replaces the
+      full list, which keeps new and deleted IDs in sync. The rows become
+      clients once, in createClientFromBeingSource, and setClients closes an
+      open Being card and renders Clients and Being itself.
     */
-    if (
-      normalizedRows.length &&
-      (
-        isBeingPlaceholderClientSource() ||
-        state.clientsSource === "being-sheet"
-      )
-    ) {
+    if (normalizedRows.length) {
       setClients(
         normalizedRows.map(createClientFromBeingSource),
         { source: "being-sheet" }
       );
-    }
+    } else {
+      // The sheet answered, but no row carried an ID: the directory stays.
+      state.beingPinOrder.clear();
+      renderBeing();
 
-    const byIdentifier = new Map();
-    normalizedRows.forEach((row) => {
-      const clientId = String(row?.clientId ?? "").trim();
-      const clientKey = String(row?._key ?? "").trim();
-
-      if (clientId) byIdentifier.set(`id:${clientId}`, row);
-      if (clientKey) byIdentifier.set(`key:${clientKey}`, row);
-    });
-
-    let clientDomainChanged = false;
-
-    state.clients.forEach((client) => {
-      const source =
-        byIdentifier.get(`key:${client._key}`) ||
-        byIdentifier.get(`id:${String(client.clientId ?? "").trim()}`);
-
-      if (!source) return;
-
-      if (
-        source.clientName &&
-        (!String(client?.name ?? "").trim() || String(client?.name ?? "").trim() === "Name")
-      ) {
-        client.name = source.clientName;
-        clientDomainChanged = true;
+      if (state.beingCardOpen) {
+        const openClient = getBeingCardClient();
+        if (openClient) renderBeingCard(openClient);
+        else closeBeingCard({ restoreFocus: false });
       }
-
-      const nextQuest = parseActiveQuestCell(source.activeQuest, client?.quest);
-      if (serializeQuestDraft(nextQuest) !== serializeQuestDraft(client?.quest)) {
-        client.quest = nextQuest;
-        invalidateQuestProgressCache();
-        clientDomainChanged = true;
-      }
-
-      if (source.reactivationProfile?.performance) {
-        const sourcePerformance = source.reactivationProfile.performance;
-        client.performance = {
-          day: createBeingPerformanceFromProfile(sourcePerformance.day),
-          "7d": createBeingPerformanceFromProfile(sourcePerformance["7d"]),
-          "30d": createBeingPerformanceFromProfile(sourcePerformance["30d"]),
-          "12m": createBeingPerformanceFromProfile(sourcePerformance["12m"])
-        };
-        const period12m = sourcePerformance["12m"] || {};
-        client.whereHePlays = {
-          sport: normalizeOptionalNumber(period12m.sport),
-          casino: normalizeOptionalNumber(period12m.casino),
-          liveCasino: normalizeOptionalNumber(period12m.live),
-          slots: normalizeOptionalNumber(period12m.slots),
-          instant: normalizeOptionalNumber(period12m.instant)
-        };
-        client.activity = {
-          ...(client.activity || {}),
-          lastClientActivity: normalizeBeingDateValue(period12m.lastActivityDate)
-        };
-        client.questDaily = normalizeQuestDaily(source.reactivationProfile.daily);
-        invalidateQuestProgressCache();
-        clientDomainChanged = true;
-      }
-
-      client.being = {
-        ...(client.being || {}),
-        lastContactDate:
-          source.lastContactDate ??
-          client?.being?.lastContactDate ??
-          "",
-        followUpDate:
-          source.followUpDate ??
-          client?.being?.followUpDate ??
-          "",
-        note:
-          source.note ??
-          client?.being?.note ??
-          "",
-        pinned:
-          source.pinned ??
-          client?.being?.pinned ??
-          false,
-        bonusLog:
-          source.bonusLog ??
-          client?.being?.bonusLog ??
-          ""
-      };
-    });
-
-    if (clientDomainChanged) {
-      state.clientsRevision += 1;
-      state.clientsRenderedQuery = null;
-      renderClients(true);
     }
 
     refreshAnalyticsFrom365();
-
-    state.beingPinOrder.clear();
-    state.beingRevision += 1;
-    renderBeing(true);
-
-    if (state.beingCardOpen) {
-      const openClient = getBeingCardClient();
-
-      if (openClient) {
-        renderBeingCard(openClient);
-      } else {
-        closeBeingCard({
-          restoreFocus: false
-        });
-      }
-    }
-
     return true;
   }
 
@@ -4514,48 +4049,57 @@
     );
   }
 
-  function setBeingCardSourceStatus(clientId, text) {
-    if (!state.beingCardOpen) return;
-
-    const client = getBeingCardClient();
-    if (!client) return;
-
-    if (String(client.clientId ?? "") !== String(clientId ?? "")) return;
-
-    dom.being.card.saveState.textContent = text;
+  /*
+    One door to the local bridge. A call is GET with the action in the query
+    or POST with it in the body, never cached and stamped with `_` so nothing
+    replays an answer; a reply is JSON with ok:true, or an error text. What
+    differs per call is only the message used when the reply carries none.
+  */
+  function beingApiUrl(action, params = {}) {
+    const url = new URL(BEING_GOOGLE_SHEET.LOCAL_API_URL, window.location.origin);
+    url.searchParams.set("action", action);
+    Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, String(value)));
+    url.searchParams.set("_", String(Date.now()));
+    return url.toString();
   }
+
+  async function fetchJson(url, init = {}) {
+    const response = await fetch(url, { cache: "no-store", ...init });
+    const data = await response.json().catch(() => null);
+    return { response, data };
+  }
+
+  // describeError(response) supplies the fallback text; it can tell a
+  // transport failure (response.ok false) from a script one (ok:false).
+  async function apiRequest(url, init, describeError) {
+    const { response, data } = await fetchJson(url, init);
+    if (!response.ok || !data?.ok) {
+      throw new Error(data?.error || describeError(response));
+    }
+    return data;
+  }
+
+  function apiGet(action, params, describeError) {
+    return apiRequest(beingApiUrl(action, params), { method: "GET" }, describeError);
+  }
+
+  function apiPost(url, body, describeError, init = {}) {
+    return apiRequest(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      ...init
+    }, describeError);
+  }
+
+  const bridgeHttpError = (response) => `Being local bridge HTTP ${response.status}`;
 
   async function fetchBeingGoogleSheetRows() {
     if (!isBeingGoogleSheetConfigured()) return [];
 
-    const url = new URL(
-      BEING_GOOGLE_SHEET.LOCAL_API_URL,
-      window.location.origin
-    );
-
-    url.searchParams.set("action", "getClients");
-    url.searchParams.set("_", String(Date.now()));
-
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      cache: "no-store"
-    });
-
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(
-        data?.error ||
-        `Being local bridge HTTP ${response.status}`
-      );
-    }
-
-    if (!data?.ok) {
-      throw new Error(
-        data?.error ||
-        "Being Google Sheet returned an error."
-      );
-    }
+    const data = await apiGet("getClients", {}, (response) => response.ok
+      ? "Being Google Sheet returned an error."
+      : bridgeHttpError(response));
 
     const clients = Array.isArray(data.clients)
       ? data.clients
@@ -4597,7 +4141,7 @@
     }
 
     try {
-      const rows = await fetchBeingGoogleSheetRows();
+      const rows = await (options.request || fetchBeingGoogleSheetRows());
 
       if (!rows.length) {
         throw new Error("Google Sheet returned 0 clients. Check the ID column and deployment.");
@@ -4635,36 +4179,11 @@
       throw new Error("ID is empty.");
     }
 
-    const url = new URL(
-      BEING_GOOGLE_SHEET.LOCAL_API_URL,
-      window.location.origin
+    const data = await apiGet(
+      "updatePinned",
+      { clientId, pinned: pinned ? "true" : "false" },
+      (response) => response.ok ? "Google Sheet pin save failed." : bridgeHttpError(response)
     );
-
-    url.searchParams.set("action", "updatePinned");
-    url.searchParams.set("clientId", clientId);
-    url.searchParams.set("pinned", pinned ? "true" : "false");
-    url.searchParams.set("_", String(Date.now()));
-
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      cache: "no-store"
-    });
-
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(
-        data?.error ||
-        `Being local bridge HTTP ${response.status}`
-      );
-    }
-
-    if (!data?.ok) {
-      throw new Error(
-        data?.error ||
-        "Google Sheet pin save failed."
-      );
-    }
 
     if (
       !Object.prototype.hasOwnProperty.call(
@@ -4673,7 +4192,7 @@
       )
     ) {
       throw new Error(
-        "Apps Script did not return the saved Pinned value. Deploy Code.gs API 2.0."
+        "Apps Script did not return the saved Pinned value. Deploy Code.gs 3.4."
       );
     }
 
@@ -4722,45 +4241,22 @@
 
     if (!Object.keys(changes).length) return;
 
-    setBeingCardSourceStatus(
-      clientId,
-      "Saving to Google Sheet…"
-    );
-
     /*
       Every field this sends is an absolute value rather than a delta, so
       repeating the request cannot double-apply anything. That is what makes
       the retry ladder below safe.
     */
-    const postChanges = async () => {
-      const response = await fetch(
-        BEING_GOOGLE_SHEET.LOCAL_API_URL,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "updateClient", clientId, changes })
-        }
-      );
-
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.error || `Being local bridge HTTP ${response.status}`);
-      }
-
-      if (!data?.ok) {
-        throw new Error(data?.error || "Being Google Sheet save failed.");
-      }
-
-      return data;
-    };
+    const postChanges = () => apiPost(
+      BEING_GOOGLE_SHEET.LOCAL_API_URL,
+      { action: "updateClient", clientId, changes },
+      (response) => response.ok ? "Being Google Sheet save failed." : bridgeHttpError(response)
+    );
 
     let lastError = null;
 
     for (let attempt = 1; attempt <= BEING_SAVE_RETRY_DELAYS.length + 1; attempt++) {
       try {
         const data = await postChanges();
-        setBeingCardSourceStatus(clientId, "Saved to Google Sheet");
         console.info("[Being] Saved to Google Sheet:", clientId, changes);
         return data;
       } catch (error) {
@@ -4768,10 +4264,6 @@
         const delay = BEING_SAVE_RETRY_DELAYS[attempt - 1];
         if (delay === undefined) break;
         console.warn(`[Being] Save attempt ${attempt} failed, retrying:`, error);
-        setBeingCardSourceStatus(
-          clientId,
-          `Saving to Google Sheet… retry ${attempt + 1}`
-        );
         await new Promise((resolve) => window.setTimeout(resolve, delay));
       }
     }
@@ -4785,12 +4277,10 @@
     const landed = await confirmBeingChangeLanded(clientId, changes);
 
     if (landed) {
-      setBeingCardSourceStatus(clientId, "Saved to Google Sheet");
       console.info("[Being] Save confirmed from the sheet after a failed reply:", clientId);
       return { ok: true, clientId, confirmedBySheet: true };
     }
 
-    setBeingCardSourceStatus(clientId, "Google Sheet save failed");
     console.error("[Being] Google Sheet save failed:", lastError);
     throw lastError || new Error("Being Google Sheet save failed.");
   }
@@ -4802,13 +4292,10 @@
   */
   async function confirmBeingChangeLanded(clientId, changes) {
     try {
-      const url = new URL(BEING_GOOGLE_SHEET.LOCAL_API_URL, window.location.origin);
-      url.searchParams.set("action", "getClientFields");
-      url.searchParams.set("clientId", clientId);
-      url.searchParams.set("_", String(Date.now()));
-
-      const response = await fetch(url.toString(), { method: "GET", cache: "no-store" });
-      const data = await response.json().catch(() => null);
+      const { response, data } = await fetchJson(
+        beingApiUrl("getClientFields", { clientId }),
+        { method: "GET" }
+      );
       if (!response.ok || !data?.ok || !data.fields) return false;
 
       const fields = data.fields;
@@ -4839,47 +4326,26 @@
   async function fetchReactivationGoogleSheetState() {
     if (!isBeingGoogleSheetConfigured()) return null;
 
-    const url = new URL(BEING_GOOGLE_SHEET.LOCAL_API_URL, window.location.origin);
-    url.searchParams.set("action", "getReactivation");
-    url.searchParams.set("_", String(Date.now()));
-
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      cache: "no-store"
-    });
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok || !data?.ok) {
-      throw new Error(data?.error || `Reactivation bridge HTTP ${response.status}`);
-    }
-
-    return data;
+    return apiGet(
+      "getReactivation",
+      {},
+      (response) => `Reactivation bridge HTTP ${response.status}`
+    );
   }
 
   async function saveReactivationChangeToGoogleSheet(change) {
     if (!state.reactivationSourceReady) return null;
 
-    const response = await fetch(BEING_GOOGLE_SHEET.LOCAL_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "updateReactivation",
-        mutation: change
-      }),
-      cache: "no-store"
-    });
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok || !data?.ok) {
-      throw new Error(data?.error || `Reactivation save HTTP ${response.status}`);
-    }
-
-    return data;
+    return apiPost(
+      BEING_GOOGLE_SHEET.LOCAL_API_URL,
+      { action: "updateReactivation", mutation: change },
+      (response) => `Reactivation save HTTP ${response.status}`
+    );
   }
 
-  async function loadReactivationFromGoogleSheet() {
+  async function loadReactivationFromGoogleSheet(request = fetchReactivationGoogleSheetState()) {
     try {
-      const data = await fetchReactivationGoogleSheetState();
+      const data = await request;
 
       if (!data?.ready) {
         state.reactivationSourceReady = false;
@@ -4889,9 +4355,6 @@
       }
 
       setReactivationData(Array.isArray(data.rows) ? data.rows : []);
-      setReactivationArchiveData(
-        Array.isArray(data.archiveRows) ? data.archiveRows : data.rows
-      );
       state.reactivationSourceReady = true;
       setReactivationChangeHandler(saveReactivationChangeToGoogleSheet);
       console.info(`[Reactivation] Loaded ${state.reactivationClients.length} IDs from its Sheet source.`);
@@ -4902,6 +4365,32 @@
       console.info("[Reactivation] Sheet adapter is not active yet:", error?.message || error);
       return false;
     }
+  }
+
+  /*
+    Both sheets are asked for at once - each is a cold Apps Script call - and
+    applied in the old order: Being first, because the Reactivation rows are
+    matched against the directory it builds. A Being failure is the load
+    failing; a Reactivation failure only leaves its adapter inactive.
+  */
+  async function loadSheetsFromGoogle(options = {}) {
+    if (!isBeingGoogleSheetConfigured()) {
+      return loadBeingFromGoogleSheet(options);
+    }
+
+    const reactivationRequest = fetchReactivationGoogleSheetState();
+    // Reported when it is awaited below; without this the browser would flag
+    // the rejection as unhandled while Being is still loading.
+    reactivationRequest.catch(() => {});
+
+    const loaded = await loadBeingFromGoogleSheet({
+      ...options,
+      request: fetchBeingGoogleSheetRows()
+    });
+    if (!loaded) return false;
+
+    await loadReactivationFromGoogleSheet(reactivationRequest);
+    return true;
   }
 
   function setAppLoaderState(status, progress) {
@@ -4978,39 +4467,7 @@
   }
 
   async function verifyBeingAppsScriptVersion() {
-    const url = new URL(
-      BEING_GOOGLE_SHEET.LOCAL_API_URL,
-      window.location.origin
-    );
-
-    url.searchParams.set(
-      "action",
-      "ping"
-    );
-
-    url.searchParams.set(
-      "_",
-      String(Date.now())
-    );
-
-    const response = await fetch(
-      url.toString(),
-      {
-        method: "GET",
-        cache: "no-store"
-      }
-    );
-
-    const data = await response
-      .json()
-      .catch(() => null);
-
-    if (!response.ok || !data?.ok) {
-      throw new Error(
-        data?.error ||
-        "Apps Script ping failed."
-      );
-    }
+    const data = await apiGet("ping", {}, () => "Apps Script ping failed.");
 
     const requiredVersion = "3.4";
     const actualVersion =
@@ -5122,7 +4579,7 @@
       const [, loaded] =
         await Promise.all([
           minimumVisibleTime,
-          loadBeingFromGoogleSheet({
+          loadSheetsFromGoogle({
             throwOnError: true
           })
         ]);
@@ -5132,8 +4589,6 @@
           "Google Sheet returned no client data."
         );
       }
-
-      await loadReactivationFromGoogleSheet();
 
       setAppLoaderState(
         "Data loaded",
@@ -5269,9 +4724,9 @@
       : createEmptyQuest();
   }
 
-  function applySavedQuestToClient(client) {
-    // Compatibility name retained for the existing call sites.
-    // There is no saved/local quest layer anymore.
+  // Quest state is source-driven only; this just guarantees the shape the
+  // profile and the editor read, for a client built without one.
+  function ensureClientQuestShape(client) {
     if (!client) return client;
     if (!client.quest || typeof client.quest !== "object") {
       client.quest = createEmptyQuest();
@@ -5425,9 +4880,14 @@
     dom.clients.questRewardInput.readOnly = readOnly;
   }
 
-  function updateQuestDirtyState() {
+  /*
+    Progress depends on the mechanic, section, currency, goal and dates only.
+    Name, conditions and reward are typed far more and change nothing in the
+    tracking, so their keystrokes skip the walk over the daily grid.
+  */
+  function updateQuestDirtyState({ progress = true } = {}) {
     updateQuestSectionAvailability();
-    if (state.selectedClient) {
+    if (progress && state.selectedClient) {
       renderQuestLiveProgress(state.selectedClient, getQuestDraftFromInputs());
     }
     const dirty =
@@ -5490,25 +4950,11 @@
     if (!clientId) throw new Error("ID is empty.");
 
     const activeQuest = serializeActiveQuestCell(draft);
-    const response = await fetch(BEING_GOOGLE_SHEET.LOCAL_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "updateActiveQuest",
-        clientId,
-        activeQuest
-      }),
-      cache: "no-store"
-    });
-
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok || !data?.ok) {
-      throw new Error(
-        data?.error ||
-        `Quest save failed (HTTP ${response.status}). Deploy Code.gs API 2.0.`
-      );
-    }
+    const data = await apiPost(
+      BEING_GOOGLE_SHEET.LOCAL_API_URL,
+      { action: "updateActiveQuest", clientId, activeQuest },
+      (response) => `Quest save failed (HTTP ${response.status}). Deploy Code.gs 3.4.`
+    );
 
     const confirmedValue =
       typeof data.activeQuest === "string"
@@ -5824,42 +5270,6 @@
     openQuestCompletionConfirm(progress);
   }
 
-  function parseManualBonusAmount(value) {
-    if (typeof value === "number") {
-      return Number.isFinite(value) ? value : 0;
-    }
-
-    let text = String(value ?? "")
-      .trim()
-      .replace(/[\s\u00A0\u202F]/g, "")
-      .replace(/[^0-9,.-]/g, "");
-
-    if (!text) return 0;
-
-    const lastComma = text.lastIndexOf(",");
-    const lastDot = text.lastIndexOf(".");
-
-    if (lastComma !== -1 && lastDot !== -1) {
-      const decimalSeparator = lastComma > lastDot ? "," : ".";
-      const groupingSeparator = decimalSeparator === "," ? "." : ",";
-      text = text.split(groupingSeparator).join("");
-      if (decimalSeparator === ",") text = text.replace(",", ".");
-    } else if (lastComma !== -1) {
-      const digitsAfter = text.length - lastComma - 1;
-      text = digitsAfter > 0 && digitsAfter <= 2
-        ? text.replace(",", ".")
-        : text.replace(/,/g, "");
-    } else if (lastDot !== -1) {
-      const digitsAfter = text.length - lastDot - 1;
-      if (digitsAfter === 3 && /^-?\d{1,3}(?:\.\d{3})+$/.test(text)) {
-        text = text.replace(/\./g, "");
-      }
-    }
-
-    const number = Number(text);
-    return Number.isFinite(number) ? number : 0;
-  }
-
   function parseManualBonusDate(value) {
     if (value instanceof Date && Number.isFinite(value.getTime())) {
       return { display: value.toISOString().slice(0, 10), timestamp: value.getTime() };
@@ -5909,93 +5319,17 @@
     };
   }
 
-  function normalizeManualBonusHistory(records) {
-    if (!Array.isArray(records)) return [];
-
-    return records
-      .map((record, index) => {
-        const parsedDate = parseManualBonusDate(record?.date);
-        return {
-          date: parsedDate.display,
-          name: String(record?.name ?? "Bonus Name"),
-          amount: parseManualBonusAmount(record?.amount),
-          _sortTimestamp: parsedDate.timestamp,
-          _sortIndex: index
-        };
-      })
-      .sort((a, b) => {
-        if (b._sortTimestamp !== a._sortTimestamp) {
-          return b._sortTimestamp - a._sortTimestamp;
-        }
-        return a._sortIndex - b._sortIndex;
-      })
-      .map(({ _sortTimestamp, _sortIndex, ...record }) => record);
-  }
-
-  function getManualBonusClientKey(client) {
-    const clientId = String(client?.clientId ?? "").trim();
-    if (clientId) return `id:${clientId}`;
-
-    const internalKey = String(client?._key ?? "").trim();
-    return internalKey ? `key:${internalKey}` : "";
-  }
-
-  function rememberManualBonusHistory(client, records, sourceReady = true) {
-    const key = getManualBonusClientKey(client);
-    if (!key) return;
-
-    state.manualBonusStore.set(key, {
-      records: normalizeManualBonusHistory(records),
-      sourceReady: Boolean(sourceReady)
-    });
-  }
-
-  function applyRememberedManualBonusHistory(client) {
-    const key = getManualBonusClientKey(client);
-    const saved = key ? state.manualBonusStore.get(key) : null;
-
-    if (saved) {
-      client.manualBonusHistory = saved.records.map((record) => ({ ...record }));
-      client.manualBonusSourceReady = saved.sourceReady;
-      return client;
-    }
-
-    if (client?.manualBonusSourceReady) {
-      client.manualBonusHistory = normalizeManualBonusHistory(client.manualBonusHistory);
-      rememberManualBonusHistory(client, client.manualBonusHistory, true);
-    }
-
-    return client;
-  }
-
-  function getManualBonusHistory(client) {
-    return normalizeManualBonusHistory(client?.manualBonusHistory);
-  }
-
+  /*
+    Bonus History is an independent data domain: it must never pull completed
+    quests or rewards from Current Quest / Quest History. Its own sheet is not
+    bound yet, so the summary shows the profile totals over an empty list.
+  */
   function getManualBonusSummary(client) {
-    const records = getManualBonusHistory(client);
-
-    // UI-only phase: keep approved placeholder values until the second-sheet source is connected.
-    if (!client?.manualBonusSourceReady) {
-      return {
-        total: normalizeNumber(client?.bonuses?.total),
-        lastDate: client?.bonuses?.lastDate ?? "1",
-        lastAmount: normalizeNumber(client?.bonuses?.lastAmount),
-        records
-      };
-    }
-
-    const total = records.reduce(
-      (sum, record) => sum + parseManualBonusAmount(record.amount),
-      0
-    );
-    const latest = records[0];
-
     return {
-      total,
-      lastDate: latest?.date || "1",
-      lastAmount: parseManualBonusAmount(latest?.amount),
-      records
+      total: normalizeNumber(client?.bonuses?.total),
+      lastDate: client?.bonuses?.lastDate ?? "1",
+      lastAmount: normalizeNumber(client?.bonuses?.lastAmount),
+      records: []
     };
   }
 
@@ -6090,7 +5424,7 @@
       dom.app.inert = state.reactivationCardOpen || state.beingCardOpen;
     }
     if (state.reactivationCardOpen && "inert" in dom.reactivation.card.modal) {
-      dom.reactivation.card.modal.inert = state.reactivationHistoryOpen;
+      dom.reactivation.card.modal.inert = false;
     }
     if (state.beingCardOpen && "inert" in dom.being.card.modal) {
       dom.being.card.modal.inert = false;
@@ -6104,44 +5438,6 @@
         returnFocus.focus({ preventScroll: true });
       });
     }
-  }
-
-  /*
-    Future technical entry point:
-      VIPCRM.setManualBonusHistory(clientId, records)
-
-    records:
-      [{ date, name, amount }, ...]
-
-    The second-sheet adapter will later handle:
-      - FG / ID matching
-      - approved source columns
-      - newest-first ordering
-  */
-  function setManualBonusHistory(clientIdentifier, records) {
-    const identifier = String(clientIdentifier ?? "");
-
-    const client = state.clients.find((item) =>
-      item._key === identifier ||
-      String(item.clientId ?? "") === identifier
-    );
-
-    if (!client) return false;
-
-    client.manualBonusHistory = normalizeManualBonusHistory(records);
-    client.manualBonusSourceReady = true;
-
-    // Persist separately so a later Update Data / setClients() cannot wipe manual bonuses.
-    rememberManualBonusHistory(client, client.manualBonusHistory, true);
-
-    if (state.selectedClient?._key === client._key) {
-      renderProfile(client);
-    }
-    if (state.bonusHistoryOpen && state.bonusHistoryClientKey === client._key) {
-      renderBonusHistory(client);
-    }
-
-    return true;
   }
 
   function renderProfile(client) {
@@ -6176,10 +5472,10 @@
       ? "—"
       : (quest.openEnded ? "No limit" : (quest.end ?? "1"));
     dom.clients.questOpen.classList.toggle("is-no-active-quest", questInactive);
-    const manualBonusSummary = getManualBonusSummary(client);
-    dom.clients.totalBonuses.textContent = formatMoney(manualBonusSummary.total);
-    dom.clients.lastBonusDate.textContent = String(manualBonusSummary.lastDate);
-    dom.clients.lastBonusAmount.textContent = formatMoney(manualBonusSummary.lastAmount);
+    const bonusSummary = getManualBonusSummary(client);
+    dom.clients.totalBonuses.textContent = formatMoney(bonusSummary.total);
+    dom.clients.lastBonusDate.textContent = String(bonusSummary.lastDate);
+    dom.clients.lastBonusAmount.textContent = formatMoney(bonusSummary.lastAmount);
 
     setProfilePeriod("day");
   }
@@ -6371,7 +5667,6 @@
       : `— / ${tracking.goal > 0 ? money(tracking.goal) : "—"}`;
     const showSecondary = tracking.mechanic === "turnover_insurance";
     dom.clients.questProgressSecondary.hidden = !showSecondary;
-    dom.clients.questProgressSecondaryLabel.textContent = "GGR";
     dom.clients.questProgressSecondaryValue.textContent = tracking.available
       ? money(tracking.secondaryValue)
       : "—";
@@ -6433,25 +5728,6 @@
     }
   }
 
-  function getQuestTrackingKey(quest) {
-    const mechanic = QUEST_MECHANICS[quest?.mechanic]
-      ? quest.mechanic
-      : DEFAULT_QUEST_MECHANIC;
-
-    return QUEST_MECHANICS[mechanic].trackingKey;
-  }
-
-  /*
-    Future live-data usage example:
-      const trackingKey = getQuestTrackingKey(client.quest);
-      const currentValue = liveQuestMetrics[trackingKey];
-
-    Expected live metric keys:
-      turnover
-      turnoverInsurance
-      netLoss
-  */
-
   function openQuestDetail() {
     const client = state.selectedClient;
     if (!client) return;
@@ -6503,7 +5779,7 @@
     if (!client) return;
 
     if (!preserveQuestOrigin) state.questNavigationOrigin = null;
-    state.selectedClient = applySavedQuestToClient(client);
+    state.selectedClient = ensureClientQuestShape(client);
     renderProfile(state.selectedClient);
 
     dom.clients.profile.scrollTop = 0;
@@ -6544,7 +5820,7 @@
         }
       };
 
-      return applyRememberedManualBonusHistory(normalized);
+      return normalized;
     });
   }
 
@@ -6552,47 +5828,40 @@
     closeBeingCard({ restoreFocus: false });
     state.clients = normalizeClients(clients);
     invalidateQuestProgressCache();
-    state.clientsSource = String(options?.source || "external");
+    beingNotesCache.clear();
+    state.clientsSource = String(options?.source || "placeholder");
     state.clientQuery = "";
     state.clientsRevision += 1;
     state.clientsRenderedQuery = null;
-    state.beingRevision += 1;
-    state.beingRenderedRevision = -1;
     state.beingPinOrder.clear();
     dom.clients.search.value = "";
     showClientsDirectory();
     renderClients(true);
-    renderBeing(true);
+    renderBeing();
   }
 
   /*
     There is no confirmation window any more, so progress and failure have to
-    land somewhere the eye already goes: the notification strip. Success is
-    barely seen - the window closes - but a failure has to be readable, or a
-    save that did not happen would look exactly like one that did.
+    land somewhere the eye already goes: the status strip under the menu.
+    Success is barely seen - the window closes - but a failure has to be
+    readable, or a save that did not happen would look exactly like one that
+    did.
   */
-  function setExitStatus(message, stateName = "idle") {
+  function setExitStatus(message) {
     const text = String(message || "");
     if (!text || !dom.versionNotification) return;
 
     dom.versionNotificationText.textContent = text;
-    dom.versionNotification.dataset.state = stateName;
     dom.versionNotification.classList.add("is-visible");
   }
 
   async function sendCrmControl(action, { keepalive = false, payload = null } = {}) {
-    const response = await fetch(CRM_CONTROL_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload ? { action, ...payload } : { action }),
-      cache: "no-store",
-      keepalive
-    });
-
-    const data = await response.json().catch(() => null);
-    if (!response.ok || !data?.ok) {
-      throw new Error(data?.error || `Local CRM control HTTP ${response.status}`);
-    }
+    const data = await apiPost(
+      CRM_CONTROL_URL,
+      payload ? { action, ...payload } : { action },
+      (response) => `Local CRM control HTTP ${response.status}`,
+      { keepalive }
+    );
 
     state.crmControlAvailable = true;
     return data;
@@ -6600,11 +5869,10 @@
 
   async function initializeCrmControl() {
     try {
-      const response = await fetch(`${CRM_CONTROL_URL}?action=ping&_=${Date.now()}`, {
-        method: "GET",
-        cache: "no-store"
-      });
-      const data = await response.json().catch(() => null);
+      const { response, data } = await fetchJson(
+        `${CRM_CONTROL_URL}?action=ping&_=${Date.now()}`,
+        { method: "GET" }
+      );
       state.crmControlAvailable = Boolean(response.ok && data?.ok);
     } catch {
       state.crmControlAvailable = false;
@@ -6665,11 +5933,11 @@
 
     state.exitInProgress = true;
     dom.exit.button.disabled = true;
-    setExitStatus("Saving…", "saving");
+    setExitStatus("Saving…");
 
     try {
       await saveOpenEditorsBeforeExit();
-      setExitStatus("Saved. Closing…", "success");
+      setExitStatus("Saved. Closing…");
       await sendCrmControl("shutdown", { keepalive: true });
 
       if (state.crmHeartbeatTimer) {
@@ -6679,7 +5947,7 @@
 
       window.setTimeout(() => window.close(), 90);
       window.setTimeout(() => {
-        setExitStatus("Saved. You can close this window.", "success");
+        setExitStatus("Saved. You can close this window.");
       }, 900);
     } catch (error) {
       console.error("[VIP CRM] Safe exit failed:", error);
@@ -6694,7 +5962,7 @@
       setWindowCollapsed(false);
       shapeWorkArea();
 
-      setExitStatus(error?.message || "Could not save. CRM stays open.", "error");
+      setExitStatus(error?.message || "Could not save. CRM stays open.");
     }
   }
 
@@ -7001,8 +6269,8 @@
       if (!refreshAnalyticsFrom365()) renderDashboard(DASHBOARD_TEST_DATA);
     }
     else if (page === PAGES.CLIENTS) renderClients();
-    else if (page === PAGES.REACTIVATION) renderReactivation(true);
-    else if (page === PAGES.BEING) renderBeing(true);
+    else if (page === PAGES.REACTIVATION) renderReactivation();
+    else if (page === PAGES.BEING) renderBeing();
   }
 
   function enterReactivationPortal() {
@@ -7020,7 +6288,6 @@
     window.requestAnimationFrame(() => {
       dom.app.scrollTop = 0;
       if (dom.reactivation.tableShell) dom.reactivation.tableShell.scrollLeft = 0;
-      fitReactivationRowsToViewport();
     });
 
     const originPage = state.reactivationPortalOrigin?.page;
@@ -7047,9 +6314,9 @@
       state.reactivationPortalReturning = false;
       dom.reactivationPortalBack.blur();
       dom.app.classList.remove("app--reactivation-portal");
-      syncShellState();
       dom.app.scrollTop = 0;
       window.requestAnimationFrame(() => { dom.app.scrollTop = 0; });
+      // Both ways out sync the shell state themselves.
       if (!origin.opened || !origin.page) {
         returnToMainMenu();
         return;
@@ -7089,8 +6356,6 @@
     */
     state.dockFoldedScreen = false;
     if (state.windowCollapsed) setWindowCollapsed(false);
-
-    syncShellState();
 
     if (page === PAGES.CLIENTS) showClientsDirectory();
 
@@ -7194,23 +6459,7 @@
   }
 
   function goBack() {
-    const before = navigationSignature();
-
-    for (let index = 0; index < BACK_LADDER.length; index += 1) {
-      const element = document.querySelector(BACK_LADDER[index]);
-      if (!isBackStepAvailable(element)) continue;
-
-      element.click();
-
-      // The step may have declined; give it a frame, then look again.
-      window.requestAnimationFrame(() => {
-        if (navigationSignature() !== before) return;
-        goBackFrom(index + 1, before);
-      });
-      return;
-    }
-
-    returnToMainMenu();
+    goBackFrom(0, navigationSignature());
   }
 
   function goBackFrom(startIndex, before) {
@@ -7219,6 +6468,8 @@
       if (!isBackStepAvailable(element)) continue;
 
       element.click();
+
+      // The step may have declined; give it a frame, then look again.
       window.requestAnimationFrame(() => {
         if (navigationSignature() !== before) return;
         goBackFrom(index + 1, before);
@@ -7280,21 +6531,8 @@
     foldTimer = window.setTimeout(applyWindowShape, FOLD_DELAY);
   }
 
-  function showVersionNotification(version) {
-    dom.versionNotificationText.textContent = `Version ${version} is available. Download the latest version of VIP CRM.`;
-    dom.versionNotification.classList.add("is-visible");
-  }
+  // The strip under the menu now carries only the exit status (setExitStatus).
   function hideVersionNotification() { dom.versionNotification.classList.remove("is-visible"); }
-
-  async function fetchLatestData() {
-    await new Promise((resolve) => window.setTimeout(resolve, 650));
-    return {
-      system: TEST_SYSTEM_DATA,
-      yesterday: YESTERDAY_TEST_DATA,
-      dashboard: DASHBOARD_TEST_DATA,
-      clients: CLIENTS_TEST_DATA
-    };
-  }
 
   async function updateData() {
     if (state.updating) return;
@@ -7303,20 +6541,17 @@
     dom.updateButtonText.textContent = "Updating";
 
     try {
-      const result = await fetchLatestData();
-      dom.dataUpdated.textContent = result.system?.dataUpdatedAt ?? "1";
-      syncSystemMeta();
+      // A refresh starts a clean strip: whatever the last exit attempt left
+      // there is cleared.
+      hideVersionNotification();
 
-      if (isNewerVersion(APP_VERSION, result.system?.siteVersion)) showVersionNotification(result.system.siteVersion);
-      else hideVersionNotification();
-
-      renderYesterday(result.yesterday);
-      renderDashboard(result.dashboard);
       if (isBeingGoogleSheetConfigured()) {
-        await loadBeingFromGoogleSheet({ throwOnError: true });
-        await loadReactivationFromGoogleSheet();
+        // Yesterday and Dashboard are rebuilt from sheet 365 inside setBeingData.
+        await loadSheetsFromGoogle({ throwOnError: true });
       } else {
-        setClients(result.clients, { source: "placeholder" });
+        renderYesterday(YESTERDAY_TEST_DATA);
+        renderDashboard(DASHBOARD_TEST_DATA);
+        setClients(CLIENTS_TEST_DATA, { source: "placeholder" });
       }
 
       renderDataSourceState();
@@ -7544,8 +6779,11 @@
 
   dom.reactivation.search.addEventListener("input", () => {
     state.reactivationQuery = dom.reactivation.search.value;
-    state.reactivationRevision += 1;
-    renderReactivation(true);
+    if (state.reactivationSearchFrame) window.cancelAnimationFrame(state.reactivationSearchFrame);
+    state.reactivationSearchFrame = window.requestAnimationFrame(() => {
+      state.reactivationSearchFrame = 0;
+      renderReactivation();
+    });
   });
 
   dom.reactivation.search.addEventListener("keydown", (event) => {
@@ -7558,7 +6796,6 @@
   dom.reactivation.clearFilters.addEventListener("click", clearReactivationView);
 
   window.addEventListener("resize", () => {
-    fitReactivationRowsToViewport();
     if (state.quickNavOpen && state.quickNavReturnFocus?.isConnected) {
       positionClientQuickNav(state.quickNavReturnFocus);
     }
@@ -7588,11 +6825,6 @@
       return;
     }
 
-    if (event.target.closest("[data-reactivation-undo-last]")) {
-      undoReactivationContact(clientId);
-      return;
-    }
-
     openReactivationCard(
       clientId,
       event.target.closest("[data-reactivation-open]") || row
@@ -7611,7 +6843,7 @@
       if (state.reactivationStatsPeriod === nextPeriod) return;
       state.reactivationStatsPeriod = nextPeriod;
       const client = getReactivationClient(state.reactivationSelectedId);
-      if (client) renderReactivationStatistics(getReactivationDisplayClient(client));
+      if (client) renderReactivationStatistics(client);
     });
   });
   dom.reactivation.card.toolRail.addEventListener("click", (event) => {
@@ -7677,17 +6909,6 @@
     undoReactivationContact(state.reactivationSelectedId);
   });
 
-  dom.reactivation.card.contactLog.addEventListener("click", (event) => {
-    const undo = event.target.closest("[data-reactivation-undo]");
-    if (!undo || !state.reactivationSelectedId) return;
-    undoReactivationContact(state.reactivationSelectedId, undo.dataset.reactivationUndo);
-  });
-
-  dom.reactivation.history.close.addEventListener("click", () => closeReactivationHistory());
-  dom.reactivation.history.overlay.addEventListener("click", (event) => {
-    if (event.target === dom.reactivation.history.overlay) closeReactivationHistory();
-  });
-
   dom.being.rows.addEventListener("click", (event) => {
     const row = event.target.closest(".being-row");
     if (!row) return;
@@ -7716,8 +6937,7 @@
   dom.being.questFilter.addEventListener("click", () => {
     state.beingQuestFilter = !state.beingQuestFilter;
     dom.being.questFilter.setAttribute("aria-pressed", state.beingQuestFilter ? "true" : "false");
-    state.beingRevision += 1;
-    renderBeing(true);
+    renderBeing();
     dom.being.rows.scrollTop = 0;
   });
 
@@ -7734,8 +6954,7 @@
     if (state.beingSearchFrame) window.cancelAnimationFrame(state.beingSearchFrame);
     state.beingSearchFrame = window.requestAnimationFrame(() => {
       state.beingSearchFrame = 0;
-      state.beingRevision += 1;
-      renderBeing(true);
+      renderBeing();
     });
   });
 
@@ -7761,24 +6980,21 @@
     const client = getBeingCardClient();
     if (!client) return;
     updateBeingDate(client._key, "lastContactDate", dom.being.card.lastContact.value);
-    dom.being.card.saveState.textContent = isBeingGoogleSheetConfigured() ? "Saving to Google Sheet…" : "Updated · session only";
   });
 
   dom.being.card.lastContactToday.addEventListener("click", () => {
     const client = getBeingCardClient();
     if (!client) return;
 
-    const today = getBeingLocalTodayIso();
+    const today = getLocalTodayIso();
     dom.being.card.lastContact.value = today;
     updateBeingDate(client._key, "lastContactDate", today);
-    dom.being.card.saveState.textContent = isBeingGoogleSheetConfigured() ? "Saving to Google Sheet…" : "Last Contact set to today · session only";
   });
 
   dom.being.card.followUp.addEventListener("change", () => {
     const client = getBeingCardClient();
     if (!client) return;
     updateBeingDate(client._key, "followUpDate", dom.being.card.followUp.value);
-    dom.being.card.saveState.textContent = isBeingGoogleSheetConfigured() ? "Saving to Google Sheet…" : "Updated · session only";
   });
 
   dom.being.card.noteSave.addEventListener("click", saveBeingDatedNote);
@@ -7852,12 +7068,6 @@
     if (state.bonusHistoryOpen) {
       event.preventDefault();
       closeBonusHistory();
-      return;
-    }
-
-    if (state.reactivationHistoryOpen) {
-      event.preventDefault();
-      closeReactivationHistory();
       return;
     }
 
@@ -7935,9 +7145,19 @@
     dom.clients.questRewardInput
   ];
 
+  const questProgressFields = new Set([
+    dom.clients.questMechanicSelect,
+    dom.clients.questSectionSelect,
+    dom.clients.questCurrencySelect,
+    dom.clients.questGoalInput,
+    dom.clients.questDetailStartInput,
+    dom.clients.questDetailEndInput
+  ]);
+
   questEditableFields.forEach((field) => {
-    field.addEventListener("input", updateQuestDirtyState);
-    field.addEventListener("change", updateQuestDirtyState);
+    const onEdit = () => updateQuestDirtyState({ progress: questProgressFields.has(field) });
+    field.addEventListener("input", onEdit);
+    field.addEventListener("change", onEdit);
   });
 
   dom.clients.questCurrencySelect.addEventListener("change", updateQuestGoalCurrencyLabel);
@@ -7957,29 +7177,6 @@
     });
   });
 
-  window.VIPCRM = Object.freeze({
-    setClients,
-    setBeingData,
-    setBeingChangeHandler,
-    setReactivationData,
-    setReactivationArchiveData,
-    setReactivationChangeHandler,
-    addToReactivation: (clientIdentifier) => {
-      const identifier = String(clientIdentifier ?? "");
-      const client = state.clients.find((item) =>
-        item._key === identifier || String(item.clientId ?? "") === identifier
-      );
-      return client ? addWorkspaceClientToReactivation(client) : Promise.resolve(false);
-    },
-    setManualBonusHistory,
-    getQuestHistory: (clientIdentifier) => {
-      const identifier = String(clientIdentifier ?? "");
-      const client = state.clients.find((item) => item._key === identifier || String(item.clientId ?? "") === identifier);
-      return client ? readQuestHistory(client) : [];
-    },
-    manualBonusVisibleRows: MANUAL_BONUS_VISIBLE_ROWS
-  });
-
   dom.localVersion.textContent = APP_VERSION;
 
   // Connect save adapter, then keep the startup loader visible
@@ -7996,19 +7193,24 @@
     hideAppLoader();
   });
 
-  // Keep the first paint focused on the main menu.
-  // Pre-render the heavier screens only when the browser has idle time.
-  const preRender = () => {
-    renderYesterday(YESTERDAY_TEST_DATA);
-    renderDashboard(DASHBOARD_TEST_DATA);
-    renderClients(true);
-    renderReactivation(true);
-  };
+  /*
+    Placeholder mode only: with no bridge the screens hold test figures, so
+    they are drawn once the browser has idle time. Under the bridge the loader
+    covers the UI until the sheet data has rendered every screen itself.
+  */
+  if (!isBeingGoogleSheetConfigured()) {
+    const preRender = () => {
+      renderYesterday(YESTERDAY_TEST_DATA);
+      renderDashboard(DASHBOARD_TEST_DATA);
+      renderClients(true);
+      renderReactivation();
+    };
 
-  if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(preRender, { timeout: 500 });
-  } else {
-    window.setTimeout(preRender, 40);
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(preRender, { timeout: 500 });
+    } else {
+      window.setTimeout(preRender, 40);
+    }
   }
 })();
 
